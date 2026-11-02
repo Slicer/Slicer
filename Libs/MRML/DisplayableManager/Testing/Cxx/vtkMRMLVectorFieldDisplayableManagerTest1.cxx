@@ -44,6 +44,7 @@
 #include <vtkVectorFieldSampler.h>
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLMarkupsROINode.h>
+#include <vtkMRMLTransformDisplayNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 
@@ -54,6 +55,8 @@
 #include <vtkIdList.h>
 #include <vtkCellArray.h>
 #include <vtkDoubleArray.h>
+#include <vtkActor.h>
+#include <vtkActor2D.h>
 #include <vtkMapper.h>
 #include <vtkMatrix4x4.h>
 #include <vtkMath.h>
@@ -65,6 +68,7 @@
 #include <vtkProp.h>
 #include <vtkPropCollection.h>
 #include <vtkProperty.h>
+#include <vtkProperty2D.h>
 #include <vtkRenderer.h>
 #include <vtkScalarsToColors.h>
 #include <vtkRenderWindow.h>
@@ -108,6 +112,27 @@ std::vector<vtkProp*> GetVisibleProps(vtkRenderer* renderer)
     }
   }
   return visibleProps;
+}
+
+//----------------------------------------------------------------------------
+/// Whether a visible actor draws solid lines in the first component of the color, in 3D or in 2D
+bool HasVisibleSolidActor(vtkRenderer* renderer, double red)
+{
+  for (vtkProp* prop : GetVisibleProps(renderer))
+  {
+    vtkActor* actor = vtkActor::SafeDownCast(prop);
+    vtkActor2D* actor2D = vtkActor2D::SafeDownCast(prop);
+    double* color = actor ? actor->GetProperty()->GetColor() : (actor2D ? actor2D->GetProperty()->GetColor() : nullptr);
+    vtkAbstractMapper* mapper = actor ? static_cast<vtkAbstractMapper*>(actor->GetMapper()) : (actor2D ? static_cast<vtkAbstractMapper*>(actor2D->GetMapper()) : nullptr);
+    vtkMapper* mapper3D = vtkMapper::SafeDownCast(mapper);
+    vtkPolyDataMapper2D* mapper2D = vtkPolyDataMapper2D::SafeDownCast(mapper);
+    bool solid = (mapper3D && !mapper3D->GetScalarVisibility()) || (mapper2D && !mapper2D->GetScalarVisibility());
+    if (color && solid && std::abs(color[0] - red) < 1e-9)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 //----------------------------------------------------------------------------
@@ -315,12 +340,8 @@ struct Views
   {
     this->ApplicationLogic->SetMRMLScene(scene);
     this->SetupView(this->RenderWindow3D, this->Renderer3D, this->Interactor3D, this->Group3D, this->Manager3D, scene->AddNewNodeByClass("vtkMRMLViewNode"));
-    this->SetupView(this->RenderWindow3DSecond,
-                    this->Renderer3DSecond,
-                    this->Interactor3DSecond,
-                    this->Group3DSecond,
-                    this->Manager3DSecond,
-                    scene->AddNewNodeByClass("vtkMRMLViewNode"));
+    this->SetupView(
+      this->RenderWindow3DSecond, this->Renderer3DSecond, this->Interactor3DSecond, this->Group3DSecond, this->Manager3DSecond, scene->AddNewNodeByClass("vtkMRMLViewNode"));
 
     vtkNew<vtkMRMLSliceNode> sliceNode;
     sliceNode->SetLayoutName("Red");
@@ -746,6 +767,172 @@ int TestCellData()
   return EXIT_SUCCESS;
 }
 
+//----------------------------------------------------------------------------
+int TestTransform()
+{
+  vtkNew<vtkMRMLScene> scene;
+  Views views;
+  views.Setup(scene);
+  // A rotation and a translation, so that the displacement varies from place to place and
+  // has contours
+  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLLinearTransformNode"));
+  vtkNew<vtkTransform> transform;
+  transform->Translate(3.0, 0.0, 0.0);
+  transform->RotateZ(10.0);
+  transformNode->SetMatrixTransformToParent(transform->GetMatrix());
+  transformNode->CreateDefaultDisplayNodes();
+  vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
+  CHECK_NOT_NULL(displayNode);
+  displayNode->SetVisibility(true);
+  displayNode->SetSamplingSpacing(10.0);
+  displayNode->SetGridSpacing(20.0);
+
+  // Without a region a transform is drawn in slice views, wherever the slice is, but not in
+  // 3D views: it is defined everywhere, so the 3D view has to be told where to draw it
+  for (int mode = 0; mode < vtkMRMLTransformDisplayNode::VIS_MODE_LAST; ++mode)
+  {
+    displayNode->SetVisualizationMode(mode);
+    views.Render();
+    vtkIdType drawnPointsSlice = CountDrawnPoints(views.RendererSlice);
+    std::cout << "Transform without region, " << displayNode->GetVisualizationModeAsString() << ": " << drawnPointsSlice << " points in the slice" << std::endl;
+    CHECK_BOOL(drawnPointsSlice > 0, true);
+    CHECK_INT(CountDrawnPoints(views.Renderer3D), 0);
+  }
+
+  // With a region, in both views
+  vtkMRMLMarkupsROINode* roiNode = AddROI(scene, vtkVector3d(0.0, 0.0, 0.0), vtkVector3d(50.0, 50.0, 50.0));
+  displayNode->SetAndObserveSamplingRegionNode(roiNode);
+  CHECK_EXIT_SUCCESS(CheckDrawnInModes(views, displayNode, "Transform with region", vtkMRMLTransformDisplayNode::VIS_MODE_LAST));
+
+  // A transform is evaluated in the world, with its parent transforms, so a 3D view does not
+  // move it by its parent transform again
+  {
+    transformNode->SetAndObserveTransformNodeID(AddTranslation(scene, 0.0, 0.0, 300.0)->GetID());
+    displayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH);
+    views.Render();
+    vtkActor* actor = GetVisibleActor(views.Renderer3D);
+    CHECK_NOT_NULL(actor);
+    CHECK_BOOL(!actor->GetUserMatrix() || actor->GetUserMatrix()->IsIdentity(), true);
+    transformNode->SetAndObserveTransformNodeID(nullptr);
+  }
+
+  // Glyphs at the points of a node. A grid and contours need an inside or a plane to be built
+  // in, so in 3D views they have nowhere to be drawn; slice views draw them in their plane.
+  vtkMRMLMarkupsFiducialNode* pointsNode = AddPointList(scene, { vtkVector3d(20.0, 0.0, 0.0), vtkVector3d(-20.0, 10.0, 0.0), vtkVector3d(0.0, 30.0, 0.0) });
+  displayNode->SetAndObserveSamplingRegionNode(pointsNode);
+  displayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH);
+  views.Render();
+  CHECK_INT(CountDrawnPoints(views.Renderer3D), 3);
+  // A slice view draws the outline of each glyph, a few points per glyph
+  vtkIdType drawnPointsSlice = CountDrawnPoints(views.RendererSlice);
+  CHECK_BOOL(drawnPointsSlice > 0 && drawnPointsSlice <= 3 * 10, true);
+
+  // A negative scale factor points the glyph the other way. The slice view draws the glyph geometry itself, in slice XY
+  // coordinates (the 3D glyph mapper only reports bounds that hold the glyph in any direction).
+  {
+    displayNode->SetAndObserveSamplingRegionNode(AddPointList(scene, { vtkVector3d(20.0, 0.0, 0.0) }));
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetFirstNodeByClass("vtkMRMLSliceNode"));
+    CHECK_NOT_NULL(sliceNode);
+    vtkNew<vtkMatrix4x4> rasToXY;
+    vtkMatrix4x4::Invert(sliceNode->GetXYToRAS(), rasToXY);
+    const double point_RAS[4] = { 20.0, 0.0, 0.0, 1.0 };
+    double point_XY[4] = { 0.0, 0.0, 0.0, 1.0 };
+    rasToXY->MultiplyPoint(point_RAS, point_XY);
+    double glyphCenter_XY[2][2] = { { 0.0, 0.0 }, { 0.0, 0.0 } };
+    const double scaleFactors[2] = { 5.0, -5.0 };
+    for (int index = 0; index < 2; ++index)
+    {
+      displayNode->SetGlyphScaleFactor(scaleFactors[index]);
+      views.Render();
+      CHECK_INT(CountDrawnPoints(views.Renderer3D), 1);
+      vtkPolyData* glyphs = GetVisibleSliceGeometry(views.RendererSlice);
+      CHECK_NOT_NULL(glyphs);
+      CHECK_BOOL(glyphs->GetNumberOfPoints() > 0, true);
+      double bounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
+      glyphs->GetBounds(bounds);
+      glyphCenter_XY[index][0] = 0.5 * (bounds[0] + bounds[1]);
+      glyphCenter_XY[index][1] = 0.5 * (bounds[2] + bounds[3]);
+    }
+    std::cout << "Glyph centers in the slice with a scale factor of 5 and -5: " << glyphCenter_XY[0][0] << ", " << glyphCenter_XY[0][1] << " and " << glyphCenter_XY[1][0] << ", "
+              << glyphCenter_XY[1][1] << "; the point is at " << point_XY[0] << ", " << point_XY[1] << std::endl;
+    // On either side of the point, as far from it
+    CHECK_BOOL(std::abs(glyphCenter_XY[0][0] - point_XY[0]) + std::abs(glyphCenter_XY[0][1] - point_XY[1]) > 1.0, true);
+    for (int axis = 0; axis < 2; ++axis)
+    {
+      CHECK_DOUBLE_TOLERANCE(glyphCenter_XY[0][axis] + glyphCenter_XY[1][axis], 2.0 * point_XY[axis], 0.5);
+    }
+    displayNode->SetGlyphScaleFactor(1.0);
+    displayNode->SetAndObserveSamplingRegionNode(pointsNode);
+  }
+
+  displayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GRID);
+  views.Render();
+  CHECK_INT(CountDrawnPoints(views.Renderer3D), 0);
+  CHECK_BOOL(CountDrawnPoints(views.RendererSlice) > 0, true);
+
+  // Masked by a region of interest: only what is inside it is drawn, in both views
+  displayNode->SetAndObserveSamplingRegionNode(roiNode);
+  displayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH);
+  views.Render();
+  vtkIdType unmaskedGlyphs3D = CountDrawnPoints(views.Renderer3D);
+  vtkIdType unmaskedSlice = CountDrawnPoints(views.RendererSlice);
+  vtkMRMLMarkupsROINode* maskNode = AddROI(scene, vtkVector3d(25.0, 0.0, 0.0), vtkVector3d(25.0, 50.0, 50.0));
+  displayNode->SetAndObserveMaskingRegionNode(maskNode);
+  views.Render();
+  vtkIdType maskedGlyphs3D = CountDrawnPoints(views.Renderer3D);
+  vtkIdType maskedSlice = CountDrawnPoints(views.RendererSlice);
+  std::cout << "Transform glyphs masked to half of the region: " << maskedGlyphs3D << " of " << unmaskedGlyphs3D << " in 3D, " << maskedSlice << " of " << unmaskedSlice
+            << " points in the slice" << std::endl;
+  CHECK_BOOL(maskedGlyphs3D > 0 && maskedGlyphs3D < unmaskedGlyphs3D, true);
+  CHECK_BOOL(maskedSlice > 0 && maskedSlice < unmaskedSlice, true);
+  // Grid lines are cut at the edge of the mask
+  displayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GRID);
+  displayNode->SetAndObserveMaskingRegionNode(nullptr);
+  views.Render();
+  vtkIdType unmaskedGrid3D = CountDrawnPoints(views.Renderer3D);
+  displayNode->SetAndObserveMaskingRegionNode(maskNode);
+  views.Render();
+  vtkIdType maskedGrid3D = CountDrawnPoints(views.Renderer3D);
+  CHECK_BOOL(maskedGrid3D > 0 && maskedGrid3D < unmaskedGrid3D, true);
+  // A grid deformed the opposite way is drawn as well
+  displayNode->SetGridScaleFactor(-1.0);
+  views.Render();
+  CHECK_BOOL(CountDrawnPoints(views.Renderer3D) > 0, true);
+  CHECK_BOOL(CountDrawnPoints(views.RendererSlice) > 0, true);
+  displayNode->SetGridScaleFactor(1.0);
+  // The undeformed grid is one more actor in both views, in a color of its own however the field is colored
+  displayNode->SetScalarVisibility(true);
+  size_t visibleProps3D = GetVisibleProps(views.Renderer3D).size();
+  size_t visiblePropsSlice = GetVisibleProps(views.RendererSlice).size();
+  vtkIdType gridPoints3D = CountDrawnPoints(views.Renderer3D);
+  vtkIdType gridPointsSlice = CountDrawnPoints(views.RendererSlice);
+  displayNode->SetGridNonWarpedColor(0.125, 0.25, 0.5);
+  displayNode->SetGridShowNonWarped(true);
+  views.Render();
+  CHECK_INT(static_cast<int>(GetVisibleProps(views.Renderer3D).size()), static_cast<int>(visibleProps3D + 1));
+  CHECK_INT(static_cast<int>(GetVisibleProps(views.RendererSlice).size()), static_cast<int>(visiblePropsSlice + 1));
+  CHECK_BOOL(HasVisibleSolidActor(views.Renderer3D, 0.125), true);
+  CHECK_BOOL(HasVisibleSolidActor(views.RendererSlice, 0.125), true);
+  CHECK_BOOL(CountDrawnPoints(views.Renderer3D) > gridPoints3D, true);
+  CHECK_BOOL(CountDrawnPoints(views.RendererSlice) > gridPointsSlice, true);
+  // It follows the color, and goes away with the option and in other modes
+  displayNode->SetGridNonWarpedColor(0.75, 0.25, 0.5);
+  views.Render();
+  CHECK_BOOL(HasVisibleSolidActor(views.Renderer3D, 0.75), true);
+  CHECK_BOOL(HasVisibleSolidActor(views.RendererSlice, 0.75), true);
+  displayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH);
+  views.Render();
+  CHECK_BOOL(HasVisibleSolidActor(views.Renderer3D, 0.75), false);
+  CHECK_BOOL(HasVisibleSolidActor(views.RendererSlice, 0.75), false);
+  displayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GRID);
+  displayNode->SetGridShowNonWarped(false);
+  views.Render();
+  CHECK_INT(static_cast<int>(GetVisibleProps(views.Renderer3D).size()), static_cast<int>(visibleProps3D));
+  CHECK_INT(static_cast<int>(GetVisibleProps(views.RendererSlice).size()), static_cast<int>(visiblePropsSlice));
+  views.TearDown();
+  return EXIT_SUCCESS;
+}
+
 } // namespace
 
 //----------------------------------------------------------------------------
@@ -836,6 +1023,7 @@ int vtkMRMLVectorFieldDisplayableManagerTest1(int vtkNotUsed(argc), char* vtkNot
   CHECK_EXIT_SUCCESS(TestSurfaceMesh());
   CHECK_EXIT_SUCCESS(TestSliceGlyphScaleArray());
   CHECK_EXIT_SUCCESS(TestCellData());
+  CHECK_EXIT_SUCCESS(TestTransform());
   CHECK_EXIT_SUCCESS(TestFolderDisplayOverride());
   CHECK_EXIT_SUCCESS(TestSliceReparent());
   std::cout << "Success" << std::endl;

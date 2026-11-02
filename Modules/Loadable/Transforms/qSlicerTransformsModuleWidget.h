@@ -64,6 +64,11 @@ protected:
 
 protected slots:
 
+  /// Show the color legend of the displacement magnitude that the transform is colored by.
+  /// The legend node is created the first time the section is opened.
+  void updateColorLegendFromMRML();
+  void colorLegendCollapsibleButtonCollapsed(bool collapsed);
+
   /// Called when a subject hierarchy item is modified.
   /// Updates current item selection to reflect changes in item (such as display node creation)
   void onSubjectHierarchyItemModified(vtkObject* caller, void* callData);
@@ -86,8 +91,17 @@ protected slots:
   void onDisplaySectionClicked(bool);
   void onTransformableSectionClicked(bool);
 
-  void updateConvertButtonState();
-  void convert();
+  /// Show the inputs of the chosen operation and type, and enable Apply when they are set
+  void updateExportImportWidgets();
+  /// Export the transform to the output node, or import it from the input node
+  void applyExportImport();
+
+  /// Show the source model and displacement array of a scattered transform
+  void updateScatteredTransformWidgets();
+  void onScatteredSourceModelChanged(vtkMRMLNode* node);
+  void onScatteredDisplacementArrayChanged(int index);
+  /// Set the fitting parameters and the displacement scale of a scattered transform
+  void onScatteredFittingParameterChanged();
 
 protected:
   ///

@@ -12,12 +12,15 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   qMRMLTransformDisplayNodeWidget.cxx
   qMRMLTransformDisplayNodeWidget.h
+  qMRMLTransformInteractionWidget.cxx
+  qMRMLTransformInteractionWidget.h
   qMRMLTransformInfoWidget.cxx
   qMRMLTransformInfoWidget.h
   )
 
 set(${KIT}_UI_SRCS
   Resources/UI/qMRMLTransformDisplayNodeWidget.ui
+  Resources/UI/qMRMLTransformInteractionWidget.ui
   Resources/UI/qMRMLTransformInfoWidget.ui
   )
 

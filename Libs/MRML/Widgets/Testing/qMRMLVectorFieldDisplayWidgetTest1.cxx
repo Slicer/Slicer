@@ -49,6 +49,7 @@
 #include <vtkMRMLLinearTransformNode.h>
 #include <vtkMRMLMarkupsFiducialNode.h>
 #include <vtkMRMLMarkupsROINode.h>
+#include <vtkMRMLTransformDisplayNode.h>
 #include <vtkMRMLVectorVolumeNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLSegmentationNode.h>
@@ -430,6 +431,180 @@ int qMRMLVectorFieldDisplayWidgetTest1(int argc, char* argv[])
   gridDisplayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeGrid);
   CHECK_BOOL(regionNodeComboBox->isVisibleTo(&widget), true);
   CHECK_BOOL(sampleSpacingSpinBox->isVisibleTo(&widget), true);
+
+  // A transform is not shown in 3D views until a region is chosen
+  vtkMRMLLinearTransformNode* transformNode = vtkMRMLLinearTransformNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLLinearTransformNode"));
+  transformNode->CreateDefaultDisplayNodes();
+  widget.setMRMLVectorFieldDisplayNode(transformNode->GetDisplayNode());
+  CHECK_STD_STRING(regionNodeComboBox->noneDisplay().toStdString(), "Select a node");
+  CHECK_BOOL(interpolateCheckBox->isVisibleTo(&widget), false);
+
+  // Sampled in a region of interest: its inside, on a lattice or at random
+  vtkMRMLTransformDisplayNode* transformDisplayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetDisplayNode());
+  vtkMRMLMarkupsROINode* roiNode = vtkMRMLMarkupsROINode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLMarkupsROINode"));
+  vtkMRMLMarkupsFiducialNode* pointsNode = AddPointList(scene, { vtkVector3d(0.0, 0.0, 0.0) });
+  // A transform is the field: there is no array to choose
+  CHECK_BOOL(widget.isEnabled(), true);
+  CHECK_BOOL(noVectorArraysLabel->isVisibleTo(&widget), false);
+  CHECK_BOOL(fieldArrayComboBox->isVisibleTo(&widget), false);
+  transformDisplayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH);
+  regionNodeComboBox->setCurrentNode(roiNode);
+  CHECK_POINTER(transformDisplayNode->GetSamplingRegionNode(), roiNode);
+  CHECK_POINTER(transformDisplayNode->GetRegionNode(), roiNode);
+  // A region of interest only has an inside, so there is no part to choose
+  CHECK_BOOL(partComboBox->isVisibleTo(&widget), false);
+  CHECK_BOOL(sampleSpacingSpinBox->isVisibleTo(&widget), true);
+  CHECK_BOOL(pointsNumberSpinBox->isVisibleTo(&widget), false);
+  transformDisplayNode->SetSamplingPattern(vtkMRMLVectorFieldDisplayNode::SamplingPatternRandom);
+  CHECK_BOOL(sampleSpacingSpinBox->isVisibleTo(&widget), false);
+  CHECK_BOOL(pointsNumberSpinBox->isVisibleTo(&widget), true);
+  transformDisplayNode->SetSamplingPattern(vtkMRMLVectorFieldDisplayNode::SamplingPatternRegular);
+  // At the points of a point list, which are taken as they are
+  regionNodeComboBox->setCurrentNode(pointsNode);
+  CHECK_POINTER(transformDisplayNode->GetGlyphPointsNode(), pointsNode);
+  CHECK_BOOL(sampleSpacingSpinBox->isVisibleTo(&widget), false);
+  // Grids are built on a lattice, whatever the pattern of the samples
+  transformDisplayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GRID);
+  CHECK_BOOL(patternComboBox->isVisibleTo(&widget), false);
+  transformDisplayNode->SetVisualizationMode(vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH);
+
+  // Masked by some of the segments of a segmentation
+  vtkMRMLSegmentationNode* segmentationNode = vtkMRMLSegmentationNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLSegmentationNode"));
+  segmentationNode->GetSegmentation()->SetSourceRepresentationName(vtkSegmentationConverter::GetClosedSurfaceRepresentationName());
+  for (const char* segmentID : { "liver", "spleen" })
+  {
+    vtkNew<vtkSegment> segment;
+    segment->SetName(std::string(segmentID) == "liver" ? "Liver" : "Spleen");
+    vtkNew<vtkPolyData> surface;
+    segment->AddRepresentation(vtkSegmentationConverter::GetClosedSurfaceRepresentationName(), surface);
+    segmentationNode->GetSegmentation()->AddSegment(segment, segmentID);
+  }
+  CHECK_INT(segmentationNode->GetSegmentation()->GetNumberOfSegments(), 2);
+  CHECK_BOOL(maskingSegmentsComboBox->isVisibleTo(&widget), false);
+  maskingNodeComboBox->setCurrentNode(segmentationNode);
+  CHECK_POINTER(transformDisplayNode->GetMaskingRegionNode(), segmentationNode);
+  CHECK_BOOL(maskingSegmentsComboBox->isVisibleTo(&widget), true);
+  CHECK_INT(maskingSegmentsComboBox->count(), 2);
+  CHECK_STD_STRING(maskingSegmentsComboBox->itemText(1).toStdString(), "Spleen");
+  maskingSegmentsComboBox->setCheckState(maskingSegmentsComboBox->model()->index(1, 0), Qt::Checked);
+  CHECK_BOOL(transformDisplayNode->GetMaskingSegmentIDs() == std::vector<std::string>({ "spleen" }), true);
+  // Shown outside of them
+  QComboBox* maskingModeComboBox = GetChild<QComboBox>(widget, "MaskingModeComboBox");
+  CHECK_NOT_NULL(maskingModeComboBox);
+  maskingModeComboBox->setCurrentIndex(maskingModeComboBox->findData(false));
+  CHECK_BOOL(transformDisplayNode->GetMaskingShowInside(), false);
+  // The segments that were chosen belong to the segmentation, so another node clears them
+  maskingNodeComboBox->setCurrentNode(roiNode);
+  CHECK_BOOL(transformDisplayNode->GetMaskingSegmentIDs().empty(), true);
+  CHECK_BOOL(maskingSegmentsComboBox->isVisibleTo(&widget), false);
+
+  // A vector volume has one vector array, so there is no array to choose. Its streamlines
+  // follow its voxels, so they have no resolution to set either.
+  vtkMRMLVectorVolumeNode* volumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorVolumeNode"));
+  vtkNew<vtkImageData> vectorImage;
+  vectorImage->SetDimensions(5, 5, 5);
+  vectorImage->AllocateScalars(VTK_DOUBLE, 3);
+  vectorImage->GetPointData()->GetScalars()->Fill(1.0);
+  volumeNode->SetAndObserveImageData(vectorImage);
+  vtkMRMLVectorFieldDisplayNode* volumeDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorFieldDisplayNode"));
+  volumeNode->AddAndObserveDisplayNodeID(volumeDisplayNode->GetID());
+  widget.setMRMLVectorFieldDisplayNode(volumeDisplayNode);
+  CHECK_BOOL(widget.isEnabled(), true);
+  CHECK_BOOL(noVectorArraysLabel->isVisibleTo(&widget), false);
+  CHECK_BOOL(fieldArrayComboBox->isVisibleTo(&widget), false);
+  // It can only be colored by the magnitude of its vectors, and has no surface to follow
+  CHECK_STD_STRING(colorByComboBox->itemText(1).toStdString(), "Magnitude");
+  CHECK_BOOL(sameColoringCheckBox->isVisibleTo(&widget), false);
+  volumeDisplayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeGrid);
+  CHECK_BOOL(sampleSpacingSpinBox->isVisibleTo(&widget), true);
+  // A grid is not cut by the threshold, so it is not offered
+  QWidget* thresholdCheckBox = GetChild<QWidget>(widget, "FieldThresholdCheckBox");
+  CHECK_NOT_NULL(thresholdCheckBox);
+  CHECK_BOOL(thresholdCheckBox->isVisibleTo(&widget), false);
+  // The whole row is hidden, so that it leaves no gap: a form layout keeps the spacing of a
+  // row whose field is a layout, and of a row with nothing in it
+  QWidget* thresholdWidget = GetChild<QWidget>(widget, "FieldThresholdWidget");
+  CHECK_NOT_NULL(thresholdWidget);
+  CHECK_BOOL(thresholdWidget->isVisibleTo(&widget), false);
+  for (QFormLayout* formLayout : widget.findChildren<QFormLayout*>())
+  {
+    if (scalarsDisplayWidget && scalarsDisplayWidget->isAncestorOf(formLayout->parentWidget()))
+    {
+      continue; // lays out its own rows
+    }
+    for (int row = 0; row < formLayout->rowCount(); ++row)
+    {
+      QLayoutItem* labelItem = formLayout->itemAt(row, QFormLayout::LabelRole);
+      QLayoutItem* fieldItem = formLayout->itemAt(row, QFormLayout::FieldRole);
+      QLayoutItem* spanningItem = formLayout->itemAt(row, QFormLayout::SpanningRole);
+      if (!labelItem && !fieldItem && !spanningItem)
+      {
+        std::cerr << "Empty row " << row << " in " << qPrintable(formLayout->objectName()) << std::endl;
+        return EXIT_FAILURE;
+      }
+      // Qt 5 keeps the spacing of a hidden row, so a hidden row is taken out of the layout
+      QWidget* label = (labelItem ? labelItem->widget() : nullptr);
+      QWidget* field = (fieldItem ? fieldItem->widget() : (spanningItem ? spanningItem->widget() : nullptr));
+      if (field && !IsShownToParent(field) && (!label || !IsShownToParent(label)))
+      {
+        std::cerr << "Hidden row " << row << " (" << qPrintable(field->objectName()) << ") left in " << qPrintable(formLayout->objectName()) << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+  }
+  // Only glyphs have a diameter
+  QWidget* glyphDiameterWidget = GetChild<QWidget>(widget, "GlyphDiameterWidget");
+  CHECK_NOT_NULL(glyphDiameterWidget);
+  CHECK_BOOL(glyphDiameterWidget->isVisibleTo(&widget), false);
+  volumeDisplayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeGlyph);
+  CHECK_BOOL(thresholdCheckBox->isVisibleTo(&widget), true);
+  volumeDisplayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeGrid);
+  // Streamlines are traced through the voxels; the spacing is the spacing of their seeds
+  // Random seeds are counted, not spaced
+  volumeDisplayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeStreamline);
+  CHECK_BOOL(sampleSpacingSpinBox->isVisibleTo(&widget), false);
+  volumeDisplayNode->SetSamplingPattern(vtkMRMLVectorFieldDisplayNode::SamplingPatternRegular);
+  CHECK_BOOL(sampleSpacingSpinBox->isVisibleTo(&widget), true);
+  CHECK_STD_STRING(regionNodeComboBox->noneDisplay().toStdString(), "(This volume)");
+
+  // Rows that are updated while their section is collapsed are all there when it is expanded:
+  // a collapsed section hides its children, which does not mean that their rows are not used
+  widget.show();
+  ctkCollapsibleGroupBox* advancedGroupBox = GetChild<ctkCollapsibleGroupBox>(widget, "AdvancedGroupBox");
+  CHECK_NOT_NULL(advancedGroupBox);
+  QFormLayout* advancedLayout = GetChild<QFormLayout>(widget, "advancedLayout");
+  CHECK_NOT_NULL(advancedLayout);
+  QWidget* glyphTypeComboBox = GetChild<QWidget>(widget, "GlyphTypeComboBox");
+  CHECK_NOT_NULL(glyphTypeComboBox);
+  advancedGroupBox->setCollapsed(true);
+  QApplication::processEvents();
+  volumeDisplayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeGrid);
+  volumeDisplayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeGlyph);
+  advancedGroupBox->setCollapsed(false);
+  QApplication::processEvents();
+  int glyphTypeRow = -1;
+  QFormLayout::ItemRole glyphTypeRole;
+  advancedLayout->getWidgetPosition(glyphTypeComboBox, &glyphTypeRow, &glyphTypeRole);
+  CHECK_BOOL(glyphTypeRow >= 0, true);
+  CHECK_BOOL(glyphTypeComboBox->isVisible(), true);
+  // Also a row whose visibility is never set: the opacity, shown in every mode
+  ctkCollapsibleGroupBox* threeDDisplayGroupBox = GetChild<ctkCollapsibleGroupBox>(widget, "ThreeDDisplayGroupBox");
+  QFormLayout* threeDDisplayLayout = GetChild<QFormLayout>(widget, "threeDDisplayLayout");
+  QWidget* opacitySliderWidget = GetChild<QWidget>(widget, "OpacitySliderWidget");
+  CHECK_NOT_NULL(threeDDisplayGroupBox);
+  CHECK_NOT_NULL(threeDDisplayLayout);
+  CHECK_NOT_NULL(opacitySliderWidget);
+  threeDDisplayGroupBox->setCollapsed(true);
+  QApplication::processEvents();
+  volumeDisplayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeGrid);
+  threeDDisplayGroupBox->setCollapsed(false);
+  QApplication::processEvents();
+  int opacityRow = -1;
+  QFormLayout::ItemRole opacityRole;
+  threeDDisplayLayout->getWidgetPosition(opacitySliderWidget, &opacityRow, &opacityRole);
+  CHECK_BOOL(opacityRow >= 0, true);
+  CHECK_BOOL(opacitySliderWidget->isVisible(), true);
+  widget.hide();
 
   std::cout << "Success" << std::endl;
   return EXIT_SUCCESS;

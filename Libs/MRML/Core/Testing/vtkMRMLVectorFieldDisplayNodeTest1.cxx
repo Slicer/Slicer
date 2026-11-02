@@ -1064,8 +1064,7 @@ int TestSamplingRegions()
         double position_Plane[4] = { 0.0, 0.0, 0.0, 1.0 };
         worldToPlane->MultiplyPoint(position_World, position_Plane);
         if (position_Plane[0] < planeBounds[0] - tolerance || position_Plane[0] > planeBounds[1] + tolerance //
-            || position_Plane[1] < planeBounds[2] - tolerance || position_Plane[1] > planeBounds[3] + tolerance
-            || std::abs(position_Plane[2]) > 1e-6)
+            || position_Plane[1] < planeBounds[2] - tolerance || position_Plane[1] > planeBounds[3] + tolerance || std::abs(position_Plane[2]) > 1e-6)
         {
           std::cerr << "Position " << position_Plane[0] << ", " << position_Plane[1] << ", " << position_Plane[2] << " is outside the plane rectangle" << std::endl;
           return false;
@@ -1265,8 +1264,10 @@ int TestMaskingRegion()
   roi->SetXYZ(100.0, 0.0, 0.0);
   displayNode->SetAndObserveMaskingRegionNode(roi);
   field = UpdateMaskedField(displayNode);
-  int shownMoved = CountShownPoints(field, [](const vtkVector3d& p) { return std::abs(p[0] - 100.0) <= 15.0 && std::abs(p[1]) <= 25.0 && std::abs(p[2]) <= 35.0; }, //
-                                     transformNode->GetTransformToParent());
+  int shownMoved = CountShownPoints(
+    field,
+    [](const vtkVector3d& p) { return std::abs(p[0] - 100.0) <= 15.0 && std::abs(p[1]) <= 25.0 && std::abs(p[2]) <= 35.0; }, //
+    transformNode->GetTransformToParent());
   CHECK_BOOL(shownMoved > 0, true);
   displayNode->GetDisplayableNode()->SetAndObserveTransformNodeID(nullptr);
   roi->SetXYZ(0.0, 0.0, 0.0);
@@ -1731,6 +1732,13 @@ int TestGlyphPoints()
   }
   displayNode->SetVisualizationMode(vtkMRMLVectorFieldDisplayNode::VisualizationModeGlyph);
 
+  // A transform is evaluated in the world, so its parent transform does not move it again
+  vtkMRMLTransformNode* fieldTransformNode = AddNonLinearTranslation(scene, 10.0);
+  fieldTransformNode->CreateDefaultDisplayNodes();
+  vtkMRMLVectorFieldDisplayNode* transformDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(fieldTransformNode->GetDisplayNode());
+  CHECK_NOT_NULL(transformDisplayNode);
+  fieldTransformNode->SetAndObserveTransformNodeID(nonLinearTransformNode->GetID());
+  CHECK_NULL(transformDisplayNode->GetPipeline()->GetNonLinearFieldToWorldTransform());
   return EXIT_SUCCESS;
 }
 

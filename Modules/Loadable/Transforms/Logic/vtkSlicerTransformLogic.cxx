@@ -89,6 +89,19 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "itkTranslationTransform.h"
 #include "itkTransformFactory.h"
 
+//----------------------------------------------------------------------------
+namespace
+{
+/// Distance between transform visualization samples in mm. Spacing 0 follows the field resolution, which a transform
+/// lacks, so then the display node samplers use 1 mm, and so does this.
+double GetVisualizationSamplingSpacing(vtkMRMLTransformDisplayNode* displayNode)
+{
+  double spacingMm = displayNode->GetSamplingSpacing();
+  return (spacingMm > 0.0 ? spacingMm : 1.0);
+}
+} // namespace
+
+//----------------------------------------------------------------------------
 vtkStandardNewMacro(vtkSlicerTransformLogic);
 
 //----------------------------------------------------------------------------
@@ -1008,11 +1021,11 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
   }
   else
   {
-    GetTransformedPointSamplesOnRoi(pointSet.GetPointer(), inputTransformNode, roiToRAS, roiSize, displayNode->GetGlyphSpacingMm());
+    GetTransformedPointSamplesOnRoi(pointSet.GetPointer(), inputTransformNode, roiToRAS, roiSize, GetVisualizationSamplingSpacing(displayNode));
   }
 
   vtkNew<vtkTransformVisualizerGlyph3D> glyphFilter;
-  glyphFilter->SetScaleFactor(displayNode->GetGlyphScalePercent() * 0.01);
+  glyphFilter->SetScaleFactor(displayNode->GetGlyphScaleFactor());
   glyphFilter->SetColorModeToColorByScalar();
   glyphFilter->OrientOn();
   glyphFilter->SetInputData(pointSet.GetPointer());
@@ -1030,7 +1043,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
     {
       vtkNew<vtkArrowSource> arrowSource;
       arrowSource->SetTipLength(displayNode->GetGlyphTipLengthPercent() * 0.01);
-      arrowSource->SetTipRadius(displayNode->GetGlyphDiameterMm() * 0.5);
+      arrowSource->SetTipRadius(displayNode->GetGlyphDiameter() * 0.5);
       arrowSource->SetTipResolution(displayNode->GetGlyphResolution());
       arrowSource->SetShaftRadius(arrowSource->GetTipRadius() * 0.01 * displayNode->GetGlyphShaftDiameterPercent());
       arrowSource->SetShaftResolution(displayNode->GetGlyphResolution());
@@ -1044,7 +1057,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization3d(vtkPolyData* output,
     {
       vtkNew<vtkConeSource> coneSource;
       coneSource->SetHeight(1.0);
-      coneSource->SetRadius(displayNode->GetGlyphDiameterMm() * 0.5);
+      coneSource->SetRadius(displayNode->GetGlyphDiameter() * 0.5);
       coneSource->SetResolution(displayNode->GetGlyphResolution());
       glyphFilter->SetScaleDirectional(true);
       glyphFilter->SetScaleModeToScaleByVector();
@@ -1083,7 +1096,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
 
   vtkMRMLTransformNode* inputTransformNode = vtkMRMLTransformNode::SafeDownCast(displayNode->GetDisplayableNode());
   vtkSlicerTransformLogic::GetTransformedPointSamplesOnSlice(
-    pointSet.GetPointer(), inputTransformNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize, displayNode->GetGlyphSpacingMm(), 1, nullptr, samplePositions_RAS);
+    pointSet.GetPointer(), inputTransformNode, sliceToRAS, fieldOfViewOrigin, fieldOfViewSize, GetVisualizationSamplingSpacing(displayNode), 1, nullptr, samplePositions_RAS);
 
   vtkNew<vtkTransformVisualizerGlyph3D> glyphFilter;
   vtkNew<vtkTransform> rotateArrow;
@@ -1138,7 +1151,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
   glyph2DSource->SetScale(1);
   glyph2DSource->SetFilled(0);
 
-  glyphFilter->SetScaleFactor(displayNode->GetGlyphScalePercent() * 0.01);
+  glyphFilter->SetScaleFactor(displayNode->GetGlyphScaleFactor());
   glyphFilter->SetScaleDirectional(false);
   glyphFilter->SetColorModeToColorByScalar();
   glyphFilter->SetSourceTransform(rotateArrow.GetPointer());
@@ -1159,7 +1172,7 @@ void vtkSlicerTransformLogic::GetGlyphVisualization2d(vtkPolyData* output,
 //----------------------------------------------------------------------------
 int vtkSlicerTransformLogic::GetGridSubdivision(vtkMRMLTransformDisplayNode* displayNode)
 {
-  int subdivision = floor(displayNode->GetGridSpacingMm() / displayNode->GetGridResolutionMm() + 0.5);
+  int subdivision = floor(displayNode->GetGridSpacing() / GetVisualizationSamplingSpacing(displayNode) + 0.5);
   if (subdivision < 1)
   {
     // avoid infinite loops and division by zero errors
@@ -1224,7 +1237,7 @@ void vtkSlicerTransformLogic::CreateGrid(vtkPolyData* gridPolyData, vtkMRMLTrans
   {
     vtkNew<vtkWarpVector> warp;
     warp->SetInputData(gridPolyData);
-    warp->SetScaleFactor(displayNode->GetGridScalePercent() * 0.01);
+    warp->SetScaleFactor(displayNode->GetGridScaleFactor());
     warp->Update();
     vtkPolyData* polyoutput = warp->GetPolyDataOutput();
 
@@ -1242,7 +1255,7 @@ void vtkSlicerTransformLogic::GetGridVisualization2d(vtkPolyData* output,
                                                      double* fieldOfViewOrigin,
                                                      double* fieldOfViewSize)
 {
-  double pointSpacing = displayNode->GetGridSpacingMm() / GetGridSubdivision(displayNode);
+  double pointSpacing = displayNode->GetGridSpacing() / GetGridSubdivision(displayNode);
   int numGridPoints[3] = { 0 };
 
   vtkNew<vtkPolyData> gridPolyData;
@@ -1290,7 +1303,7 @@ void vtkSlicerTransformLogic::GetGridVisualization2d(vtkPolyData* output,
 //----------------------------------------------------------------------------
 void vtkSlicerTransformLogic::GetGridVisualization3d(vtkPolyData* output, vtkMRMLTransformDisplayNode* displayNode, vtkMatrix4x4* roiToRAS, int* roiSize)
 {
-  double pointSpacing = displayNode->GetGridSpacingMm() / GetGridSubdivision(displayNode);
+  double pointSpacing = displayNode->GetGridSpacing() / GetGridSubdivision(displayNode);
   int numGridPoints[3] = { 0 };
 
   vtkNew<vtkPolyData> gridPolyData;
@@ -1302,7 +1315,7 @@ void vtkSlicerTransformLogic::GetGridVisualization3d(vtkPolyData* output, vtkMRM
 
   vtkNew<vtkTubeFilter> tubeFilter;
   tubeFilter->SetInputData(warpedGridPolyData.GetPointer());
-  tubeFilter->SetRadius(displayNode->GetGridLineDiameterMm() * 0.5);
+  tubeFilter->SetRadius(displayNode->GetGridLineDiameter() * 0.5);
   tubeFilter->SetNumberOfSides(8);
   tubeFilter->Update();
   output->ShallowCopy(tubeFilter->GetOutput());
@@ -1316,7 +1329,7 @@ void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output,
                                                         double* fieldOfViewSize)
 {
   vtkNew<vtkImageData> magnitudeImage;
-  double pointSpacing = displayNode->GetContourResolutionMm();
+  double pointSpacing = GetVisualizationSamplingSpacing(displayNode);
 
   vtkNew<vtkMatrix4x4> ijkToRAS;
 
@@ -1343,7 +1356,7 @@ void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output,
   GetTransformedPointSamplesAsMagnitudeImage(magnitudeImage.GetPointer(), inputTransformNode, ijkToRAS.GetPointer());
 
   vtkNew<vtkContourFilter> contourFilter;
-  double* levels = displayNode->GetContourLevelsMm();
+  double* levels = displayNode->GetContourLevels();
   for (unsigned int i = 0; i < displayNode->GetNumberOfContourLevels(); i++)
   {
     contourFilter->SetValue(i, levels[i]);
@@ -1364,7 +1377,7 @@ void vtkSlicerTransformLogic::GetContourVisualization2d(vtkPolyData* output,
 void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtkMRMLTransformDisplayNode* displayNode, vtkMatrix4x4* roiToRAS, int* roiSize)
 {
   // Compute the sampling image grid position, orientation, and spacing
-  double pointSpacingMm = displayNode->GetContourResolutionMm();
+  double pointSpacingMm = GetVisualizationSamplingSpacing(displayNode);
   double roiSpacingMm[3] = {
     sqrt(roiToRAS->Element[0][0] * roiToRAS->Element[0][0] + roiToRAS->Element[1][0] * roiToRAS->Element[1][0] + roiToRAS->Element[2][0] * roiToRAS->Element[2][0]),
     sqrt(roiToRAS->Element[0][1] * roiToRAS->Element[0][1] + roiToRAS->Element[1][1] * roiToRAS->Element[1][1] + roiToRAS->Element[2][1] * roiToRAS->Element[2][1]),
@@ -1406,7 +1419,7 @@ void vtkSlicerTransformLogic::GetContourVisualization3d(vtkPolyData* output, vtk
 
   // Contput contours
   vtkNew<vtkContourFilter> contourFilter;
-  double* levels = displayNode->GetContourLevelsMm();
+  double* levels = displayNode->GetContourLevels();
   for (unsigned int i = 0; i < displayNode->GetNumberOfContourLevels(); i++)
   {
     contourFilter->SetValue(i, levels[i]);
@@ -1500,7 +1513,7 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
   vtkMRMLDisplayableNode* displayableNode = vtkMRMLDisplayableNode::SafeDownCast(regionNode);
   if (sliceNode != nullptr)
   {
-    double pointSpacing = displayNode->GetGlyphSpacingMm();
+    double pointSpacing = GetVisualizationSamplingSpacing(displayNode);
 
     vtkMatrix4x4* sliceToRAS = sliceNode->GetSliceToRAS();
     double* fieldOfViewSize = sliceNode->GetFieldOfView();
@@ -1611,17 +1624,14 @@ bool vtkSlicerTransformLogic::GetVisualization3d(vtkPolyData* output,
   {
     case vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH:
       displayNode->SetBackfaceCulling(1);
-      displayNode->SetOpacity(1);
       GetGlyphVisualization3d(output, displayNode, roiToRAS, roiSize, samplePositions_RAS);
       break;
     case vtkMRMLTransformDisplayNode::VIS_MODE_GRID:
       displayNode->SetBackfaceCulling(1);
-      displayNode->SetOpacity(1);
       GetGridVisualization3d(output, displayNode, roiToRAS, roiSize);
       break;
     case vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR:
       displayNode->SetBackfaceCulling(0);
-      displayNode->SetOpacity(displayNode->GetContourOpacity());
       GetContourVisualization3d(output, displayNode, roiToRAS, roiSize);
       break;
   }

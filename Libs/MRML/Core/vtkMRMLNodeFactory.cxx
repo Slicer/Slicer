@@ -84,6 +84,7 @@
 #include "vtkMRMLTextNode.h"
 #include "vtkMRMLTextStorageNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
+#include "vtkMRMLTransformInteractionDisplayNode.h"
 #include "vtkMRMLTransformNode.h"
 #include "vtkMRMLTransformSequenceStorageNode.h"
 #include "vtkMRMLTransformStorageNode.h"
@@ -220,6 +221,7 @@ void vtkMRMLNodeFactory::RegisterCoreNodeClasses()
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTextNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTextStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformDisplayNode>::New());
+  this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformInteractionDisplayNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLTransformStorageNode>::New());
   this->RegisterNodeClass(vtkSmartPointer<vtkMRMLVectorFieldDisplayNode>::New());

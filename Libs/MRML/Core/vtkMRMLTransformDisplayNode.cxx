@@ -20,110 +20,104 @@
 
 ==============================================================================*/
 
-#include "vtkObjectFactory.h"
-
+// MRML includes
 #include "vtkMRMLTransformDisplayNode.h"
-
-#include "vtkMRMLColorTableNode.h"
-#include "vtkMRMLModelNode.h"
+#include "vtkMRMLColorNode.h"
 #include "vtkMRMLProceduralColorNode.h"
-#include "vtkMRMLTransformNode.h"
 #include "vtkMRMLScene.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLVolumeNode.h"
+#include "vtkMRMLTransformInteractionDisplayNode.h"
+#include "vtkMRMLTransformNode.h"
+#include "vtkMRMLVectorFieldPipeline.h"
+#include "vtkVectorFieldSampler.h"
 
+// VTK includes
+#include <vtkAlgorithmOutput.h>
 #include <vtkColorTransferFunction.h>
-#include <vtkIntArray.h>
+#include <vtkCommand.h>
+#include <vtkGeneralTransform.h>
+#include <vtkLookupTable.h>
 #include <vtkNew.h>
-#include <vtkMRMLProceduralColorNode.h>
+#include <vtkObjectFactory.h>
 
+// STD includes
+#include <algorithm>
+#include <set>
+#include <map>
 #include <sstream>
 
-const char RegionReferenceRole[] = "region";
-const char GlyphPointsReferenceRole[] = "glyphPoints";
-const char* DISPLACEMENT_MAGNITUDE_SCALAR_NAME = "DisplacementMagnitude";
-const char CONTOUR_LEVEL_SEPARATOR = ' ';
+namespace
+{
 const char* DEFAULT_COLOR_TABLE_NAME = "Displacement to color";
+const char CONTOUR_LEVEL_SEPARATOR = ' ';
 
-//------------------------------------------------------------------------------
+/// Attributes of the interactive editing settings that scenes saved by earlier versions
+/// stored in this node. They belong to vtkMRMLTransformInteractionDisplayNode now.
+const std::set<std::string> LegacyInteractionAttributeNames = {
+  "EditorVisibility",
+  "EditorVisibility3D",
+  "EditorSliceIntersectionVisibility",
+  "EditorTranslationEnabled",
+  "EditorRotationEnabled",
+  "EditorScalingEnabled",
+  "EditorTranslationSliceAnywhereEnabled",
+  "EditorTranslationSliceAnywhereSensitivity",
+  "InteractionSizeAbsolute",
+  "InteractionSizeMm",
+  "InteractionScalePercent",
+  "InteractionHandleOpacity",
+  "TranslationHandleComponentVisibility3D",
+  "RotationHandleComponentVisibility3D",
+  "ScaleHandleComponentVisibility3D",
+  "TranslationHandleComponentVisibilitySlice",
+  "RotationHandleComponentVisibilitySlice",
+  "ScaleHandleComponentVisibilitySlice",
+};
+} // namespace
+
+//----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTransformDisplayNode);
 
 //----------------------------------------------------------------------------
 vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
-  : vtkMRMLDisplayNode()
 {
-  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTransformDisplayNode", "Transform Display Node");
+  this->SetScalarVisibility(1);
+  // The colors are exactly those of the color map, which goes from a displacement in mm to a
+  // color (see UpdateScalarRange)
+  this->SetScalarRangeFlag(vtkMRMLDisplayNode::UseColorNodeScalarRange);
+  this->SetActiveScalarName(vtkVectorFieldSampler::GetMagnitudeArrayName());
+  this->SetGlyphOrientationArrayName(vtkVectorFieldSampler::GetVectorArrayName());
+  this->SetGlyphScaleArrayName(vtkVectorFieldSampler::GetVectorArrayName());
 
-  // Don't show transform nodes by default
-  // to allow the users to adjust visualization parameters first
   this->Visibility = 0;
-  this->Visibility2D = 0;
-  // If global visibility is turned on then 3D will show up
+  this->Visibility2D = 1;
   this->Visibility3D = 1;
 
-  this->ScalarVisibility = 1;
-  this->SetActiveScalarName(DISPLACEMENT_MAGNITUDE_SCALAR_NAME);
+  // Arrows keep their thickness in mm however long they are, which is what makes a field of
+  // displacement vectors readable.
+  this->SetGlyphDiameterAbsolute(true);
+  this->SetGlyphScaleFactor(1.0);
+  this->SetGlyphTipLengthPercent(30.0);
+  this->SetGlyphShaftDiameterPercent(40.0);
+  this->SetGlyphResolution(6);
 
-  this->VisualizationMode = VIS_MODE_GLYPH;
+  this->SetThresholdEnabled(true);
+  this->SetThresholdRange(0.01, 100.0);
 
-  this->GlyphSpacingMm = 10.0;
-  this->GlyphScalePercent = 100;
-  this->GlyphDisplayRangeMaxMm = 100;
-  this->GlyphDisplayRangeMinMm = 0.01;
-  this->GlyphType = GLYPH_TYPE_ARROW;
-  this->GlyphTipLengthPercent = 30;
-  this->GlyphDiameterMm = 5.0;
-  this->GlyphShaftDiameterPercent = 40;
-  this->GlyphResolution = 6;
-  this->GlyphResolution2D = 12;
-  this->GlyphTipLengthPercent2D = 30;
+  this->SetGridSpacing(15.0);
+  this->SetGridLineDiameter(1.0);
+  // As the glyphs were placed before every mode shared one spacing: on a lattice, 10 mm apart.
+  // A transform is sampled, so the glyphs sit on a lattice rather than on mesh points.
+  this->SetSamplingSpacing(10.0);
+  this->SetSamplingPattern(vtkMRMLVectorFieldDisplayNode::SamplingPatternRegular);
 
-  this->GridScalePercent = 100;
-  this->GridSpacingMm = 15.0;
-  this->GridLineDiameterMm = 1.0;
-  this->GridResolutionMm = 5.0;
-  this->GridShowNonWarped = false;
-
-  this->ContourResolutionMm = 5.0;
-  this->ContourOpacity = 0.8;
-  this->ContourLevelsMm.clear();
-  for (double level = 2.0; level < 20.0; level += 2.0)
+  std::vector<double> contourLevels;
+  for (int i = 2; i <= 18; i += 2)
   {
-    this->ContourLevelsMm.push_back(level);
+    contourLevels.push_back(i);
   }
+  this->SetContourLevels(contourLevels.data(), static_cast<int>(contourLevels.size()));
 
-  this->EditorVisibility = false;
-  this->EditorVisibility3D = true;
-  this->EditorSliceIntersectionVisibility = true;
-  this->EditorTranslationEnabled = true;
-  this->EditorTranslationSliceEnabled = true;
-  this->EditorTranslationSliceAnywhereEnabled = false;
-  this->EditorTranslationSliceAnywhereSensitivity = 0.2;
-  this->EditorRotationEnabled = true;
-  this->EditorRotationSliceEnabled = true;
-  this->EditorScalingEnabled = false;
-  this->EditorScalingSliceEnabled = false;
-
-  for (int i = 0; i < 4; ++i)
-  {
-    this->RotationHandleComponentVisibility3D[i] = true;
-    this->ScaleHandleComponentVisibility3D[i] = true;
-    this->TranslationHandleComponentVisibility3D[i] = true;
-
-    this->RotationHandleComponentVisibilitySlice[i] = false;
-    this->ScaleHandleComponentVisibilitySlice[i] = true;
-    this->TranslationHandleComponentVisibilitySlice[i] = false;
-  }
-  this->RotationHandleComponentVisibility3D[3] = false;
-  this->RotationHandleComponentVisibilitySlice[3] = true;
-  this->TranslationHandleComponentVisibilitySlice[3] = true;
-
-  vtkNew<vtkIntArray> regionModifiedEvents;
-  regionModifiedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-  regionModifiedEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-  this->AddNodeReferenceRole(RegionReferenceRole, RegionReferenceRole, regionModifiedEvents);
-
-  this->AddNodeReferenceRole(GlyphPointsReferenceRole, GlyphPointsReferenceRole, nullptr, ContentModifiedObserveEnabled /* observe content modified events */);
+  this->TypeDisplayName = vtkMRMLTr("vtkMRMLTransformDisplayNode", "Transform Display");
 }
 
 //----------------------------------------------------------------------------
@@ -134,325 +128,492 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
 
-  vtkMRMLWriteXMLBeginMacro(of);
-
-  of << " VisualizationMode=\"" << ConvertVisualizationModeToString(this->VisualizationMode) << "\"";
-
-  of << " GlyphSpacingMm=\"" << this->GlyphSpacingMm << "\"";
-  of << " GlyphScalePercent=\"" << this->GlyphScalePercent << "\"";
-  of << " GlyphDisplayRangeMaxMm=\"" << this->GlyphDisplayRangeMaxMm << "\"";
-  of << " GlyphDisplayRangeMinMm=\"" << this->GlyphDisplayRangeMinMm << "\"";
-  of << " GlyphType=\"" << ConvertGlyphTypeToString(this->GlyphType) << "\"";
-  of << " GlyphTipLengthPercent=\"" << this->GlyphTipLengthPercent << "\"";
-  of << " GlyphDiameterMm=\"" << this->GlyphDiameterMm << "\"";
-  of << " GlyphShaftDiameterPercent=\"" << this->GlyphShaftDiameterPercent << "\"";
-  of << " GlyphResolution=\"" << this->GlyphResolution << "\"";
-  of << " GlyphResolution2D=\"" << this->GlyphResolution2D << "\"";
-  of << " GlyphTipLengthPercent2D=\"" << this->GlyphTipLengthPercent2D << "\"";
-
-  of << " GridScalePercent=\"" << this->GridScalePercent << "\"";
-  of << " GridSpacingMm=\"" << this->GridSpacingMm << "\"";
-  of << " GridLineDiameterMm=\"" << this->GridLineDiameterMm << "\"";
-  of << " GridResolutionMm=\"" << this->GridResolutionMm << "\"";
-  of << " GridShowNonWarped=\"" << this->GridShowNonWarped << "\"";
-
-  of << " ContourResolutionMm=\"" << this->ContourResolutionMm << "\"";
-  of << " ContourLevelsMm=\"" << this->GetContourLevelsMmAsString() << "\"";
-  of << " ContourOpacity=\"" << this->ContourOpacity << "\"";
-
-  of << " EditorVisibility=\"" << this->EditorVisibility << "\"";
-  of << " EditorSliceIntersectionVisibility=\"" << this->EditorSliceIntersectionVisibility << "\"";
-  of << " EditorTranslationEnabled=\"" << this->EditorTranslationEnabled << "\"";
-  of << " EditorRotationEnabled=\"" << this->EditorRotationEnabled << "\"";
-  of << " EditorScalingEnabled=\"" << this->EditorScalingEnabled << "\"";
-
-  vtkMRMLWriteXMLBooleanMacro(EditorVisibility3D, EditorVisibility3D);
-  vtkMRMLWriteXMLBooleanMacro(EditorTranslationSliceAnywhereEnabled, EditorTranslationSliceAnywhereEnabled);
-  vtkMRMLWriteXMLFloatMacro(EditorTranslationSliceAnywhereSensitivity, EditorTranslationSliceAnywhereSensitivity);
-  vtkMRMLWriteXMLFloatMacro(InteractionSizeAbsolute, InteractionSizeAbsolute);
-  vtkMRMLWriteXMLFloatMacro(InteractionSizeMm, InteractionSizeMm);
-  vtkMRMLWriteXMLFloatMacro(InteractionScalePercent, InteractionScalePercent);
-  vtkMRMLWriteXMLFloatMacro(InteractionHandleOpacity, InteractionHandleOpacity);
-  vtkMRMLWriteXMLVectorMacro(TranslationHandleComponentVisibility3D, TranslationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLWriteXMLVectorMacro(RotationHandleComponentVisibility3D, RotationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLWriteXMLVectorMacro(ScaleHandleComponentVisibility3D, ScaleHandleComponentVisibility3D, bool, 4);
-  vtkMRMLWriteXMLVectorMacro(TranslationHandleComponentVisibilitySlice, TranslationHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLWriteXMLVectorMacro(RotationHandleComponentVisibilitySlice, RotationHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLWriteXMLVectorMacro(ScaleHandleComponentVisibilitySlice, ScaleHandleComponentVisibilitySlice, bool, 4);
-
-  vtkMRMLWriteXMLEndMacro();
+  // The attribute names are the ones that transform display used before it was built on the
+  // shared vector field display node, so that scenes stay readable by both.
+  of << " VisualizationMode=\"" << ConvertVisualizationModeToString(this->GetVisualizationMode()) << "\"";
+  of << " GlyphSpacingMm=\"" << this->GetSamplingSpacing() << "\"";
+  of << " GlyphScalePercent=\"" << this->GetGlyphScalePercent() << "\"";
+  of << " GlyphDisplayRangeMaxMm=\"" << this->GetGlyphDisplayRangeMaxMm() << "\"";
+  of << " GlyphDisplayRangeMinMm=\"" << this->GetGlyphDisplayRangeMinMm() << "\"";
+  of << " GlyphType=\"" << ConvertGlyphTypeToString(this->GetGlyphType()) << "\"";
 }
 
-#define READ_FROM_ATT(varName)           \
-  if (!strcmp(xmlReadAttName, #varName)) \
-  {                                      \
-    std::stringstream ss;                \
-    ss << xmlReadAttValue;               \
-    ss >> this->varName;                 \
-    continue;                            \
+#define READ_FROM_ATT_INTO(attributeName, setter) \
+  if (!strcmp(xmlReadAttName, #attributeName))    \
+  {                                               \
+    double attributeValue = 0.0;                  \
+    std::stringstream ss;                         \
+    ss << xmlReadAttValue;                        \
+    ss >> attributeValue;                         \
+    this->setter(attributeValue);                 \
+    continue;                                     \
   }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
 {
-  MRMLNodeModifyBlocker(this);
+  MRMLNodeModifyBlocker blocker(this);
   Superclass::ReadXMLAttributes(atts);
+
+  // The nodes that earlier versions drew the transform in (region) and placed glyphs at
+  // (glyphPoints), by ID
+  std::string legacyRegionNodeID;
+  std::string legacyGlyphPointsNodeID;
+  // and the spacing that each mode was sampled at
+  std::map<int, double> legacySpacings;
+  auto readLegacySpacing = [&legacySpacings](int mode, const char* value)
+  {
+    std::stringstream ss;
+    ss << value;
+    double spacing = 0.0;
+    if (ss >> spacing)
+    {
+      legacySpacings[mode] = spacing;
+    }
+  };
+  // One bound of the threshold range. Whether it applies is thresholdEnabled (read by the superclass); older scenes
+  // without it keep the constructor default (on), as those versions always applied the range.
+  auto readLegacyThresholdBound = [this](int index, const char* value)
+  {
+    std::stringstream ss;
+    ss << value;
+    double bound = 0.0;
+    if (ss >> bound)
+    {
+      double range[2] = { this->ThresholdRange[0], this->ThresholdRange[1] };
+      range[index] = bound;
+      this->SetThresholdRange(range);
+    }
+  };
 
   vtkMRMLReadXMLBeginMacro(atts);
 
   if (!strcmp(xmlReadAttName, "VisualizationMode"))
   {
-    this->VisualizationMode = ConvertVisualizationModeFromString(xmlReadAttValue);
+    int mode = ConvertVisualizationModeFromString(xmlReadAttValue);
+    if (mode >= 0)
+    {
+      this->SetVisualizationMode(mode);
+    }
     continue;
   }
-  READ_FROM_ATT(GlyphSpacingMm);
-  READ_FROM_ATT(GlyphScalePercent);
-  READ_FROM_ATT(GlyphDisplayRangeMaxMm);
-  READ_FROM_ATT(GlyphDisplayRangeMinMm);
   if (!strcmp(xmlReadAttName, "GlyphType"))
   {
-    this->GlyphType = ConvertGlyphTypeFromString(xmlReadAttValue);
+    int glyphType = ConvertGlyphTypeFromString(xmlReadAttValue);
+    if (glyphType >= 0)
+    {
+      this->SetGlyphType(glyphType);
+    }
     continue;
   }
-  READ_FROM_ATT(GlyphTipLengthPercent);
-  READ_FROM_ATT(GlyphDiameterMm);
-  READ_FROM_ATT(GlyphShaftDiameterPercent);
-  READ_FROM_ATT(GlyphResolution);
-  READ_FROM_ATT(GlyphResolution2D);
-  READ_FROM_ATT(GlyphTipLengthPercent2D);
-  READ_FROM_ATT(GridScalePercent);
-  READ_FROM_ATT(GridSpacingMm);
-  READ_FROM_ATT(GridLineDiameterMm);
-  READ_FROM_ATT(GridResolutionMm);
-  READ_FROM_ATT(GridShowNonWarped);
-  READ_FROM_ATT(ContourResolutionMm);
-  READ_FROM_ATT(ContourOpacity);
+  if (!strcmp(xmlReadAttName, "GlyphSpacingMm"))
+  {
+    readLegacySpacing(vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH, xmlReadAttValue);
+    continue;
+  }
+  if (!strcmp(xmlReadAttName, "GridResolutionMm"))
+  {
+    readLegacySpacing(vtkMRMLTransformDisplayNode::VIS_MODE_GRID, xmlReadAttValue);
+    continue;
+  }
+  if (!strcmp(xmlReadAttName, "ContourResolutionMm"))
+  {
+    readLegacySpacing(vtkMRMLTransformDisplayNode::VIS_MODE_CONTOUR, xmlReadAttValue);
+    continue;
+  }
+  READ_FROM_ATT_INTO(GlyphScalePercent, SetGlyphScalePercent);
+  if (!strcmp(xmlReadAttName, "GlyphDisplayRangeMaxMm"))
+  {
+    readLegacyThresholdBound(1, xmlReadAttValue);
+    continue;
+  }
+  if (!strcmp(xmlReadAttName, "GlyphDisplayRangeMinMm"))
+  {
+    readLegacyThresholdBound(0, xmlReadAttValue);
+    continue;
+  }
+  // Properties that moved to the shared node but kept their old attribute name
+  READ_FROM_ATT_INTO(GlyphTipLengthPercent, SetGlyphTipLengthPercent);
+  READ_FROM_ATT_INTO(GlyphDiameterMm, SetGlyphDiameter);
+  READ_FROM_ATT_INTO(GlyphShaftDiameterPercent, SetGlyphShaftDiameterPercent);
+  READ_FROM_ATT_INTO(GlyphResolution, SetGlyphResolution);
+  READ_FROM_ATT_INTO(GlyphResolution2D, SetGlyphResolution2D);
+  READ_FROM_ATT_INTO(GlyphTipLengthPercent2D, SetGlyphTipLengthPercent2D);
+  READ_FROM_ATT_INTO(GridScalePercent, SetGridScalePercent);
+  READ_FROM_ATT_INTO(GridSpacingMm, SetGridSpacing);
+  READ_FROM_ATT_INTO(GridLineDiameterMm, SetGridLineDiameter);
+  READ_FROM_ATT_INTO(GridShowNonWarped, SetGridShowNonWarped);
+  READ_FROM_ATT_INTO(ContourOpacity, SetContourOpacity3D);
   if (!strcmp(xmlReadAttName, "ContourLevelsMm"))
   {
-    SetContourLevelsMmFromString(xmlReadAttValue);
+    this->SetContourLevelsAsString(xmlReadAttValue);
     continue;
   }
-  READ_FROM_ATT(EditorVisibility);
-  READ_FROM_ATT(EditorSliceIntersectionVisibility);
-  READ_FROM_ATT(EditorTranslationEnabled);
-  READ_FROM_ATT(EditorRotationEnabled);
-  READ_FROM_ATT(EditorScalingEnabled);
-
-  vtkMRMLReadXMLBooleanMacro(EditorVisibility3D, EditorVisibility3D);
-  vtkMRMLReadXMLBooleanMacro(EditorTranslationSliceAnywhereEnabled, EditorTranslationSliceAnywhereEnabled);
-  vtkMRMLReadXMLFloatMacro(EditorTranslationSliceAnywhereSensitivity, EditorTranslationSliceAnywhereSensitivity);
-  vtkMRMLReadXMLFloatMacro(InteractionSizeAbsolute, InteractionSizeAbsolute);
-  vtkMRMLReadXMLFloatMacro(InteractionSizeMm, InteractionSizeMm);
-  vtkMRMLReadXMLFloatMacro(InteractionScalePercent, InteractionScalePercent);
-  vtkMRMLReadXMLFloatMacro(InteractionHandleOpacity, InteractionHandleOpacity);
-
-  vtkMRMLReadXMLVectorMacro(RotationHandleComponentVisibility3D, RotationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLReadXMLVectorMacro(ScaleHandleComponentVisibility3D, ScaleHandleComponentVisibility3D, bool, 4);
-  vtkMRMLReadXMLVectorMacro(TranslationHandleComponentVisibility3D, TranslationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLReadXMLVectorMacro(RotationHandleComponentVisibilitySlice, RotationHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLReadXMLVectorMacro(ScaleHandleComponentVisibilitySlice, ScaleHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLReadXMLVectorMacro(TranslationHandleComponentVisibilitySlice, TranslationHandleComponentVisibilitySlice, bool, 4);
+  if (!strcmp(xmlReadAttName, "region"))
+  {
+    legacyRegionNodeID = xmlReadAttValue;
+    continue;
+  }
+  if (!strcmp(xmlReadAttName, "glyphPoints"))
+  {
+    legacyGlyphPointsNodeID = xmlReadAttValue;
+    continue;
+  }
+  // Editor properties of scenes that were saved before they moved into their own node. They
+  // are kept as they were written and applied once the transform node is known.
+  if (LegacyInteractionAttributeNames.count(xmlReadAttName))
+  {
+    this->LegacyInteractionAttributes[xmlReadAttName] = xmlReadAttValue;
+    continue;
+  }
 
   vtkMRMLReadXMLEndMacro();
+
+  // Earlier versions kept a spacing for each mode; every mode shares one now, and the one of
+  // the mode the scene was saved in is what it showed
+  if (!legacySpacings.empty())
+  {
+    auto modeSpacing = legacySpacings.find(this->GetVisualizationMode());
+    this->SetSamplingSpacing(modeSpacing != legacySpacings.end() ? modeSpacing->second : legacySpacings.begin()->second);
+  }
+
+  // Earlier versions drew glyphs at the glyph points when there were some, and everything
+  // else in the region. Both are the sampling region now.
+  if (!legacyGlyphPointsNodeID.empty() && this->GetVisualizationMode() == vtkMRMLTransformDisplayNode::VIS_MODE_GLYPH)
+  {
+    this->SetAndObserveSamplingRegionNodeID(legacyGlyphPointsNodeID.c_str());
+  }
+  else if (!legacyRegionNodeID.empty())
+  {
+    this->SetAndObserveSamplingRegionNodeID(legacyRegionNodeID.c_str());
+  }
+
+  // When the node is already in the scene (for example its attributes are set again) the
+  // interaction display node can be found right away
+  this->ApplyLegacyInteractionAttributes();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
+void vtkMRMLTransformDisplayNode::UpdateScene(vtkMRMLScene* scene)
 {
-  MRMLNodeModifyBlocker blocker(this);
-  Superclass::CopyContent(anode, deepCopy);
-  vtkMRMLTransformDisplayNode* node = vtkMRMLTransformDisplayNode::SafeDownCast(anode);
-  if (!node)
+  this->Superclass::UpdateScene(scene);
+  // All the nodes of the scene that is read are in the scene now, so the transform node
+  // that refers to this node can be found
+  this->ApplyLegacyInteractionAttributes();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::ApplyLegacyInteractionAttributes()
+{
+  if (this->LegacyInteractionAttributes.empty() || !this->GetScene() || !this->GetDisplayableNode())
   {
     return;
   }
-
-  vtkMRMLCopyBeginMacro(anode);
-
-  vtkMRMLCopyIntMacro(VisualizationMode);
-
-  vtkMRMLCopyFloatMacro(GlyphSpacingMm);
-  vtkMRMLCopyFloatMacro(GlyphScalePercent);
-  vtkMRMLCopyFloatMacro(GlyphDisplayRangeMaxMm);
-  vtkMRMLCopyFloatMacro(GlyphDisplayRangeMinMm);
-  vtkMRMLCopyIntMacro(GlyphType);
-
-  vtkMRMLCopyFloatMacro(GlyphTipLengthPercent);
-  vtkMRMLCopyFloatMacro(GlyphDiameterMm);
-  vtkMRMLCopyFloatMacro(GlyphShaftDiameterPercent);
-  vtkMRMLCopyIntMacro(GlyphResolution);
-
-  vtkMRMLCopyIntMacro(GlyphResolution2D);
-  vtkMRMLCopyFloatMacro(GlyphTipLengthPercent2D);
-
-  vtkMRMLCopyFloatMacro(GridScalePercent);
-  vtkMRMLCopyFloatMacro(GridSpacingMm);
-  vtkMRMLCopyFloatMacro(GridLineDiameterMm);
-  vtkMRMLCopyFloatMacro(GridResolutionMm);
-  vtkMRMLCopyBooleanMacro(GridShowNonWarped);
-
-  vtkMRMLCopyFloatMacro(ContourResolutionMm);
-  vtkMRMLCopyFloatMacro(ContourOpacity);
-  if (this->ContourLevelsMm != node->ContourLevelsMm)
+  vtkMRMLTransformInteractionDisplayNode* interactionDisplayNode = this->GetInteractionDisplayNode(true);
+  if (!interactionDisplayNode)
   {
-    this->ContourLevelsMm = node->ContourLevelsMm;
-    this->Modified();
+    return;
   }
-  vtkMRMLCopyBooleanMacro(EditorVisibility);
-  vtkMRMLCopyBooleanMacro(EditorSliceIntersectionVisibility);
-  vtkMRMLCopyBooleanMacro(EditorTranslationEnabled);
-  vtkMRMLCopyBooleanMacro(EditorRotationEnabled);
-  vtkMRMLCopyBooleanMacro(EditorScalingEnabled);
-  vtkMRMLCopyBooleanMacro(EditorVisibility3D);
-  vtkMRMLCopyBooleanMacro(EditorTranslationSliceAnywhereEnabled);
-  vtkMRMLCopyFloatMacro(EditorTranslationSliceAnywhereSensitivity);
-  vtkMRMLCopyBooleanMacro(EditorScalingSliceEnabled);
-  vtkMRMLCopyFloatMacro(InteractionHandleOpacity);
-  vtkMRMLCopyVectorMacro(RotationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLCopyVectorMacro(ScaleHandleComponentVisibility3D, bool, 4);
-  vtkMRMLCopyVectorMacro(TranslationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLCopyVectorMacro(RotationHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLCopyVectorMacro(ScaleHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLCopyVectorMacro(TranslationHandleComponentVisibilitySlice, bool, 4);
+  // Booleans were written both as "1"/"0" and as "true"/"false", depending on the version
+  auto toBool = [](const std::string& value) { return (value == "true" || value == "1"); };
+  auto toDouble = [](const std::string& value)
+  {
+    double number = 0.0;
+    std::stringstream ss(value);
+    ss >> number;
+    return number;
+  };
+  auto toBoolVector = [&toBool](const std::string& value, bool vector[4])
+  {
+    std::stringstream ss(value);
+    for (int i = 0; i < 4; ++i)
+    {
+      std::string component;
+      ss >> component;
+      vector[i] = toBool(component);
+    }
+  };
 
-  vtkMRMLCopyEndMacro();
+  MRMLNodeModifyBlocker blocker(interactionDisplayNode);
+  for (const auto& nameAndValue : this->LegacyInteractionAttributes)
+  {
+    const std::string& name = nameAndValue.first;
+    const std::string& value = nameAndValue.second;
+    bool vector[4] = { false, false, false, false };
+    if (name == "EditorVisibility")
+    {
+      interactionDisplayNode->SetEditorVisibility(toBool(value));
+    }
+    else if (name == "EditorVisibility3D")
+    {
+      interactionDisplayNode->SetEditorVisibility3D(toBool(value));
+    }
+    else if (name == "EditorSliceIntersectionVisibility")
+    {
+      interactionDisplayNode->SetEditorSliceIntersectionVisibility(toBool(value));
+    }
+    else if (name == "EditorTranslationEnabled")
+    {
+      interactionDisplayNode->SetEditorTranslationEnabled(toBool(value));
+    }
+    else if (name == "EditorRotationEnabled")
+    {
+      interactionDisplayNode->SetEditorRotationEnabled(toBool(value));
+    }
+    else if (name == "EditorScalingEnabled")
+    {
+      interactionDisplayNode->SetEditorScalingEnabled(toBool(value));
+    }
+    else if (name == "EditorTranslationSliceAnywhereEnabled")
+    {
+      interactionDisplayNode->SetEditorTranslationSliceAnywhereEnabled(toBool(value));
+    }
+    else if (name == "EditorTranslationSliceAnywhereSensitivity")
+    {
+      interactionDisplayNode->SetEditorTranslationSliceAnywhereSensitivity(toDouble(value));
+    }
+    else if (name == "InteractionSizeAbsolute")
+    {
+      interactionDisplayNode->SetInteractionSizeAbsolute(toBool(value));
+    }
+    else if (name == "InteractionSizeMm")
+    {
+      interactionDisplayNode->SetInteractionSizeMm(toDouble(value));
+    }
+    else if (name == "InteractionScalePercent")
+    {
+      interactionDisplayNode->SetInteractionScalePercent(toDouble(value));
+    }
+    else if (name == "InteractionHandleOpacity")
+    {
+      interactionDisplayNode->SetInteractionHandleOpacity(toDouble(value));
+    }
+    else if (name == "TranslationHandleComponentVisibility3D")
+    {
+      toBoolVector(value, vector);
+      interactionDisplayNode->SetTranslationHandleComponentVisibility3D(vector);
+    }
+    else if (name == "RotationHandleComponentVisibility3D")
+    {
+      toBoolVector(value, vector);
+      interactionDisplayNode->SetRotationHandleComponentVisibility3D(vector);
+    }
+    else if (name == "ScaleHandleComponentVisibility3D")
+    {
+      toBoolVector(value, vector);
+      interactionDisplayNode->SetScaleHandleComponentVisibility3D(vector);
+    }
+    else if (name == "TranslationHandleComponentVisibilitySlice")
+    {
+      toBoolVector(value, vector);
+      interactionDisplayNode->SetTranslationHandleComponentVisibilitySlice(vector);
+    }
+    else if (name == "RotationHandleComponentVisibilitySlice")
+    {
+      toBoolVector(value, vector);
+      interactionDisplayNode->SetRotationHandleComponentVisibilitySlice(vector);
+    }
+    else if (name == "ScaleHandleComponentVisibilitySlice")
+    {
+      toBoolVector(value, vector);
+      interactionDisplayNode->SetScaleHandleComponentVisibilitySlice(vector);
+    }
+  }
+  this->LegacyInteractionAttributes.clear();
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
+// Vector field source
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformDisplayNode::CanSampleAtArbitraryPositions()
 {
-  Superclass::PrintSelf(os, indent);
-
-  vtkMRMLPrintBeginMacro(os, indent);
-
-  os << indent << "VisualizationMode = " << ConvertVisualizationModeToString(this->VisualizationMode) << "\n";
-  os << indent << "GlyphScalePercent = " << this->GlyphScalePercent << "\n";
-  os << indent << "GlyphDisplayRangeMaxMm = " << this->GlyphDisplayRangeMaxMm << "\n";
-  os << indent << "GlyphDisplayRangeMinMm = " << this->GlyphDisplayRangeMinMm << "\n";
-  os << indent << "GlyphType = " << ConvertGlyphTypeToString(this->GlyphType) << "\n";
-  os << indent << "GlyphTipLengthPercent = " << this->GlyphTipLengthPercent << "\n";
-  os << indent << "GlyphDiameterMm = " << this->GlyphDiameterMm << "\n";
-  os << indent << "GlyphShaftDiameterPercent = " << this->GlyphShaftDiameterPercent << "\n";
-  os << indent << "GlyphResolution = " << this->GlyphResolution << "\n";
-  os << indent << "GlyphResolution2D = " << this->GlyphResolution2D << "\n";
-  os << indent << "GlyphTipLengthPercent2D = " << this->GlyphTipLengthPercent2D << "\n";
-
-  os << indent << "GridScalePercent = " << this->GridScalePercent << "\n";
-  os << indent << "GridSpacingMm = " << this->GridSpacingMm << "\n";
-  os << indent << "GridLineDiameterMm = " << this->GridLineDiameterMm << "\n";
-  os << indent << "GridResolutionMm = " << this->GridResolutionMm << "\n";
-  os << indent << "GridShowNonWarped = " << this->GridShowNonWarped << "\n";
-
-  os << indent << "ContourResolutionMm = " << this->ContourResolutionMm << "\n";
-  os << indent << "ContourOpacity = " << this->ContourOpacity << "\n";
-  os << indent << "ContourLevelsMm = " << GetContourLevelsMmAsString() << "\n";
-
-  os << indent << " EditorVisibility=\"" << this->EditorVisibility << "\n";
-  os << indent << " EditorSliceIntersectionVisibility=\"" << this->EditorSliceIntersectionVisibility << "\n";
-  os << indent << " EditorTranslationEnabled=\"" << this->EditorTranslationEnabled << "\n";
-  os << indent << " EditorRotationEnabled=\"" << this->EditorRotationEnabled << "\n";
-  os << indent << " EditorScalingEnabled=\"" << this->EditorScalingEnabled << "\n";
-
-  vtkMRMLPrintBooleanMacro(EditorVisibility3D);
-  vtkMRMLPrintBooleanMacro(EditorTranslationSliceAnywhereEnabled);
-  vtkMRMLPrintFloatMacro(EditorTranslationSliceAnywhereSensitivity);
-  vtkMRMLPrintFloatMacro(InteractionHandleOpacity);
-  vtkMRMLPrintVectorMacro(RotationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLPrintVectorMacro(ScaleHandleComponentVisibility3D, bool, 4);
-  vtkMRMLPrintVectorMacro(TranslationHandleComponentVisibility3D, bool, 4);
-  vtkMRMLPrintVectorMacro(RotationHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLPrintVectorMacro(ScaleHandleComponentVisibilitySlice, bool, 4);
-  vtkMRMLPrintVectorMacro(TranslationHandleComponentVisibilitySlice, bool, 4);
-
-  vtkMRMLPrintEndMacro();
+  return vtkMRMLTransformNode::SafeDownCast(this->GetDisplayableNode()) != nullptr;
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformDisplayNode::HasFixedFieldArrays()
 {
-  if (caller != nullptr                                                                                    //
-      && (event == vtkCommand::ModifiedEvent || event == vtkMRMLTransformableNode::TransformModifiedEvent) //
-      && caller == GetRegionNode()                                                                         //
-      && this->Visibility)
-  {
-    // update visualization if the region node is changed
-    // Note: this updates all the 2D views as well, so instead of a generic modified event a separate
-    // even for 2D and 3D views could be useful.
-    // If 3D visibility is disabled then we can ignore this event, as the region is only used for 3D display.
-    this->Modified();
-  }
-  else if (caller != nullptr                            //
-           && caller == GetGlyphPointsNode()            // event can be any content modified event
-           && this->VisualizationMode == VIS_MODE_GLYPH //
-           && (this->Visibility || this->GetVisibility2D()))
-  {
-    // update visualization if glyph points are changed
-    this->Modified();
-  }
-  else if (caller != nullptr                     //
-           && event == vtkCommand::ModifiedEvent //
-           && caller == GetColorNode())
-  {
-    // update visualization if the color node is changed
-    this->Modified();
-  }
-  else
-  {
-    this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  }
+  return true;
 }
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformDisplayNode::IsVisualizationModeSupported(int visualizationMode)
+{
+  return (visualizationMode >= 0 && visualizationMode < vtkMRMLTransformDisplayNode::VIS_MODE_LAST);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::UpdateScalarRange()
+{
+  // The color map maps displacement in mm to color, so its range is the scalar range, even before the field is sampled.
+  // A manual range or one taken from the data is handled by the superclass.
+  if (this->GetScalarRangeFlag() != vtkMRMLDisplayNode::UseColorNodeScalarRange)
+  {
+    this->Superclass::UpdateScalarRange();
+    return;
+  }
+  vtkMRMLColorNode* colorNode = this->GetColorNode();
+  if (colorNode && colorNode->GetLookupTable())
+  {
+    double* range = colorNode->GetLookupTable()->GetRange();
+    if (range && range[1] >= range[0])
+    {
+      this->SetScalarRange(range[0], range[1]);
+      return;
+    }
+  }
+  this->Superclass::UpdateScalarRange();
+}
+
+//----------------------------------------------------------------------------
+vtkAbstractTransform* vtkMRMLTransformDisplayNode::GetSampledTransform()
+{
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(this->GetDisplayableNode());
+  if (!transformNode)
+  {
+    this->SampledTransform = nullptr;
+    this->SampledTransformNode = nullptr;
+    return nullptr;
+  }
+  // Inverting or reparenting modifies no transform, so node modified times are included to rebuild the transform to world.
+  // Transform edits need no rebuild: it concatenates the node transforms themselves, so it is modified with them.
+  vtkMTimeType buildTime = transformNode->GetTransformToWorldMTime();
+  for (vtkMRMLTransformNode* node = transformNode; node; node = node->GetParentTransformNode())
+  {
+    buildTime = std::max(buildTime, node->GetMTime());
+  }
+  if (!this->SampledTransform || this->SampledTransformNode != transformNode || buildTime > this->SampledTransformBuildTime)
+  {
+    // A new object rather than the same one rebuilt, so that a sampler that holds it is
+    // modified even if the concatenated transforms are older than the last sampling
+    this->SampledTransform = vtkSmartPointer<vtkGeneralTransform>::New();
+    transformNode->GetTransformToWorld(this->SampledTransform);
+    this->SampledTransformNode = transformNode;
+    this->SampledTransformBuildTime = buildTime;
+  }
+  return this->SampledTransform;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::ConfigureTransformSampler(vtkVectorFieldSampler* sampler)
+{
+  sampler->SetFieldSourceToTransform();
+  sampler->SetTransform(this->GetSampledTransform());
+  this->GetPipeline()->UpdateSamplerRegion(sampler);
+}
+
+//----------------------------------------------------------------------------
+vtkAlgorithmOutput* vtkMRMLTransformDisplayNode::GetFieldConnection()
+{
+  if (!this->CanSampleAtArbitraryPositions())
+  {
+    return nullptr;
+  }
+  // A transform is defined everywhere, so there is nothing to draw until the user says
+  // which region to draw it in, or which points to place glyphs at.
+  if (!this->GetSamplingRegionNodeOtherThanSource())
+  {
+    return nullptr;
+  }
+  vtkVectorFieldSampler* sampler = this->GetPipeline()->GetFieldSampler();
+  this->ConfigureTransformSampler(sampler);
+  return sampler->GetOutputPort();
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformDisplayNode::UpdateSliceFieldSampler(vtkVectorFieldSampler* sampler)
+{
+  // A transform is defined everywhere, so a slice view always samples it in its own plane,
+  // with or without a region. The base class only knows how to sample meshes and volumes.
+  if (!sampler || !this->CanSampleAtArbitraryPositions())
+  {
+    return false;
+  }
+  this->ConfigureTransformSampler(sampler);
+  return true;
+}
+
+//----------------------------------------------------------------------------
+// Display options
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLTransformDisplayNode::GetRegionNode()
 {
-  return this->GetNodeReference(RegionReferenceRole);
+  return this->GetSamplingRegionNode();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetAndObserveRegionNode(vtkMRMLNode* node)
 {
-  this->SetAndObserveNthNodeReferenceID(RegionReferenceRole, 0, node ? node->GetID() : nullptr);
+  this->SetAndObserveSamplingRegionNode(node);
 }
 
 //----------------------------------------------------------------------------
 vtkMRMLNode* vtkMRMLTransformDisplayNode::GetGlyphPointsNode()
 {
-  return this->GetNodeReference(GlyphPointsReferenceRole);
+  // The glyph points of earlier versions are a sampling region whose points are sampled
+  vtkMRMLNode* samplingRegionNode = this->GetSamplingRegionNode();
+  if (samplingRegionNode && this->GetEffectiveSamplingRegionPart() == vtkMRMLVectorFieldDisplayNode::SamplingRegionPartPoints)
+  {
+    return samplingRegionNode;
+  }
+  return nullptr;
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetAndObserveGlyphPointsNode(vtkMRMLNode* node)
 {
-  this->SetAndObserveNthNodeReferenceID(GlyphPointsReferenceRole, 0, node ? node->GetID() : nullptr);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::SetContourLevelsMm(double* values, int size)
-{
-  this->ContourLevelsMm.clear();
-  for (int i = 0; i < size; i++)
+  // The glyph points are the sampling region now, so they replace the region the transform
+  // was drawn in; clearing them clears the sampling region if they were it
+  if (node)
   {
-    this->ContourLevelsMm.push_back(values[i]);
+    this->SetAndObserveSamplingRegionNode(node);
   }
-  this->Modified();
-}
-
-//----------------------------------------------------------------------------
-double* vtkMRMLTransformDisplayNode::GetContourLevelsMm()
-{
-  if (this->ContourLevelsMm.size() == 0)
+  else if (this->GetGlyphPointsNode())
   {
-    return nullptr;
+    this->SetAndObserveSamplingRegionNode(nullptr);
   }
-  // std::vector values are guaranteed to be stored in a continuous block in memory,
-  // so we can return the address to the first one
-  return &(this->ContourLevelsMm[0]);
 }
 
 //----------------------------------------------------------------------------
-unsigned int vtkMRMLTransformDisplayNode::GetNumberOfContourLevels()
+void vtkMRMLTransformDisplayNode::SetGlyphScalePercent(double scalePercent)
 {
-  return this->ContourLevelsMm.size();
+  this->SetGlyphScaleFactor(scalePercent * 0.01);
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLTransformDisplayNode::GetGlyphScalePercent()
+{
+  return this->GetGlyphScaleFactor() * 100.0;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::SetGlyphDisplayRangeMinMm(double minMm)
+{
+  this->SetThresholdRange(minMm, this->ThresholdRange[1]);
+  this->SetThresholdEnabled(true);
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLTransformDisplayNode::GetGlyphDisplayRangeMinMm()
+{
+  return this->GetThresholdRange()[0];
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::SetGlyphDisplayRangeMaxMm(double maxMm)
+{
+  this->SetThresholdRange(this->ThresholdRange[0], maxMm);
+  this->SetThresholdEnabled(true);
+}
+
+//----------------------------------------------------------------------------
+double vtkMRMLTransformDisplayNode::GetGlyphDisplayRangeMaxMm()
+{
+  return this->GetThresholdRange()[1];
 }
 
 //----------------------------------------------------------------------------
@@ -470,13 +631,13 @@ const char* vtkMRMLTransformDisplayNode::ConvertVisualizationModeToString(int mo
 //----------------------------------------------------------------------------
 int vtkMRMLTransformDisplayNode::ConvertVisualizationModeFromString(const char* modeString)
 {
-  if (modeString == nullptr)
+  if (!modeString)
   {
     return -1;
   }
-  for (int modeIndex = 0; modeIndex < VIS_MODE_LAST; modeIndex++)
+  for (int modeIndex = 0; modeIndex < VIS_MODE_LAST; ++modeIndex)
   {
-    if (strcmp(modeString, vtkMRMLTransformDisplayNode::ConvertVisualizationModeToString(modeIndex)) == 0)
+    if (strcmp(modeString, ConvertVisualizationModeToString(modeIndex)) == 0)
     {
       return modeIndex;
     }
@@ -485,95 +646,85 @@ int vtkMRMLTransformDisplayNode::ConvertVisualizationModeFromString(const char* 
 }
 
 //----------------------------------------------------------------------------
-const char* vtkMRMLTransformDisplayNode::ConvertGlyphTypeToString(int modeIndex)
+const char* vtkMRMLTransformDisplayNode::ConvertGlyphTypeToString(int typeIndex)
 {
-  switch (modeIndex)
+  // The shared node knows more glyph types than transform display offered; the ones it
+  // offered keep their old names so that saved scenes keep working.
+  switch (typeIndex)
   {
-    case GLYPH_TYPE_ARROW: return "ARROW";
-    case GLYPH_TYPE_CONE: return "CONE";
-    case GLYPH_TYPE_SPHERE: return "SPHERE";
-    default: return "";
+    case vtkMRMLVectorFieldDisplayNode::GlyphTypeArrow: return "ARROW";
+    case vtkMRMLVectorFieldDisplayNode::GlyphTypeCone: return "CONE";
+    case vtkMRMLVectorFieldDisplayNode::GlyphTypeSphere: return "SPHERE";
+    default: return vtkMRMLVectorFieldDisplayNode::GetGlyphTypeAsString(typeIndex);
   }
 }
 
 //----------------------------------------------------------------------------
-int vtkMRMLTransformDisplayNode::ConvertGlyphTypeFromString(const char* modeString)
+int vtkMRMLTransformDisplayNode::ConvertGlyphTypeFromString(const char* typeString)
 {
-  if (modeString == nullptr)
+  if (!typeString)
   {
     return -1;
   }
-  for (int modeIndex = 0; modeIndex < GLYPH_TYPE_LAST; modeIndex++)
+  if (strcmp(typeString, "ARROW") == 0)
   {
-    if (strcmp(modeString, vtkMRMLTransformDisplayNode::ConvertGlyphTypeToString(modeIndex)) == 0)
-    {
-      return modeIndex;
-    }
+    return vtkMRMLVectorFieldDisplayNode::GlyphTypeArrow;
   }
-  return -1;
+  if (strcmp(typeString, "CONE") == 0)
+  {
+    return vtkMRMLVectorFieldDisplayNode::GlyphTypeCone;
+  }
+  if (strcmp(typeString, "SPHERE") == 0)
+  {
+    return vtkMRMLVectorFieldDisplayNode::GlyphTypeSphere;
+  }
+  return vtkMRMLVectorFieldDisplayNode::GetGlyphTypeFromString(typeString);
+}
+
+//----------------------------------------------------------------------------
+// Contour levels
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::SetContourLevelsMm(double* levels, int size)
+{
+  this->SetContourLevels(levels, size);
+}
+
+//----------------------------------------------------------------------------
+double* vtkMRMLTransformDisplayNode::GetContourLevelsMm()
+{
+  return this->GetContourLevels();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::GetContourLevelsMm(std::vector<double>& levels)
+{
+  this->GetContourLevels(levels);
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLTransformDisplayNode::GetContourLevelsMmAsString()
 {
-  return ConvertContourLevelsToString(this->ContourLevelsMm);
+  return this->GetContourLevelsAsString();
 }
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetContourLevelsMmFromString(const char* str)
 {
-  std::vector<double> newLevels = this->ConvertContourLevelsFromString(str);
-  if (this->IsContourLevelEqual(newLevels, this->ContourLevelsMm))
-  {
-    // no change
-    return;
-  }
-  this->ContourLevelsMm = newLevels;
-  this->Modified();
+  this->SetContourLevelsAsString(str ? str : "");
 }
 
 //----------------------------------------------------------------------------
 std::vector<double> vtkMRMLTransformDisplayNode::ConvertContourLevelsFromString(const char* str)
 {
-  return vtkMRMLTransformDisplayNode::StringToDoubleVector(str);
-}
-
-//----------------------------------------------------------------------------
-std::vector<double> vtkMRMLTransformDisplayNode::StringToDoubleVector(const char* str)
-{
-  std::vector<double> values;
-  std::stringstream ss(str);
-  std::string itemString;
-  double itemDouble;
-  while (std::getline(ss, itemString, CONTOUR_LEVEL_SEPARATOR))
-  {
-    std::stringstream itemStream;
-    itemStream << itemString;
-    itemStream >> itemDouble;
-    values.push_back(itemDouble);
-  }
-  return values;
+  return StringToDoubleVector(str);
 }
 
 //----------------------------------------------------------------------------
 std::string vtkMRMLTransformDisplayNode::ConvertContourLevelsToString(const std::vector<double>& levels)
 {
-  return vtkMRMLTransformDisplayNode::DoubleVectorToString(&(levels[0]), levels.size());
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLTransformDisplayNode::DoubleVectorToString(const double* values, int numberOfValues)
-{
-  std::stringstream ss;
-  for (int i = 0; i < numberOfValues; i++)
-  {
-    if (i > 0)
-    {
-      ss << CONTOUR_LEVEL_SEPARATOR;
-    }
-    ss << values[i];
-  }
-  return ss.str();
+  return DoubleVectorToString(levels.data(), static_cast<int>(levels.size()));
 }
 
 //----------------------------------------------------------------------------
@@ -595,10 +746,164 @@ bool vtkMRMLTransformDisplayNode::IsContourLevelEqual(const std::vector<double>&
 }
 
 //----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::GetContourLevelsMm(std::vector<double>& levels)
+std::vector<double> vtkMRMLTransformDisplayNode::StringToDoubleVector(const char* sourceStr)
 {
-  levels = this->ContourLevelsMm;
+  std::vector<double> values;
+  if (!sourceStr)
+  {
+    return values;
+  }
+  std::stringstream ss(sourceStr);
+  std::string itemString;
+  while (std::getline(ss, itemString, CONTOUR_LEVEL_SEPARATOR))
+  {
+    if (itemString.empty())
+    {
+      continue;
+    }
+    std::stringstream itemStream(itemString);
+    double value = 0.0;
+    itemStream >> value;
+    if (!itemStream.fail())
+    {
+      values.push_back(value);
+    }
+  }
+  return values;
 }
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLTransformDisplayNode::DoubleVectorToString(const double* values, int numberOfValues)
+{
+  std::stringstream ss;
+  for (int i = 0; i < numberOfValues; i++)
+  {
+    if (i > 0)
+    {
+      ss << CONTOUR_LEVEL_SEPARATOR;
+    }
+    ss << values[i];
+  }
+  return ss.str();
+}
+
+//----------------------------------------------------------------------------
+// Interaction parameters, forwarded to the interaction display node
+//----------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------
+vtkMRMLTransformInteractionDisplayNode* vtkMRMLTransformDisplayNode::GetInteractionDisplayNode(bool createIfMissing /*=false*/)
+{
+  vtkMRMLDisplayableNode* displayableNode = this->GetDisplayableNode();
+  if (!displayableNode)
+  {
+    return nullptr;
+  }
+  int numberOfDisplayNodes = displayableNode->GetNumberOfDisplayNodes();
+  for (int i = 0; i < numberOfDisplayNodes; ++i)
+  {
+    vtkMRMLTransformInteractionDisplayNode* interactionDisplayNode = vtkMRMLTransformInteractionDisplayNode::SafeDownCast(displayableNode->GetNthDisplayNode(i));
+    if (interactionDisplayNode)
+    {
+      return interactionDisplayNode;
+    }
+  }
+  if (!createIfMissing || !this->GetScene())
+  {
+    return nullptr;
+  }
+  vtkMRMLTransformInteractionDisplayNode* interactionDisplayNode =
+    vtkMRMLTransformInteractionDisplayNode::SafeDownCast(this->GetScene()->AddNewNodeByClass("vtkMRMLTransformInteractionDisplayNode"));
+  if (interactionDisplayNode)
+  {
+    displayableNode->AddAndObserveDisplayNodeID(interactionDisplayNode->GetID());
+  }
+  return interactionDisplayNode;
+}
+
+/// Forwards a property to the interaction display node. The node is only created when a
+/// property is set, so that a transform that is never edited does not get one.
+#define INTERACTION_PROPERTY_FORWARDER(type, name, defaultValue)                                            \
+  type vtkMRMLTransformDisplayNode::Get##name()                                                             \
+  {                                                                                                         \
+    vtkMRMLTransformInteractionDisplayNode* interactionDisplayNode = this->GetInteractionDisplayNode();     \
+    return interactionDisplayNode ? interactionDisplayNode->Get##name() : defaultValue;                     \
+  }                                                                                                         \
+  void vtkMRMLTransformDisplayNode::Set##name(type value)                                                   \
+  {                                                                                                         \
+    vtkMRMLTransformInteractionDisplayNode* interactionDisplayNode = this->GetInteractionDisplayNode(true); \
+    if (interactionDisplayNode)                                                                             \
+    {                                                                                                       \
+      interactionDisplayNode->Set##name(value);                                                             \
+    }                                                                                                       \
+    /* Observers of this node expect to hear about the change, wherever it is stored now */                 \
+    this->Modified();                                                                                       \
+  }
+
+INTERACTION_PROPERTY_FORWARDER(bool, EditorVisibility, false);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorVisibility3D, true);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorSliceIntersectionVisibility, true);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorTranslationEnabled, true);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorTranslationSliceEnabled, true);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorTranslationSliceAnywhereEnabled, false);
+INTERACTION_PROPERTY_FORWARDER(double, EditorTranslationSliceAnywhereSensitivity, 0.2);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorRotationEnabled, true);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorRotationSliceEnabled, true);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorScalingEnabled, false);
+INTERACTION_PROPERTY_FORWARDER(bool, EditorScalingSliceEnabled, false);
+INTERACTION_PROPERTY_FORWARDER(double, InteractionSizeMm, 5.0);
+INTERACTION_PROPERTY_FORWARDER(double, InteractionScalePercent, 15.0);
+INTERACTION_PROPERTY_FORWARDER(bool, InteractionSizeAbsolute, false);
+INTERACTION_PROPERTY_FORWARDER(double, InteractionHandleOpacity, 1.0);
+INTERACTION_PROPERTY_FORWARDER(int, ActiveInteractionType, -1);
+INTERACTION_PROPERTY_FORWARDER(int, ActiveInteractionIndex, -1);
+
+/// Forwards a handle visibility vector to the interaction display node.
+#define INTERACTION_VISIBILITY_FORWARDER(name)                                                              \
+  void vtkMRMLTransformDisplayNode::Get##name(bool visibility[4])                                           \
+  {                                                                                                         \
+    vtkMRMLTransformInteractionDisplayNode* interactionDisplayNode = this->GetInteractionDisplayNode();     \
+    if (interactionDisplayNode)                                                                             \
+    {                                                                                                       \
+      interactionDisplayNode->Get##name(visibility);                                                        \
+      return;                                                                                               \
+    }                                                                                                       \
+    for (int i = 0; i < 4; ++i)                                                                             \
+    {                                                                                                       \
+      visibility[i] = true;                                                                                 \
+    }                                                                                                       \
+  }                                                                                                         \
+  void vtkMRMLTransformDisplayNode::Set##name(bool visibility[4])                                           \
+  {                                                                                                         \
+    vtkMRMLTransformInteractionDisplayNode* interactionDisplayNode = this->GetInteractionDisplayNode(true); \
+    if (interactionDisplayNode)                                                                             \
+    {                                                                                                       \
+      interactionDisplayNode->Set##name(visibility);                                                        \
+    }                                                                                                       \
+    this->Modified();                                                                                       \
+  }
+
+INTERACTION_VISIBILITY_FORWARDER(RotationHandleComponentVisibility3D);
+INTERACTION_VISIBILITY_FORWARDER(ScaleHandleComponentVisibility3D);
+INTERACTION_VISIBILITY_FORWARDER(TranslationHandleComponentVisibility3D);
+INTERACTION_VISIBILITY_FORWARDER(RotationHandleComponentVisibilitySlice);
+INTERACTION_VISIBILITY_FORWARDER(ScaleHandleComponentVisibilitySlice);
+INTERACTION_VISIBILITY_FORWARDER(TranslationHandleComponentVisibilitySlice);
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::UpdateEditorBounds()
+{
+  vtkMRMLTransformInteractionDisplayNode* interactionDisplayNode = this->GetInteractionDisplayNode();
+  if (interactionDisplayNode)
+  {
+    interactionDisplayNode->UpdateEditorBounds();
+  }
+  this->InvokeEvent(vtkMRMLTransformDisplayNode::TransformUpdateEditorBoundsEvent);
+}
+
+//----------------------------------------------------------------------------
+// Color map
+//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 void vtkMRMLTransformDisplayNode::SetDefaultColors()
@@ -627,6 +932,21 @@ void vtkMRMLTransformDisplayNode::SetDefaultColors()
 
   this->GetScene()->AddNode(colorNode.GetPointer());
   this->SetAndObserveColorNodeID(colorNode->GetID());
+  // The color map is what defines the scalar range, so the range is only meaningful once
+  // the map exists
+  this->UpdateScalarRange();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
+{
+  this->Superclass::ProcessMRMLEvents(caller, event, callData);
+  vtkMRMLColorNode* colorNode = vtkMRMLColorNode::SafeDownCast(caller);
+  if (colorNode && colorNode == this->GetColorNode() && event == vtkCommand::ModifiedEvent)
+  {
+    // Editing the color map moves the range that the displacements are mapped to
+    this->UpdateScalarRange();
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -678,10 +998,4 @@ void vtkMRMLTransformDisplayNode::SetColorMap(vtkColorTransferFunction* newColor
     vtkErrorMacro("vtkMRMLTransformDisplayNode::SetColorMap failed: could not create default color node");
   }
   this->EndModify(oldModified);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::UpdateEditorBounds()
-{
-  this->InvokeEvent(vtkMRMLTransformDisplayNode::TransformUpdateEditorBoundsEvent);
 }
