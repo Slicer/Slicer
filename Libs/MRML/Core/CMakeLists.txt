@@ -287,6 +287,7 @@ set(MRMLCore_SRCS
   vtkMRMLTransformableNode.cxx
   vtkMRMLTranslator.h
   vtkMRMLUnitNode.cxx
+  vtkMRMLVectorFieldDisplayNode.cxx
   vtkMRMLVectorVolumeDisplayNode.cxx
   vtkMRMLViewNode.cxx
   vtkMRMLVolumeArchetypeStorageNode.cxx
@@ -311,6 +312,9 @@ set(MRMLCore_SRCS
 # Classes that are only used to display vector fields (vtkMRMLVectorFieldDisplayNode)
 set(MRMLCore_SRCS
   ${MRMLCore_SRCS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkMRMLVectorFieldPipeline.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkMRMLVectorFieldMask.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkMRMLVectorFieldSamplePointSource.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkVectorFieldGeometry.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkVectorFieldGlyph.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkVectorFieldGrid.cxx
