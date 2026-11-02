@@ -118,6 +118,46 @@ The `3` in `axis 3 index type` and `axis 3 index values` fields refer to the 4th
 * `intent_code` **must** be `1006` (`NIFTI_INTENT_DISPVECT`)
 * Displacement vector components are stored in the **RAS** coordinate system
 
+## Model-based transform files
+
+A model-based transform (`vtkMeshDisplacementTransform` or `vtkScatteredBSplineTransform`, in vtkAddon) is computed from displacements at the points of the mesh of a model. It is stored in an ITK transform file (`.h5`, `.tfm`, `.txt`) like other transforms, but the file holds only the parameters of the transform, not the displacements: when the file is read, the transform is computed again from the model of the transform node. The model is found by the source key (`InputPointSetSourceKey`) that is saved with the transform: the transform node references its model with the role `displacementModel/` followed by the key, so the file can only be used in a scene that has the model. Other applications cannot interpret these files; a model-based transform can be converted to a displacement field for them.
+
+The ITK transform classes are `MeshDisplacementTransform` and `ScatteredBSplineTransform` (in a file: `MeshDisplacementTransform_double_3_3` and `ScatteredBSplineTransform_double_3_3`). As for other non-linear transforms, the inverse transform is stored by the `Inverse...` classes (`InverseMeshDisplacementTransform`, `InverseScatteredBSplineTransform`): a transform that is set as "to parent" in Slicer is written as `Inverse...`, as ITK files store transforms in resampling convention (see [Transform files](#transform-files)). The classes are defined in [vtkITKModelBasedTransform.h](https://github.com/Slicer/Slicer/blob/main/Libs/MRML/Core/vtkITKModelBasedTransform.h). They cannot compute any transformation, they are only used for reading and writing the parameters.
+
+All parameters are stored in the fixed parameters; the transform has no other parameters. Format version 1:
+
+| Index | MeshDisplacementTransform | ScatteredBSplineTransform |
+|-------|---------------------------|---------------------------|
+| 0 | format version (`1`) | format version (`1`) |
+| 1 | DisplacementScale | DisplacementScale |
+| 2 | BorderFalloffDistance | BorderFalloffDistance |
+| 3 | AutomaticBorderFalloffDistance (`0` or `1`) | AutomaticBorderFalloffDistance (`0` or `1`) |
+| 4- | DisplacementArrayName, InputPointSetSourceKey | ControlPointSpacing (3 values) |
+| 7 | | MinimumControlPointSpacing |
+| 8 | | MaximumNumberOfLevels |
+| 9 | | Tolerance |
+| 10 | | UseLinearApproximation (`0` or `1`) |
+| 11 | | AutomaticGridBounds (`0` or `1`) |
+| 12-17 | | GridBounds in LPS coordinate system (xmin, xmax, ymin, ymax, zmin, zmax) |
+| 18 | | GridBoundsMargin |
+| 19 | | BorderMode (`0`: `VTK_BSPLINE_EDGE`, `1`: `VTK_BSPLINE_ZERO`, `2`: `VTK_BSPLINE_ZERO_AT_BORDER`) |
+| 20- | | DisplacementArrayName, InputPointSetSourceKey |
+
+The two strings at the end, DisplacementArrayName and then InputPointSetSourceKey, are each stored as their length followed by their characters, one character code in each value. An empty DisplacementArrayName means the active vectors of the mesh.
+
+### Example model-based transform file
+
+A `vtkMeshDisplacementTransform` that is set as "to parent" of a transform node, with the displacements in the `Displacement` point data array of its model, in `.tfm` format:
+
+```
+#Insight Transform File V1.0
+#Transform 0
+Transform: InverseMeshDisplacementTransform_double_3_3
+Parameters:
+FixedParameters: 1 1 0 0 12 68 105 115 112 108 97 99 101 109 101 110 116 32 101 98 101 101 52 53 51 55 48 102 49 55 102 102 56 54 99 53 50 98 98 57 49 53 101 49 98 49 97 53 48 55
+```
+
+The fixed parameters are: format version `1`, DisplacementScale `1`, BorderFalloffDistance `0`, AutomaticBorderFalloffDistance `0`, then `12` and the 12 characters of `Displacement`, then `32` and the 32 characters of the source key `ebee45370f17ff86c52bb915e1b1a507`.
 
 ## Events
 

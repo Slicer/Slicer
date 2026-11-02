@@ -24,6 +24,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLMarkupsPlaneNode.h"
 #include "vtkMRMLMarkupsROINode.h"
 #include "vtkMRMLMessageCollection.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScalarVolumeDisplayNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
@@ -31,6 +32,10 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include "vtkMRMLTransformDisplayNode.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLVectorVolumeDisplayNode.h"
+#include "vtkMRMLVectorVolumeNode.h"
+
+// vtkAddon includes
+#include <vtkScatteredBSplineTransform.h>
 
 // ITKsys includes
 #include <itksys/SystemTools.hxx>
@@ -40,6 +45,7 @@ or http://www.slicer.org/copyright/copyright.txt for details.
 #include <vtkCollection.h>
 #include <vtkArrowSource.h>
 #include <vtkBoundingBox.h>
+#include <vtkBSplineTransform.h>
 #include <vtkConeSource.h>
 #include <vtkContourFilter.h>
 #include <vtkCellArray.h>
@@ -486,7 +492,15 @@ vtkMRMLVolumeNode* vtkSlicerTransformLogic::CreateDisplacementVolumeFromTransfor
   }
   else
   {
-    outputVolumeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+    // Displacement vectors are a vector volume, so that they are shown and selectable as one
+    if (magnitude)
+    {
+      outputVolumeNode = vtkSmartPointer<vtkMRMLScalarVolumeNode>::New();
+    }
+    else
+    {
+      outputVolumeNode = vtkSmartPointer<vtkMRMLVectorVolumeNode>::New();
+    }
     std::string nodeName = inputTransformNode->GetName();
     if (magnitude)
     {
@@ -699,6 +713,175 @@ vtkMRMLTransformNode* vtkSlicerTransformLogic::ConvertToGridTransform(vtkMRMLTra
   vtkSlicerTransformLogic::GetTransformedPointSamplesAsVectorImage(outputVolume, inputTransformNode, ijkToRas.GetPointer(), transformToWorld);
 
   return outputGridTransformNode.GetPointer();
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerTransformLogic::ImportTransformFromDisplacementVolume(vtkMRMLTransformNode* transformNode, vtkMRMLVectorVolumeNode* displacementVolumeNode)
+{
+  if (!transformNode || !displacementVolumeNode)
+  {
+    vtkErrorMacro("vtkSlicerTransformLogic::ImportTransformFromDisplacementVolume failed: invalid transform or volume node");
+    return false;
+  }
+  vtkImageData* displacementImage = displacementVolumeNode->GetImageData();
+  vtkDataArray* displacements = (displacementImage ? displacementImage->GetPointData()->GetScalars() : nullptr);
+  if (!displacements || displacements->GetNumberOfComponents() != 3)
+  {
+    vtkErrorMacro("vtkSlicerTransformLogic::ImportTransformFromDisplacementVolume failed: the volume has to have 3 components, a displacement vector in each voxel");
+    return false;
+  }
+
+  // Geometry of the volume in world coordinates
+  vtkNew<vtkMatrix4x4> ijkToRas;
+  displacementVolumeNode->GetIJKToRASMatrix(ijkToRas);
+  vtkNew<vtkMatrix4x4> rasToWorld;
+  if (!vtkMRMLTransformNode::GetMatrixTransformBetweenNodes(displacementVolumeNode->GetParentTransformNode(), nullptr /* world */, rasToWorld))
+  {
+    vtkErrorMacro("vtkSlicerTransformLogic::ImportTransformFromDisplacementVolume failed: non-linearly transformed volume"
+                  " is not supported. Harden or remove the transform of the volume.");
+    return false;
+  }
+  vtkMatrix4x4::Multiply4x4(rasToWorld, ijkToRas, ijkToRas);
+  double origin[3] = { 0.0, 0.0, 0.0 };
+  double spacing[3] = { 1.0, 1.0, 1.0 };
+  vtkNew<vtkMatrix4x4> ijkToRasDirection; // normalized direction matrix
+  for (int c = 0; c < 3; c++)
+  {
+    origin[c] = ijkToRas->GetElement(c, 3);
+    spacing[c] = sqrt(ijkToRas->Element[0][c] * ijkToRas->Element[0][c] + ijkToRas->Element[1][c] * ijkToRas->Element[1][c] + ijkToRas->Element[2][c] * ijkToRas->Element[2][c]);
+    if (spacing[c] == 0)
+    {
+      spacing[c] = 1.0;
+    }
+    for (int r = 0; r < 3; r++)
+    {
+      ijkToRasDirection->SetElement(r, c, ijkToRas->GetElement(r, c) / spacing[c]);
+    }
+  }
+
+  // A copy of the displacements, so that the transform does not change with the volume
+  vtkNew<vtkImageData> displacementGrid;
+  displacementGrid->SetExtent(displacementImage->GetExtent());
+  displacementGrid->SetOrigin(origin);
+  displacementGrid->SetSpacing(spacing);
+  vtkNew<vtkDoubleArray> displacementsCopy;
+  displacementsCopy->DeepCopy(displacements);
+  // Under a linear transform M, p displaced by d goes to M*(p+d) = M*p + M*d,
+  // so the world displacement is the linear part of M applied to d.
+  for (vtkIdType tupleIndex = 0; tupleIndex < displacementsCopy->GetNumberOfTuples(); ++tupleIndex)
+  {
+    double displacement_RAS[4] = { 0.0, 0.0, 0.0, 0.0 };
+    displacementsCopy->GetTuple(tupleIndex, displacement_RAS);
+    double displacement_World[4] = { 0.0, 0.0, 0.0, 0.0 };
+    rasToWorld->MultiplyPoint(displacement_RAS, displacement_World);
+    displacementsCopy->SetTuple(tupleIndex, displacement_World);
+  }
+  displacementGrid->GetPointData()->SetScalars(displacementsCopy);
+
+  vtkNew<vtkOrientedGridTransform> gridTransform;
+  gridTransform->SetDisplacementGridData(displacementGrid);
+  // vtkImageData cannot store directions, therefore that has to be set in the grid transform
+  gridTransform->SetGridDirectionMatrix(ijkToRasDirection);
+  // The displacement volume holds the displacement of the transform to world
+  transformNode->SetAndObserveTransformToParent(gridTransform);
+  return true;
+}
+
+//----------------------------------------------------------------------------
+vtkDataArray* vtkSlicerTransformLogic::GetDisplacementArray(vtkPointSet* mesh, const char* displacementArrayName)
+{
+  if (!mesh || mesh->GetNumberOfPoints() == 0)
+  {
+    return nullptr;
+  }
+  vtkDataArray* displacements = (displacementArrayName && displacementArrayName[0] != '\0' ? mesh->GetPointData()->GetArray(displacementArrayName) //
+                                                                                           : mesh->GetPointData()->GetVectors());
+  return (displacements && displacements->GetNumberOfComponents() == 3 ? displacements : nullptr);
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerTransformLogic::SetScatteredBSplineTransformDefaults(vtkScatteredBSplineTransform* transform, vtkPointSet* mesh, const char* displacementArrayName)
+{
+  if (!transform)
+  {
+    return;
+  }
+  vtkDataArray* displacements = vtkSlicerTransformLogic::GetDisplacementArray(mesh, displacementArrayName);
+  transform->SetDisplacementArrayName(displacements ? displacements->GetName() : displacementArrayName);
+  transform->UseLinearApproximationOn();
+  transform->AutomaticGridBoundsOn();
+  transform->SetControlPointSpacing(0.0, 0.0, 0.0);
+  transform->SetMaximumNumberOfLevels(8);
+  // Beyond the fitted region the displacement fades to zero, so that a transform of a model does not move positions far from it
+  transform->SetBorderMode(VTK_BSPLINE_ZERO_AT_BORDER);
+  // The displacement falls to zero at twice the largest displacement from the points
+  transform->AutomaticBorderFalloffDistanceOn();
+  if (!displacements)
+  {
+    return;
+  }
+  // The fit covers the points and a margin around them
+  double bounds[6] = { 0.0, -1.0, 0.0, -1.0, 0.0, -1.0 };
+  mesh->GetBounds(bounds);
+  double diagonal = std::sqrt((bounds[1] - bounds[0]) * (bounds[1] - bounds[0]) //
+                              + (bounds[3] - bounds[2]) * (bounds[3] - bounds[2]) + (bounds[5] - bounds[4]) * (bounds[5] - bounds[4]));
+  double margin = 0.1 * diagonal;
+  transform->SetGridBoundsMargin(margin);
+  double magnitudeRange[2] = { 0.0, -1.0 };
+  displacements->GetRange(magnitudeRange, -1); // -1: L2 norm over all components
+  // The fitted region also holds the falloff: 1.25 times the automatic falloff distance beyond the points
+  double fittedMargin = std::max(margin, 1.25 * 2.0 * std::max(0.0, magnitudeRange[1]));
+  double largestSize = std::max(std::max(bounds[1] - bounds[0], bounds[3] - bounds[2]), bounds[5] - bounds[4]) + 2.0 * fittedMargin;
+  transform->SetMinimumControlPointSpacing(largestSize > 0.0 ? largestSize / 100.0 : 0.1);
+  transform->SetTolerance(magnitudeRange[1] > 0.0 ? 0.001 * magnitudeRange[1] : 1e-6);
+}
+
+//----------------------------------------------------------------------------
+bool vtkSlicerTransformLogic::ImportTransformFromModel(vtkMRMLTransformNode* transformNode,
+                                                       vtkMRMLModelNode* modelNode,
+                                                       const char* displacementArrayName /*=nullptr*/,
+                                                       bool keepLinked /*=true*/)
+{
+  if (!transformNode || !modelNode)
+  {
+    vtkErrorMacro("vtkSlicerTransformLogic::ImportTransformFromModel failed: invalid transform or model node");
+    return false;
+  }
+  vtkPointSet* mesh = modelNode->GetMesh();
+  if (!vtkSlicerTransformLogic::GetDisplacementArray(mesh, displacementArrayName))
+  {
+    vtkErrorMacro("vtkSlicerTransformLogic::ImportTransformFromModel failed: the mesh of the model has no 3-component point data array "
+                  << (displacementArrayName && displacementArrayName[0] ? displacementArrayName : "(active vectors)"));
+    return false;
+  }
+
+  vtkNew<vtkScatteredBSplineTransform> fit;
+  vtkSlicerTransformLogic::SetScatteredBSplineTransformDefaults(fit, mesh, displacementArrayName);
+
+  // A model-based transform that follows the model
+  if (keepLinked)
+  {
+    transformNode->SetAndObserveModelBasedTransformToParent(fit, modelNode);
+    return true;
+  }
+
+  // A copy of the fit, as a B-spline transform that can be saved
+  fit->SetInputPointSet(mesh);
+  fit->Update();
+  vtkImageData* coefficients = fit->GetCoefficientData();
+  if (!coefficients)
+  {
+    vtkErrorMacro("vtkSlicerTransformLogic::ImportTransformFromModel failed: the displacements could not be fitted");
+    return false;
+  }
+  vtkNew<vtkImageData> coefficientsCopy;
+  coefficientsCopy->DeepCopy(coefficients);
+  vtkNew<vtkOrientedBSplineTransform> bsplineTransform;
+  bsplineTransform->SetCoefficientData(coefficientsCopy);
+  bsplineTransform->SetBorderMode(fit->GetBorderMode());
+  bsplineTransform->SetDisplacementScale(fit->GetDisplacementScale());
+  transformNode->SetAndObserveTransformToParent(bsplineTransform);
+  return true;
 }
 
 //----------------------------------------------------------------------------
