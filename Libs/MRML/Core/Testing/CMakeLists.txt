@@ -100,6 +100,9 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLTransformStorageNodeTest3.cxx
   vtkMRMLTransformableNodeTest1.cxx
   vtkMRMLUnitNodeTest1.cxx
+  vtkVectorFieldGeometryTest1.cxx
+  vtkVectorFieldGlyphTest1.cxx
+  vtkVectorFieldGridTest1.cxx
   vtkMRMLVectorVolumeDisplayNodeTest1.cxx
   vtkMRMLVectorVolumeNodeTest1.cxx
   vtkMRMLViewNodeTest1.cxx
@@ -223,6 +226,9 @@ simple_test( vtkMRMLTransformStorageNodeTest1 ${TEMP})
 simple_test( vtkMRMLTransformStorageNodeTest2 ${TEMP})
 simple_test( vtkMRMLTransformStorageNodeTest3 ${TEMP})
 simple_test( vtkMRMLUnitNodeTest1 )
+simple_test( vtkVectorFieldGeometryTest1 )
+simple_test( vtkVectorFieldGlyphTest1 )
+simple_test( vtkVectorFieldGridTest1 )
 simple_test( vtkMRMLVectorVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLVectorVolumeNodeTest1 )
 simple_test( vtkMRMLViewNodeTest1 )

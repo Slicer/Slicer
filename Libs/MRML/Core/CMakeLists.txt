@@ -102,6 +102,7 @@ find_package(RapidJSON REQUIRED)
 # --------------------------------------------------------------------------
 set(include_dirs
   ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField
   ${CMAKE_CURRENT_BINARY_DIR}
   ${vtkAddon_INCLUDE_DIRS}
   ${vtkITK_INCLUDE_DIRS}
@@ -129,7 +130,7 @@ if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
   set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
 endif()
 if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
+  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h" "${CMAKE_CURRENT_SOURCE_DIR}/VectorField/*.h")
   install(
     FILES ${headers} ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
     DESTINATION include/${PROJECT_NAME} COMPONENT Development)
@@ -305,6 +306,15 @@ set(MRMLCore_SRCS
   vtkURIHandler.cxx
   # Note: when you add new node types, add
   # register code to the vtkMRMLScene constructor
+  )
+
+# Classes that are only used to display vector fields (vtkMRMLVectorFieldDisplayNode)
+set(MRMLCore_SRCS
+  ${MRMLCore_SRCS}
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkVectorFieldGeometry.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkVectorFieldGlyph.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkVectorFieldGrid.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField/vtkVectorFieldSampler.cxx
   )
 
 if(MRML_USE_vtkTeem)
@@ -491,5 +501,10 @@ endif()
 # --------------------------------------------------------------------------
 # Set INCLUDE_DIRS variable
 # --------------------------------------------------------------------------
-set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${vtkAddon_INCLUDE_DIRS} ${vtkSegmentationCore_INCLUDE_DIRS}
+set(${PROJECT_NAME}_INCLUDE_DIRS
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/VectorField
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${vtkAddon_INCLUDE_DIRS}
+  ${vtkSegmentationCore_INCLUDE_DIRS}
   CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)
