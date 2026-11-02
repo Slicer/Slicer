@@ -153,6 +153,7 @@ set(MRMLCore_SRCS
   vtkImageMapToWindowLevelAddon.cxx
   vtkImageMathematicsAddon.cxx
   vtkImplicitInvertableBoolean.cxx
+  vtkMeshDisplacementTransform.cxx
   vtkMRMLAbstractLayoutNode.cxx
   vtkMRMLAbstractViewNode.cxx
   vtkMRMLBSplineTransformNode.cxx

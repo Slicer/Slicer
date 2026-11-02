@@ -19,6 +19,7 @@
 
 class vtkCollection;
 class vtkAbstractTransform;
+class vtkMRMLModelNode;
 class vtkGeneralTransform;
 class vtkMatrix4x4;
 class vtkTransform;
@@ -303,6 +304,31 @@ public:
   /// alternative method to propagate events generated in Transform nodes
   void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
 
+  /// \name Scattered transforms
+  /// Transform to parent (or from parent, e.g. after inversion) computed from displacements at the points of the mesh of
+  /// the displacement model, which it follows: vtkScatteredBSplineTransform (smooth fit) or vtkMeshDisplacementTransform (exact).
+  /// Its parameters are saved in the scene and it is computed again from the model on load, so the node has no file.
+  ///@{
+
+  /// The scattered transform: the transform to parent, or from parent if the transform to parent is computed from it
+  /// (e.g. after inversion); nullptr if there is none.
+  vtkAbstractTransform* GetScatteredTransform();
+
+  /// Returns true if the scattered transform is the transform from parent, so that the transform
+  /// to parent is computed as its inverse.
+  bool IsScatteredTransformFromParent();
+
+  /// Returns true if the transform is computed from displacements at the points of a mesh.
+  static bool IsScatteredTransform(vtkAbstractTransform* transform);
+
+  /// The model whose mesh points hold the displacements of the scattered transform. While it is
+  /// not set, the input of the scattered transform is left as it is.
+  vtkMRMLModelNode* GetDisplacementModelNode();
+  void SetAndObserveDisplacementModelNodeID(const char* modelNodeID);
+  void SetAndObserveDisplacementModelNode(vtkMRMLModelNode* modelNode);
+
+  ///@}
+
   ///
   /// Creates a shallow copy of an input composite transform (that can contain a complex hierarchy of transforms)
   /// into a flat list of transforms. This is useful for simplifying serialization for copying and writing to file.
@@ -376,6 +402,14 @@ protected:
   ///
   /// Sets and observes a transform and deletes the inverse (so that the inverse will be computed automatically)
   virtual void SetAndObserveTransform(vtkAbstractTransform** originalTransformPtr, vtkAbstractTransform** inverseTransformPtr, vtkAbstractTransform* transform);
+
+  /// Set the scattered transform input to the displacement model mesh, or to none (identity) if the mesh lacks the
+  /// displacement array. Does nothing if there is no scattered transform or no displacement model.
+  void UpdateScatteredTransformInput();
+
+  void OnNodeReferenceAdded(vtkMRMLNodeReference* reference) override;
+  void OnNodeReferenceModified(vtkMRMLNodeReference* reference) override;
+  void OnNodeReferenceRemoved(vtkMRMLNodeReference* reference) override;
 
   ///
   /// These transforms store the transforms that were set externally.

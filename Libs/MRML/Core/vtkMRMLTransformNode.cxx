@@ -20,15 +20,25 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLLinearTransformNode.h"
 
 #include "vtkMRMLLinearTransformSequenceStorageNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
 #include "vtkOrientedBSplineTransform.h"
 #include "vtkOrientedGridTransform.h"
+#include "vtkMeshDisplacementTransform.h"
+
+// vtkAddon includes
+#include <vtkScatteredBSplineTransform.h>
 
 // VTK includes
+#include <vtkBSplineTransform.h>
 #include <vtkCommand.h>
 #include <vtkCollection.h>
+#include <vtkDataArray.h>
+#include <vtkIntArray.h>
+#include <vtkPointData.h>
+#include <vtkPointSet.h>
 #include <vtkCollectionIterator.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
@@ -42,8 +52,55 @@ Version:   $Revision: 1.14 $
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
+#include <limits>
+#include <map>
 #include <sstream>
 #include <stack>
+#include <vector>
+
+//----------------------------------------------------------------------------
+namespace
+{
+/// Node reference role of the model whose mesh points hold the displacements of a scattered
+/// transform
+const char DisplacementModelReferenceRole[] = "displacementModel";
+
+/// Names of the border modes of vtkBSplineTransform, as they are saved in the scene
+const char* GetBorderModeAsString(int borderMode)
+{
+  switch (borderMode)
+  {
+    case VTK_BSPLINE_ZERO: return "Zero";
+    case VTK_BSPLINE_ZERO_AT_BORDER: return "ZeroAtBorder";
+    default: return "Edge";
+  }
+}
+int GetBorderModeFromString(const std::string& name)
+{
+  if (name == "Zero")
+  {
+    return VTK_BSPLINE_ZERO;
+  }
+  if (name == "ZeroAtBorder")
+  {
+    return VTK_BSPLINE_ZERO_AT_BORDER;
+  }
+  return VTK_BSPLINE_EDGE;
+}
+
+/// Values read from a "scatteredX" attribute, as a list of numbers
+std::vector<double> ParseNumbers(const char* text)
+{
+  std::vector<double> numbers;
+  std::stringstream ss(text ? text : "");
+  double number = 0.0;
+  while (ss >> number)
+  {
+    numbers.push_back(number);
+  }
+  return numbers;
+}
+} // namespace
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTransformNode);
@@ -63,6 +120,12 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
 
   this->DefaultSequenceStorageNodeClassName = "vtkMRMLTransformSequenceStorageNode";
+
+  // The displacement model of a scattered transform is observed however the reference is made,
+  // also when it is read from a scene: a mesh that changes changes the transform
+  vtkNew<vtkIntArray> displacementModelEvents;
+  displacementModelEvents->InsertNextValue(vtkMRMLModelNode::MeshModifiedEvent);
+  this->AddNodeReferenceRole(DisplacementModelReferenceRole, nullptr, displacementModelEvents);
 }
 
 //----------------------------------------------------------------------------
@@ -81,6 +144,49 @@ vtkMRMLTransformNode::~vtkMRMLTransformNode()
 void vtkMRMLTransformNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+
+  // A scattered transform has no file of its own: its parameters are saved here, and it is
+  // computed again from the displacement model when the scene is loaded
+  vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(this->GetScatteredTransform());
+  vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(this->GetScatteredTransform());
+  if (!bsplineTransform && !meshTransform)
+  {
+    return;
+  }
+  of << " scatteredTransform=\"" << (bsplineTransform ? "BSpline" : "Mesh") << "\"";
+  // Saved exactly, because the transform is fitted again from them when the scene is loaded:
+  // a fitting domain or a spacing that is rounded gives a slightly different transform
+  struct PrecisionRestorer
+  {
+    ostream& Stream;
+    std::streamsize Precision;
+    ~PrecisionRestorer() { this->Stream.precision(this->Precision); }
+  } precisionRestorer{ of, of.precision(std::numeric_limits<double>::max_digits10) };
+  if (this->IsScatteredTransformFromParent())
+  {
+    of << " scatteredTransformFromParent=\"true\"";
+  }
+  const char* arrayName = (bsplineTransform ? bsplineTransform->GetDisplacementArrayName() : meshTransform->GetDisplacementArrayName());
+  if (arrayName)
+  {
+    of << " scatteredDisplacementArrayName=\"" << vtkMRMLNode::XMLAttributeEncodeString(arrayName) << "\"";
+  }
+  of << " scatteredDisplacementScale=\"" << (bsplineTransform ? bsplineTransform->GetDisplacementScale() : meshTransform->GetDisplacementScale()) << "\"";
+  if (!bsplineTransform)
+  {
+    return;
+  }
+  double* spacing = bsplineTransform->GetControlPointSpacing();
+  of << " scatteredControlPointSpacing=\"" << spacing[0] << " " << spacing[1] << " " << spacing[2] << "\"";
+  of << " scatteredMinimumControlPointSpacing=\"" << bsplineTransform->GetMinimumControlPointSpacing() << "\"";
+  of << " scatteredMaximumNumberOfLevels=\"" << bsplineTransform->GetMaximumNumberOfLevels() << "\"";
+  of << " scatteredTolerance=\"" << bsplineTransform->GetTolerance() << "\"";
+  of << " scatteredUseLinearApproximation=\"" << (bsplineTransform->GetUseLinearApproximation() ? "true" : "false") << "\"";
+  of << " scatteredAutomaticGridBounds=\"" << (bsplineTransform->GetAutomaticGridBounds() ? "true" : "false") << "\"";
+  double* bounds = bsplineTransform->GetGridBounds();
+  of << " scatteredGridBounds=\"" << bounds[0] << " " << bounds[1] << " " << bounds[2] << " " << bounds[3] << " " << bounds[4] << " " << bounds[5] << "\"";
+  of << " scatteredGridBoundsMargin=\"" << bsplineTransform->GetGridBoundsMargin() << "\"";
+  of << " scatteredBorderMode=\"" << GetBorderModeAsString(bsplineTransform->GetBorderMode()) << "\"";
 }
 
 //----------------------------------------------------------------------------
@@ -90,12 +196,27 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
 
   Superclass::ReadXMLAttributes(atts);
 
+  // Parameters of a scattered transform, which is created when all of them are read
+  std::string scatteredTransformType;
+  std::map<std::string, std::string> scatteredParameters;
+
   const char* attName;
   const char* attValue;
   while (*atts != nullptr)
   {
     attName = *(atts++);
     attValue = *(atts++);
+
+    if (!strcmp(attName, "scatteredTransform"))
+    {
+      scatteredTransformType = attValue;
+      continue;
+    }
+    if (!strncmp(attName, "scattered", 9))
+    {
+      scatteredParameters[attName] = attValue;
+      continue;
+    }
 
     // For backward compatibility only
     if (!strcmp(attName, "readWriteAsTransformToParent"))
@@ -111,7 +232,220 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
     }
   }
 
+  if (scatteredTransformType == "BSpline" || scatteredTransformType == "Mesh")
+  {
+    auto fromParentIt = scatteredParameters.find("scatteredTransformFromParent");
+    bool fromParent = (fromParentIt != scatteredParameters.end() && fromParentIt->second == "true");
+    auto getParameter = [&scatteredParameters](const char* name) -> const char*
+    {
+      auto it = scatteredParameters.find(name);
+      return (it != scatteredParameters.end() ? it->second.c_str() : nullptr);
+    };
+    const char* arrayName = getParameter("scatteredDisplacementArrayName");
+    std::vector<double> scale = ParseNumbers(getParameter("scatteredDisplacementScale"));
+    if (scatteredTransformType == "Mesh")
+    {
+      vtkNew<vtkMeshDisplacementTransform> meshTransform;
+      meshTransform->SetDisplacementArrayName(arrayName);
+      if (scale.size() == 1)
+      {
+        meshTransform->SetDisplacementScale(scale[0]);
+      }
+      if (fromParent)
+      {
+        this->SetAndObserveTransformFromParent(meshTransform);
+      }
+      else
+      {
+        this->SetAndObserveTransformToParent(meshTransform);
+      }
+    }
+    else
+    {
+      vtkNew<vtkScatteredBSplineTransform> bsplineTransform;
+      bsplineTransform->SetDisplacementArrayName(arrayName);
+      if (scale.size() == 1)
+      {
+        bsplineTransform->SetDisplacementScale(scale[0]);
+      }
+      std::vector<double> numbers = ParseNumbers(getParameter("scatteredControlPointSpacing"));
+      if (numbers.size() == 3)
+      {
+        bsplineTransform->SetControlPointSpacing(numbers.data());
+      }
+      numbers = ParseNumbers(getParameter("scatteredMinimumControlPointSpacing"));
+      if (numbers.size() == 1)
+      {
+        bsplineTransform->SetMinimumControlPointSpacing(numbers[0]);
+      }
+      numbers = ParseNumbers(getParameter("scatteredMaximumNumberOfLevels"));
+      if (numbers.size() == 1)
+      {
+        bsplineTransform->SetMaximumNumberOfLevels(static_cast<int>(numbers[0]));
+      }
+      numbers = ParseNumbers(getParameter("scatteredTolerance"));
+      if (numbers.size() == 1)
+      {
+        bsplineTransform->SetTolerance(numbers[0]);
+      }
+      if (const char* useLinearApproximation = getParameter("scatteredUseLinearApproximation"))
+      {
+        bsplineTransform->SetUseLinearApproximation(!strcmp(useLinearApproximation, "true"));
+      }
+      if (const char* automaticGridBounds = getParameter("scatteredAutomaticGridBounds"))
+      {
+        bsplineTransform->SetAutomaticGridBounds(!strcmp(automaticGridBounds, "true"));
+      }
+      numbers = ParseNumbers(getParameter("scatteredGridBounds"));
+      if (numbers.size() == 6)
+      {
+        bsplineTransform->SetGridBounds(numbers.data());
+      }
+      numbers = ParseNumbers(getParameter("scatteredGridBoundsMargin"));
+      if (numbers.size() == 1)
+      {
+        bsplineTransform->SetGridBoundsMargin(numbers[0]);
+      }
+      if (const char* borderMode = getParameter("scatteredBorderMode"))
+      {
+        bsplineTransform->SetBorderMode(GetBorderModeFromString(borderMode));
+      }
+      if (fromParent)
+      {
+        this->SetAndObserveTransformFromParent(bsplineTransform);
+      }
+      else
+      {
+        this->SetAndObserveTransformToParent(bsplineTransform);
+      }
+    }
+  }
+
   this->EndModify(disabledModify);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformNode::IsScatteredTransform(vtkAbstractTransform* transform)
+{
+  return (vtkScatteredBSplineTransform::SafeDownCast(transform) != nullptr || vtkMeshDisplacementTransform::SafeDownCast(transform) != nullptr);
+}
+
+//----------------------------------------------------------------------------
+vtkAbstractTransform* vtkMRMLTransformNode::GetScatteredTransform()
+{
+  if (vtkMRMLTransformNode::IsScatteredTransform(this->TransformToParent))
+  {
+    return this->TransformToParent;
+  }
+  // Computed from the inverse: the transform to parent is computed from it
+  if (vtkMRMLTransformNode::IsScatteredTransform(this->TransformFromParent))
+  {
+    return this->TransformFromParent;
+  }
+  return nullptr;
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformNode::IsScatteredTransformFromParent()
+{
+  vtkAbstractTransform* scatteredTransform = this->GetScatteredTransform();
+  return (scatteredTransform != nullptr && scatteredTransform == this->TransformFromParent);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLModelNode* vtkMRMLTransformNode::GetDisplacementModelNode()
+{
+  return vtkMRMLModelNode::SafeDownCast(this->GetNodeReference(DisplacementModelReferenceRole));
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::SetAndObserveDisplacementModelNodeID(const char* modelNodeID)
+{
+  // The events to observe come from the role, which was registered with them
+  this->SetAndObserveNodeReferenceID(DisplacementModelReferenceRole, modelNodeID);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::SetAndObserveDisplacementModelNode(vtkMRMLModelNode* modelNode)
+{
+  this->SetAndObserveDisplacementModelNodeID(modelNode ? modelNode->GetID() : nullptr);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::UpdateScatteredTransformInput()
+{
+  vtkAbstractTransform* scatteredTransform = this->GetScatteredTransform();
+  vtkMRMLModelNode* modelNode = this->GetDisplacementModelNode();
+  if (!scatteredTransform || !modelNode)
+  {
+    return;
+  }
+  vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(scatteredTransform);
+  vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(scatteredTransform);
+  const char* arrayName = (bsplineTransform ? bsplineTransform->GetDisplacementArrayName() : meshTransform->GetDisplacementArrayName());
+  // A mesh without the displacements is not used: the transform is then the identity, instead
+  // of reporting an error every time it is used
+  vtkPointSet* mesh = modelNode->GetMesh();
+  vtkDataArray* displacements = nullptr;
+  if (mesh && mesh->GetNumberOfPoints() > 0)
+  {
+    displacements = (arrayName && arrayName[0] != '\0' ? mesh->GetPointData()->GetArray(arrayName) : mesh->GetPointData()->GetVectors());
+  }
+  vtkPointSet* input = (displacements && displacements->GetNumberOfComponents() == 3 ? mesh : nullptr);
+  if (bsplineTransform)
+  {
+    bsplineTransform->SetInputPointSet(input);
+  }
+  else
+  {
+    meshTransform->SetInputPointSet(input);
+  }
+  // Computed now, not on first use, which can be during an observer notification:
+  // vtkAbstractTransform::Update() is not reentrant (see SetAndObserveTransform)
+  scatteredTransform->Update();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceAdded(reference);
+  if (reference && reference->GetReferenceRole() && !strcmp(reference->GetReferenceRole(), DisplacementModelReferenceRole) && this->GetScatteredTransform())
+  {
+    this->UpdateScatteredTransformInput();
+    this->TransformModified();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceModified(reference);
+  if (reference && reference->GetReferenceRole() && !strcmp(reference->GetReferenceRole(), DisplacementModelReferenceRole) && this->GetScatteredTransform())
+  {
+    this->UpdateScatteredTransformInput();
+    this->TransformModified();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceRemoved(reference);
+  if (reference && reference->GetReferenceRole() && !strcmp(reference->GetReferenceRole(), DisplacementModelReferenceRole) && this->GetScatteredTransform())
+  {
+    // The mesh came from the model, so it goes with it
+    vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(this->GetScatteredTransform());
+    vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(this->GetScatteredTransform());
+    if (bsplineTransform)
+    {
+      bsplineTransform->SetInputPointSet(nullptr);
+    }
+    if (meshTransform)
+    {
+      meshTransform->SetInputPointSet(nullptr);
+    }
+    this->TransformModified();
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -845,6 +1179,11 @@ bool vtkMRMLTransformNode::IsAbstractTransformComputedFromInverse(vtkAbstractTra
 //----------------------------------------------------------------------------
 vtkMRMLStorageNode* vtkMRMLTransformNode::CreateDefaultStorageNode()
 {
+  // A scattered transform is saved in the scene and computed again from its model
+  if (this->GetScatteredTransform())
+  {
+    return nullptr;
+  }
   vtkMRMLScene* scene = this->GetScene();
   if (scene == nullptr)
   {
@@ -1190,6 +1529,10 @@ void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** origina
   // Since vtkAbstractTransform::Update() is not reentrant, this should be avoided, because it can lead to crash
   // (trying to lock an internal mutex throws an exception on Windows, and the recursive calls end up crashing
   // the application on Linux and macOS).
+  // The input of a scattered transform is the mesh of the displacement model. It is set
+  // before the update, because setting it afterwards would leave the transform to be
+  // computed the next time it is used.
+  this->UpdateScatteredTransformInput();
   if (*originalTransformPtr)
   {
     (*originalTransformPtr)->Update();
@@ -1217,6 +1560,25 @@ void vtkMRMLTransformNode::SetAndObserveTransformFromParent(vtkAbstractTransform
 void vtkMRMLTransformNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  // The displacement model mesh changed. An in-place change makes the transform newer without an event, and a new input's
+  // event does not reach this node while it processes this one, so everything transformed by this node is notified here.
+  vtkMRMLModelNode* displacementModelNode = this->GetDisplacementModelNode();
+  if (displacementModelNode && caller == displacementModelNode && event == vtkMRMLModelNode::MeshModifiedEvent)
+  {
+    if (this->GetScatteredTransform())
+    {
+      this->UpdateScatteredTransformInput();
+      this->TransformModified();
+    }
+    return;
+  }
+  // A parameter of the scattered transform changed, for example its displacement array, so the
+  // mesh may be usable now, or not any more
+  if (event == vtkCommand::ModifiedEvent && caller != nullptr && caller == this->GetScatteredTransform())
+  {
+    this->UpdateScatteredTransformInput();
+  }
 
   if (event == vtkCommand::ModifiedEvent && caller != nullptr)
   {
