@@ -17,6 +17,8 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkCellArray.h>
+#include <vtkDoubleArray.h>
 #include <vtkGeometryFilter.h>
 #include <vtkNew.h>
 #include <vtkPoints.h>
@@ -38,6 +40,7 @@ int TestSetMesh(bool observeMeshBeforeObserveDisplay, bool observeDisplayBeforeA
 
 int TestScalarRange(vtkPointSet* mesh);
 int TestThreshold(vtkPointSet* mesh);
+int TestScalarComponent();
 int TestMergeCoincidentPoints();
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
@@ -58,6 +61,7 @@ int vtkMRMLModelDisplayNodeTest1(int, char*[])
   CHECK_EXIT_SUCCESS(TestThreshold(poly.GetPointer()));
 
   CHECK_EXIT_SUCCESS(TestMergeCoincidentPoints());
+  CHECK_EXIT_SUCCESS(TestScalarComponent());
 
   CHECK_EXIT_SUCCESS(TestSetMesh(true, true, true));
   CHECK_EXIT_SUCCESS(TestSetMesh(true, true, false));
@@ -160,6 +164,89 @@ int TestThreshold(vtkPointSet* mesh)
   mdNode->ThresholdEnabledOff();
   CHECK_DOUBLE(mdNode->GetOutputMesh()->GetNumberOfCells(), mesh->GetNumberOfCells());
 
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+/// A multi-component array is shown, ranged and thresholded by the chosen component, or by
+/// its magnitude
+int TestScalarComponent()
+{
+  // Five points, each a vertex cell, with vectors (i, 10 - i, 100)
+  vtkNew<vtkPolyData> pointCloud;
+  vtkNew<vtkPoints> points;
+  vtkNew<vtkCellArray> vertices;
+  vtkNew<vtkDoubleArray> vectors;
+  vectors->SetName("Vectors");
+  vectors->SetNumberOfComponents(3);
+  for (int i = 0; i < 5; ++i)
+  {
+    points->InsertNextPoint(i, 0.0, 0.0);
+    vtkIdType pointId = i;
+    vertices->InsertNextCell(1, &pointId);
+    vectors->InsertNextTuple3(i, 10 - i, 100);
+  }
+  pointCloud->SetPoints(points);
+  pointCloud->SetVerts(vertices);
+  pointCloud->GetPointData()->AddArray(vectors);
+
+  vtkNew<vtkMRMLModelNode> modelNode;
+  modelNode->SetAndObserveMesh(pointCloud);
+  vtkNew<vtkMRMLModelDisplayNode> displayNode;
+  displayNode->SetInputMeshConnection(modelNode->GetMeshConnection());
+  displayNode->SetActiveScalarName("Vectors");
+  CHECK_INT(displayNode->GetActiveScalarComponent(), -1);
+  CHECK_INT(displayNode->GetActiveScalarNumberOfComponents(), 3);
+
+  // The magnitude by default
+  double magnitudeRange[2] = { 0.0, -1.0 };
+  vectors->GetRange(magnitudeRange, -1);
+  double range[2] = { 0.0, -1.0 };
+  displayNode->GetScalarRange(range);
+  CHECK_DOUBLE(range[0], magnitudeRange[0]);
+  CHECK_DOUBLE(range[1], magnitudeRange[1]);
+  CHECK_INT(displayNode->GetEffectiveActiveScalarComponent(vectors), -1);
+
+  // A component: the range follows it
+  displayNode->SetActiveScalarComponent(1);
+  displayNode->GetScalarRange(range);
+  CHECK_DOUBLE(range[0], 6.0);
+  CHECK_DOUBLE(range[1], 10.0);
+  CHECK_INT(displayNode->GetEffectiveActiveScalarComponent(vectors), 1);
+  displayNode->SetActiveScalarComponent(0);
+  displayNode->GetScalarRange(range);
+  CHECK_DOUBLE(range[0], 0.0);
+  CHECK_DOUBLE(range[1], 4.0);
+
+  // A component that the array does not have shows the magnitude; a single-component array
+  // is shown as it is
+  CHECK_INT(vtkMRMLDisplayNode::GetEffectiveScalarComponent(vectors, 5), -1);
+  vtkNew<vtkDoubleArray> scalars;
+  scalars->SetNumberOfComponents(1);
+  CHECK_INT(vtkMRMLDisplayNode::GetEffectiveScalarComponent(scalars, 1), 0);
+  CHECK_INT(vtkMRMLDisplayNode::GetEffectiveScalarComponent(scalars, -1), 0);
+  // Below -1 is the magnitude
+  displayNode->SetActiveScalarComponent(-5);
+  CHECK_INT(displayNode->GetActiveScalarComponent(), -1);
+
+  // The threshold uses the same value as the colors
+  displayNode->ScalarVisibilityOn();
+  displayNode->SetActiveScalarComponent(0);
+  displayNode->ThresholdEnabledOn();
+  displayNode->SetThresholdRange(0.5, 3.5);
+  CHECK_INT(static_cast<int>(displayNode->GetOutputMesh()->GetNumberOfCells()), 3);
+  displayNode->SetActiveScalarComponent(1);
+  displayNode->SetThresholdRange(8.5, 10.5);
+  CHECK_INT(static_cast<int>(displayNode->GetOutputMesh()->GetNumberOfCells()), 2);
+  // All magnitudes are above 100
+  displayNode->SetActiveScalarComponent(-1);
+  CHECK_INT(static_cast<int>(displayNode->GetOutputMesh()->GetNumberOfCells()), 0);
+
+  // Copied with the other display properties
+  vtkNew<vtkMRMLModelDisplayNode> copiedNode;
+  displayNode->SetActiveScalarComponent(2);
+  copiedNode->Copy(displayNode);
+  CHECK_INT(copiedNode->GetActiveScalarComponent(), 2);
   return EXIT_SUCCESS;
 }
 

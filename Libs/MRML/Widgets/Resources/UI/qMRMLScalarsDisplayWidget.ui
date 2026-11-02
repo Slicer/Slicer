@@ -47,8 +47,27 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="2">
+   <item row="1" column="1">
     <widget class="ctkVTKDataSetArrayComboBox" name="ActiveScalarComboBox"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QSpinBox" name="ActiveScalarComponentSpinBox">
+     <property name="toolTip">
+      <string>Component of a multi-component array (such as a vector) that the colors, the displayed range and the threshold use. Magnitude uses the length of the vectors.</string>
+     </property>
+     <property name="specialValueText">
+      <string>Magnitude</string>
+     </property>
+     <property name="minimum">
+      <number>-1</number>
+     </property>
+     <property name="maximum">
+      <number>2</number>
+     </property>
+     <property name="value">
+      <number>-1</number>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="ScalarsColorTableLabel">

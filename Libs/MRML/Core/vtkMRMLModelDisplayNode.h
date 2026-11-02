@@ -210,6 +210,10 @@ protected:
   /// its ActiveScalarName and its ActiveAttributeLocation
   virtual void UpdateAssignedAttribute() override;
 
+  /// The threshold of a multi-component array uses the same value as the colors: the component
+  /// chosen by ActiveScalarComponent, or the magnitude.
+  void UpdateThresholdComponent();
+
   /// Filter that changes the active scalar of the input mesh
   /// using the ActiveScalarName and ActiveAttributeLocation properties.
   /// This can be useful to specify what field array is the color array that

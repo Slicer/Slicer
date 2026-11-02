@@ -108,7 +108,7 @@ The following keyboard shortcuts are active when the markups toolbar is displaye
     - Outlined Behind Slice Plane: Control point projection is displayed filled (opacity = Projection Opacity) when on top of slice plane, outlined when behind, and with full opacity when in the plane. Outline isn't used for some glyphs (Dash2D, Cross2D, Starburst).
 - Scalars: Color markup according to a scalar, e.g. a per-control-point measurement (see Measurements section below)
   - Visibility: Controls the visibility of the scalars on the markups node.
-  - Active Scalar: Select the scalar value that should be displayed.
+  - Active Scalar: Select the scalar value that should be displayed. For an array with more than one component, the box next to it chooses between the magnitude and one component.
   - Color Table: Select the color table that should be used to display the scalars.
   - Scalar Range Mode: Select the mode that should be used to control the mapping the scalar range onto the color node.
     - Manual: range is set manually

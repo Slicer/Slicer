@@ -23,6 +23,7 @@
 
 class vtkAlgorithmOutput;
 class vtkMRMLClipNode;
+class vtkDataArray;
 class vtkDataSet;
 class vtkImageData;
 class vtkMRMLColorNode;
@@ -560,6 +561,23 @@ public:
   /// scalar name and location are temporarily inconsistent.
   virtual void SetActiveScalar(const char* scalarName, int location);
 
+  ///@{
+  /// Component of a multi-component active scalar array used for colors, scalar range and threshold: -1 for the
+  /// magnitude, 0 or more for a component (see GetEffectiveScalarComponent()). Default is -1.
+  virtual void SetActiveScalarComponent(int component);
+  vtkGetMacro(ActiveScalarComponent, int);
+  ///@}
+
+  /// Component of an array for VTK color mapping and thresholding (vtkMapper::SetArrayComponent(), GetRange()):
+  /// 0 for a single-component array, the requested component if the array has it, -1 (magnitude) otherwise.
+  static int GetEffectiveScalarComponent(vtkDataArray* array, int component);
+  /// GetEffectiveScalarComponent() for ActiveScalarComponent
+  int GetEffectiveActiveScalarComponent(vtkDataArray* array);
+
+  /// Number of components of the colored values: those of the active scalar array (1 if there is none).
+  /// Overridden by subclasses that color by values the active scalar array does not hold.
+  virtual int GetActiveScalarNumberOfComponents();
+
   /// Get data set containing the scalar arrays for this node type.
   /// For example for models it is the input mesh, and for markups the curve poly data
   virtual vtkDataSet* GetScalarDataSet() { return nullptr; };
@@ -705,6 +723,9 @@ protected:
   /// \sa SetActiveAttributeLocation(), GetActiveAttributeLocation(),
   /// ActiveScalarName
   int ActiveAttributeLocation;
+  /// Component of a multi-component active scalar array that is shown, -1 for the magnitude.
+  /// \sa SetActiveScalarComponent()
+  int ActiveScalarComponent{ -1 };
 
   /// Opacity of the surface expressed as a number from 0 to 1.
   /// Opaque (1.) by default.

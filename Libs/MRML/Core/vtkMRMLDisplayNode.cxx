@@ -172,6 +172,7 @@ void vtkMRMLDisplayNode::WriteXML(ostream& of, int nIndent)
   vtkMRMLWriteXMLStringMacro(colorNodeID, ColorNodeID);
   vtkMRMLWriteXMLStringMacro(activeScalarName, ActiveScalarName);
   vtkMRMLWriteXMLStringMacro(activeAttributeLocation, ActiveAttributeLocationAsString);
+  vtkMRMLWriteXMLIntMacro(activeScalarComponent, ActiveScalarComponent);
   vtkMRMLWriteXMLStdStringVectorMacro(viewNodeRef, ViewNodeIDs, std::vector);
   vtkMRMLWriteXMLBooleanMacro(showInAllViewsByDefault, ShowInAllViewsByDefault);
   vtkMRMLWriteXMLBooleanMacro(folderDisplayOverrideAllowed, FolderDisplayOverrideAllowed);
@@ -229,6 +230,7 @@ void vtkMRMLDisplayNode::ReadXMLAttributes(const char** atts)
   vtkMRMLReadXMLStringMacro(colorNodeRef, ColorNodeID);
   vtkMRMLReadXMLStringMacro(activeScalarName, ActiveScalarName);
   vtkMRMLReadXMLStringMacro(activeAttributeLocation, ActiveAttributeLocationFromString);
+  vtkMRMLReadXMLIntMacro(activeScalarComponent, ActiveScalarComponent);
   vtkMRMLReadXMLBooleanMacro(folderDisplayOverrideAllowed, FolderDisplayOverrideAllowed);
   vtkMRMLReadXMLEnumMacro(showMode, ShowMode);
   if (!strcmp(xmlReadAttName, "autoScalarRange"))
@@ -308,6 +310,7 @@ void vtkMRMLDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/
   this->SetTextureImageDataConnection(node->TextureImageDataConnection);
   this->SetAndObserveColorNodeID(node->ColorNodeID);
   this->SetActiveScalarName(node->ActiveScalarName);
+  this->SetActiveScalarComponent(node->ActiveScalarComponent);
   this->SetFolderDisplayOverrideAllowed(node->FolderDisplayOverrideAllowed);
   this->SetShowMode(node->ShowMode);
   this->SetShowInAllViewsByDefault(node->ShowInAllViewsByDefault);
@@ -355,6 +358,7 @@ void vtkMRMLDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintStringMacro(ColorNodeID);
   vtkMRMLPrintStringMacro(ActiveScalarName);
   vtkMRMLPrintStringMacro(ActiveAttributeLocationAsString);
+  vtkMRMLPrintIntMacro(ActiveScalarComponent);
   vtkMRMLPrintStdStringVectorMacro(ViewNodeIDs, std::vector);
   vtkMRMLPrintBooleanMacro(FolderDisplayOverrideAllowed);
   vtkMRMLPrintEnumMacro(ShowMode);
@@ -879,7 +883,9 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
     vtkDataArray* dataArray = this->GetActiveScalarArray();
     if (dataArray)
     {
-      dataArray->GetRange(newScalarRange);
+      // Multi-component arrays are colored by the magnitude (component -1 in VTK) or the chosen component,
+      // so the range is the range of those values.
+      dataArray->GetRange(newScalarRange, this->GetEffectiveActiveScalarComponent(dataArray));
     }
   }
   else if (flag == vtkMRMLDisplayNode::UseColorNodeScalarRange)
@@ -918,6 +924,44 @@ void vtkMRMLDisplayNode::UpdateScalarRange()
   }
 
   this->SetScalarRange(newScalarRange);
+}
+
+//---------------------------------------------------------------------------
+void vtkMRMLDisplayNode::SetActiveScalarComponent(int component)
+{
+  component = std::max(-1, component);
+  if (component == this->ActiveScalarComponent)
+  {
+    return;
+  }
+  MRMLNodeModifyBlocker blocker(this);
+  this->ActiveScalarComponent = component;
+  this->Modified();
+  // The range of the values that are shown changes with them
+  this->UpdateScalarRange();
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLDisplayNode::GetEffectiveScalarComponent(vtkDataArray* array, int component)
+{
+  if (!array || array->GetNumberOfComponents() <= 1)
+  {
+    return 0;
+  }
+  return (component >= 0 && component < array->GetNumberOfComponents() ? component : -1);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLDisplayNode::GetEffectiveActiveScalarComponent(vtkDataArray* array)
+{
+  return vtkMRMLDisplayNode::GetEffectiveScalarComponent(array, this->ActiveScalarComponent);
+}
+
+//---------------------------------------------------------------------------
+int vtkMRMLDisplayNode::GetActiveScalarNumberOfComponents()
+{
+  vtkDataArray* array = this->GetActiveScalarArray();
+  return (array ? array->GetNumberOfComponents() : 1);
 }
 
 //---------------------------------------------------------------------------

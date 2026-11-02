@@ -44,6 +44,7 @@
 #include <vtkExtractCells.h>
 #include <vtkGeneralTransform.h>
 #include <vtkIdList.h>
+#include <vtkDataArray.h>
 #include <vtkLookupTable.h>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
@@ -633,6 +634,15 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal::UpdateDisplayNodePipeline
           dNodeLUT->SetAlpha(hierarchyOpacity * displayNode->GetSliceIntersectionOpacity());
         }
         mapper->SetLookupTable(dNodeLUT);
+        // A multi-component array is colored by the chosen component or by its magnitude, as
+        // in 3D views. A mapper only uses the vector mode of its table if its own array component
+        // is negative.
+        vtkDataArray* activeScalarArray = displayNode->GetActiveScalarArray();
+        mapper->SetArrayComponent(activeScalarArray ? displayNode->GetEffectiveActiveScalarComponent(activeScalarArray) : 0);
+        if (mapper->GetLookupTable() && activeScalarArray && activeScalarArray->GetNumberOfComponents() > 1)
+        {
+          vtkMRMLModelDisplayableManager::SetLookupTableComponent(mapper->GetLookupTable(), displayNode->GetEffectiveActiveScalarComponent(activeScalarArray));
+        }
       }
 
       // Set scalar range
