@@ -43,6 +43,9 @@
 // Colors MRML and Logic includes
 #include <vtkSlicerColorLogic.h>
 #include <vtkMRMLColorLegendDisplayNode.h>
+#include <qMRMLColorLegendGroupBox.h>
+#include <qMRMLVectorFieldDisplayWidget.h>
+#include <vtkMRMLVectorFieldDisplayNode.h>
 
 // MRML includes
 #include "vtkMRMLFolderDisplayNode.h"
@@ -135,6 +138,22 @@ void qSlicerModelsModuleWidget::setup()
   connect(d->ModelDisplayWidget, SIGNAL(displayNodeChanged()), this, SLOT(onDisplayNodeChanged()));
 
   connect(d->ColorLegendCollapsibleGroupBox, SIGNAL(toggled(bool)), this, SLOT(onColorLegendCollapsibleGroupBoxToggled(bool)));
+  // The legend explains the scalars the model is colored by, so it belongs in that section
+  d->ModelDisplayWidget->addScalarsWidget(d->ColorLegendCollapsibleGroupBox);
+
+  // The vector field has a color legend of its own, for the colors of the field
+  qMRMLVectorFieldDisplayWidget* vectorFieldWidget = d->ModelDisplayWidget->vectorFieldDisplayWidget();
+  if (vectorFieldWidget)
+  {
+    qMRMLColorLegendGroupBox* vectorFieldColorLegend = new qMRMLColorLegendGroupBox;
+    vectorFieldColorLegend->setObjectName("VectorFieldColorLegendGroupBox");
+    vectorFieldWidget->addColoringWidget(vectorFieldColorLegend);
+    QObject::connect(vectorFieldWidget,
+                     &qMRMLVectorFieldDisplayWidget::mrmlVectorFieldDisplayNodeChanged,
+                     vectorFieldColorLegend,
+                     [vectorFieldColorLegend](vtkMRMLVectorFieldDisplayNode* displayNode) { vectorFieldColorLegend->setPrimaryDisplayNode(displayNode); });
+    vectorFieldColorLegend->setPrimaryDisplayNode(vectorFieldWidget->mrmlVectorFieldDisplayNode());
+  }
 
   this->Superclass::setup();
 }

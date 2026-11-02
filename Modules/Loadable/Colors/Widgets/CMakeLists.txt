@@ -12,6 +12,8 @@ set(${KIT}_INCLUDE_DIRECTORIES
 set(${KIT}_SRCS
   qMRMLColorLegendDisplayNodeWidget.cxx
   qMRMLColorLegendDisplayNodeWidget.h
+  qMRMLColorLegendGroupBox.cxx
+  qMRMLColorLegendGroupBox.h
   qMRMLColorListView.cxx
   qMRMLColorListView.h
   qMRMLColorPickerWidget.cxx

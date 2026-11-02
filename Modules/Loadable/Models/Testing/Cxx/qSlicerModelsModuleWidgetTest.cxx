@@ -36,10 +36,15 @@
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLVectorFieldDisplayNode.h>
 #include <vtkMRMLViewNode.h>
 
 // Subject hierarchy widgets
 #include <qMRMLSubjectHierarchyTreeView.h>
+
+// Widgets includes
+#include <qMRMLColorLegendGroupBox.h>
+#include <qMRMLVectorFieldDisplayWidget.h>
 
 // VTK includes
 #include <vtkNew.h>
@@ -52,7 +57,42 @@ class qSlicerModelsModuleWidgetTester : public QObject
 private:
 private slots:
   void testClearCurrentNode();
+  void testVectorFieldColorLegend();
 };
+
+// ----------------------------------------------------------------------------
+void qSlicerModelsModuleWidgetTester::testVectorFieldColorLegend()
+{
+  // A model with a vector field display node: the coloring of the field has a color legend
+  // section of its own, for the display node of the field
+  vtkNew<vtkMRMLScene> scene;
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLModelNode"));
+  modelNode->CreateDefaultDisplayNodes();
+  vtkMRMLVectorFieldDisplayNode* fieldDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorFieldDisplayNode"));
+  modelNode->AddAndObserveDisplayNodeID(fieldDisplayNode->GetID());
+
+  qSlicerModelsModule module;
+  TESTING_OUTPUT_ASSERT_WARNINGS_BEGIN();
+  module.initialize(nullptr);
+  TESTING_OUTPUT_ASSERT_WARNINGS_END(); // warning due to using 0 as application logic
+  module.setMRMLScene(scene.GetPointer());
+  QWidget* moduleWidget = dynamic_cast<QWidget*>(module.widgetRepresentation());
+  moduleWidget->show();
+
+  qMRMLColorLegendGroupBox* vectorFieldColorLegend = moduleWidget->findChild<qMRMLColorLegendGroupBox*>("VectorFieldColorLegendGroupBox");
+  QVERIFY(vectorFieldColorLegend != nullptr);
+  // It is part of the coloring of the field
+  qMRMLVectorFieldDisplayWidget* vectorFieldWidget = moduleWidget->findChild<qMRMLVectorFieldDisplayWidget*>();
+  QVERIFY(vectorFieldWidget != nullptr);
+  QVERIFY(vectorFieldWidget->isAncestorOf(vectorFieldColorLegend));
+
+  // It follows the display node that the vector field widget edits
+  vectorFieldWidget->setMRMLVectorFieldDisplayNode(fieldDisplayNode);
+  QCOMPARE(vectorFieldColorLegend->primaryDisplayNode(), static_cast<vtkMRMLDisplayNode*>(fieldDisplayNode));
+  vectorFieldWidget->setMRMLVectorFieldDisplayNode(static_cast<vtkMRMLVectorFieldDisplayNode*>(nullptr));
+  QVERIFY(vectorFieldColorLegend->primaryDisplayNode() == nullptr);
+  scene->Clear(0);
+}
 
 // ----------------------------------------------------------------------------
 void qSlicerModelsModuleWidgetTester::testClearCurrentNode()
