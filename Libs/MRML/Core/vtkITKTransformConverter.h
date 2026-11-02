@@ -18,6 +18,10 @@
 
 #include "vtkMRMLTransformNode.h"
 
+// vtkAddon includes
+#include <vtkMeshDisplacementTransform.h>
+#include <vtkScatteredBSplineTransform.h>
+
 // VTK includes
 #include <vtkCollection.h>
 #include <vtkImageData.h>
@@ -43,6 +47,10 @@
 #include <itkTransformFactory.h>
 #include <itkThinPlateSplineKernelTransform.h>
 
+// STD includes
+#include <string>
+#include <vector>
+
 // Constants and typedefs
 
 static const unsigned int VTKDimension = 3;
@@ -57,6 +65,7 @@ typedef DisplacementFieldTransformDoubleType::DisplacementFieldType GridImageDou
 typedef itk::ThinPlateSplineKernelTransform<double, 3> ThinPlateSplineTransformDoubleType;
 
 #include "vtkITKTransformInverse.h"
+#include "vtkITKModelBasedTransform.h"
 
 class vtkITKTransformConverter
 {
@@ -141,6 +150,15 @@ protected:
                                                     vtkThinPlateSplineTransform* transformVtk_RAS,
                                                     bool initialize = true);
 
+  /// The parameters of a model-based transform (vtkMeshDisplacementTransform or vtkScatteredBSplineTransform) are stored
+  /// in the fixed parameters of the ITK transform, see "Model-based transform files" in
+  /// Docs/developer_guide/modules/transforms.md. The mesh is not stored: the transform node sets it from its
+  /// displacement model.
+  static bool SetITKModelBasedTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkAbstractTransform* transformVtk_RAS);
+  /// Returns nullptr if the ITK transform is not a model-based transform or its parameters are invalid.
+  template <typename T>
+  static vtkAbstractTransform* CreateVTKModelBasedTransformFromITK(vtkObject* loggerObject, typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS);
+
   static bool IsIdentityMatrix(vtkMatrix4x4* matrix);
 
   template <typename BSplineTransformType>
@@ -192,6 +210,11 @@ void vtkITKTransformConverter::RegisterInverseTransformTypes()
 
   itk::TransformFactory<itk::ThinPlateSplineKernelTransform<float, 2>>::RegisterTransform();
   itk::TransformFactory<itk::ThinPlateSplineKernelTransform<double, 2>>::RegisterTransform();
+
+  itk::TransformFactory<MeshDisplacementTransformDoubleType>::RegisterTransform();
+  itk::TransformFactory<InverseMeshDisplacementTransformDoubleType>::RegisterTransform();
+  itk::TransformFactory<ScatteredBSplineTransformDoubleType>::RegisterTransform();
+  itk::TransformFactory<InverseScatteredBSplineTransformDoubleType>::RegisterTransform();
 }
 
 //----------------------------------------------------------------------------
@@ -1634,6 +1657,176 @@ bool vtkITKTransformConverter::SetITKThinPlateSplineTransformFromVTK(vtkObject* 
 }
 
 //----------------------------------------------------------------------------
+bool vtkITKTransformConverter::SetITKModelBasedTransformFromVTK(vtkObject* loggerObject, itk::Object::Pointer& transformItk_LPS, vtkAbstractTransform* transformVtk_RAS)
+{
+  vtkMeshDisplacementTransform* meshTransformVtk = vtkMeshDisplacementTransform::SafeDownCast(transformVtk_RAS);
+  vtkScatteredBSplineTransform* bsplineTransformVtk = vtkScatteredBSplineTransform::SafeDownCast(transformVtk_RAS);
+  if (!meshTransformVtk && !bsplineTransformVtk)
+  {
+    vtkErrorWithObjectMacro(loggerObject, "Cannot set ITK model-based transform from VTK: the input transform is not a model-based transform");
+    return false;
+  }
+
+  // Update is needed because the parameters and the inverse flag may be out-of-date if the transform depends on its inverse
+  transformVtk_RAS->Update();
+
+  // See "Model-based transform files" in Docs/developer_guide/modules/transforms.md for the layout
+  std::vector<double> parameters;
+  parameters.push_back(1.0); // format version
+  const char* arrayName = nullptr;
+  const char* sourceKey = nullptr;
+  bool inverse = false;
+  if (meshTransformVtk)
+  {
+    parameters.push_back(meshTransformVtk->GetDisplacementScale());
+    parameters.push_back(meshTransformVtk->GetBorderFalloffDistance());
+    parameters.push_back(meshTransformVtk->GetAutomaticBorderFalloffDistance() ? 1.0 : 0.0);
+    arrayName = meshTransformVtk->GetDisplacementArrayName();
+    sourceKey = meshTransformVtk->GetInputPointSetSourceKey();
+    inverse = meshTransformVtk->GetInverseFlag();
+  }
+  else
+  {
+    parameters.push_back(bsplineTransformVtk->GetDisplacementScale());
+    parameters.push_back(bsplineTransformVtk->GetBorderFalloffDistance());
+    parameters.push_back(bsplineTransformVtk->GetAutomaticBorderFalloffDistance() ? 1.0 : 0.0);
+    double* spacing = bsplineTransformVtk->GetControlPointSpacing();
+    parameters.insert(parameters.end(), spacing, spacing + 3);
+    parameters.push_back(bsplineTransformVtk->GetMinimumControlPointSpacing());
+    parameters.push_back(bsplineTransformVtk->GetMaximumNumberOfLevels());
+    parameters.push_back(bsplineTransformVtk->GetTolerance());
+    parameters.push_back(bsplineTransformVtk->GetUseLinearApproximation() ? 1.0 : 0.0);
+    parameters.push_back(bsplineTransformVtk->GetAutomaticGridBounds() ? 1.0 : 0.0);
+    // RAS to LPS: the order of the bounds along the first two axes is reversed, too
+    double* bounds_RAS = bsplineTransformVtk->GetGridBounds();
+    double bounds_LPS[6] = { -bounds_RAS[1], -bounds_RAS[0], -bounds_RAS[3], -bounds_RAS[2], bounds_RAS[4], bounds_RAS[5] };
+    parameters.insert(parameters.end(), bounds_LPS, bounds_LPS + 6);
+    parameters.push_back(bsplineTransformVtk->GetGridBoundsMargin());
+    parameters.push_back(bsplineTransformVtk->GetBorderMode());
+    arrayName = bsplineTransformVtk->GetDisplacementArrayName();
+    sourceKey = bsplineTransformVtk->GetInputPointSetSourceKey();
+    inverse = bsplineTransformVtk->GetInverseFlag();
+  }
+  // The name of the displacement array (empty: the active vectors of the mesh) and the source key, each as its length
+  // and then one character in each value
+  for (const char* text : { arrayName, sourceKey })
+  {
+    std::string textString = (text ? text : "");
+    parameters.push_back(textString.size());
+    for (unsigned char character : textString)
+    {
+      parameters.push_back(character);
+    }
+  }
+
+  typedef itk::ModelBasedTransformParameters<double, 3> ModelBasedTransformParametersType;
+  ModelBasedTransformParametersType::Pointer modelBasedTransformItk;
+  if (meshTransformVtk)
+  {
+    modelBasedTransformItk = (inverse ? static_cast<ModelBasedTransformParametersType*>(InverseMeshDisplacementTransformDoubleType::New().GetPointer())
+                                      : static_cast<ModelBasedTransformParametersType*>(MeshDisplacementTransformDoubleType::New().GetPointer()));
+  }
+  else
+  {
+    modelBasedTransformItk = (inverse ? static_cast<ModelBasedTransformParametersType*>(InverseScatteredBSplineTransformDoubleType::New().GetPointer())
+                                      : static_cast<ModelBasedTransformParametersType*>(ScatteredBSplineTransformDoubleType::New().GetPointer()));
+  }
+  ModelBasedTransformParametersType::FixedParametersType fixedParameters(static_cast<unsigned int>(parameters.size()));
+  std::copy(parameters.begin(), parameters.end(), fixedParameters.begin());
+  modelBasedTransformItk->SetFixedParameters(fixedParameters);
+  transformItk_LPS = modelBasedTransformItk.GetPointer();
+  return true;
+}
+
+//----------------------------------------------------------------------------
+template <typename T>
+vtkAbstractTransform* vtkITKTransformConverter::CreateVTKModelBasedTransformFromITK(vtkObject* loggerObject, typename itk::TransformBaseTemplate<T>::Pointer transformItk_LPS)
+{
+  std::string className = transformItk_LPS->GetNameOfClass();
+  bool mesh = (className == "MeshDisplacementTransform" || className == "InverseMeshDisplacementTransform");
+  bool bspline = (className == "ScatteredBSplineTransform" || className == "InverseScatteredBSplineTransform");
+  if (!mesh && !bspline)
+  {
+    return nullptr;
+  }
+  bool inverse = (className.compare(0, 7, "Inverse") == 0);
+
+  // See "Model-based transform files" in Docs/developer_guide/modules/transforms.md for the layout
+  const typename itk::TransformBaseTemplate<T>::FixedParametersType& parameters = transformItk_LPS->GetFixedParameters();
+  const unsigned int numberOfParameters = parameters.Size();
+  const unsigned int arrayNameLengthIndex = (mesh ? 4 : 20);
+  if (numberOfParameters <= arrayNameLengthIndex || parameters[0] != 1.0)
+  {
+    vtkErrorWithObjectMacro(loggerObject,
+                            "Cannot read " << className << ": " << numberOfParameters << " fixed parameters, format version " << (numberOfParameters > 0 ? parameters[0] : 0.0)
+                                           << " (expected version 1)");
+    return nullptr;
+  }
+  // The displacement array name and the source key, each as its length and then its characters
+  std::string texts[2];
+  unsigned int textLengthIndex = arrayNameLengthIndex;
+  for (std::string& text : texts)
+  {
+    const double textLength = (textLengthIndex < numberOfParameters ? parameters[textLengthIndex] : -1.0);
+    if (textLength < 0 || textLengthIndex + 1 + textLength > numberOfParameters)
+    {
+      vtkErrorWithObjectMacro(loggerObject, "Cannot read " << className << ": invalid displacement array name or source key");
+      return nullptr;
+    }
+    for (unsigned int index = textLengthIndex + 1; index < textLengthIndex + 1 + textLength; ++index)
+    {
+      text.push_back(static_cast<char>(static_cast<unsigned char>(parameters[index])));
+    }
+    textLengthIndex += 1 + static_cast<unsigned int>(textLength);
+  }
+  if (textLengthIndex != numberOfParameters)
+  {
+    vtkErrorWithObjectMacro(loggerObject, "Cannot read " << className << ": " << numberOfParameters << " fixed parameters, expected " << textLengthIndex);
+    return nullptr;
+  }
+  const std::string& arrayName = texts[0];
+  const std::string& sourceKey = texts[1];
+
+  vtkAbstractTransform* transformVtk_RAS = nullptr;
+  if (mesh)
+  {
+    vtkMeshDisplacementTransform* meshTransformVtk = vtkMeshDisplacementTransform::New();
+    meshTransformVtk->SetDisplacementScale(parameters[1]);
+    meshTransformVtk->SetBorderFalloffDistance(parameters[2]);
+    meshTransformVtk->SetAutomaticBorderFalloffDistance(parameters[3] != 0.0);
+    meshTransformVtk->SetDisplacementArrayName(arrayName.empty() ? nullptr : arrayName.c_str());
+    meshTransformVtk->SetInputPointSetSourceKey(sourceKey.empty() ? nullptr : sourceKey.c_str());
+    transformVtk_RAS = meshTransformVtk;
+  }
+  else
+  {
+    vtkScatteredBSplineTransform* bsplineTransformVtk = vtkScatteredBSplineTransform::New();
+    bsplineTransformVtk->SetDisplacementScale(parameters[1]);
+    bsplineTransformVtk->SetBorderFalloffDistance(parameters[2]);
+    bsplineTransformVtk->SetAutomaticBorderFalloffDistance(parameters[3] != 0.0);
+    bsplineTransformVtk->SetControlPointSpacing(parameters[4], parameters[5], parameters[6]);
+    bsplineTransformVtk->SetMinimumControlPointSpacing(parameters[7]);
+    bsplineTransformVtk->SetMaximumNumberOfLevels(static_cast<int>(parameters[8]));
+    bsplineTransformVtk->SetTolerance(parameters[9]);
+    bsplineTransformVtk->SetUseLinearApproximation(parameters[10] != 0.0);
+    bsplineTransformVtk->SetAutomaticGridBounds(parameters[11] != 0.0);
+    // LPS to RAS
+    double bounds_RAS[6] = { -parameters[13], -parameters[12], -parameters[15], -parameters[14], parameters[16], parameters[17] };
+    bsplineTransformVtk->SetGridBounds(bounds_RAS);
+    bsplineTransformVtk->SetGridBoundsMargin(parameters[18]);
+    bsplineTransformVtk->SetBorderMode(static_cast<int>(parameters[19]));
+    bsplineTransformVtk->SetDisplacementArrayName(arrayName.empty() ? nullptr : arrayName.c_str());
+    bsplineTransformVtk->SetInputPointSetSourceKey(sourceKey.empty() ? nullptr : sourceKey.c_str());
+    transformVtk_RAS = bsplineTransformVtk;
+  }
+  if (inverse)
+  {
+    transformVtk_RAS->Inverse();
+  }
+  return transformVtk_RAS;
+}
+
+//----------------------------------------------------------------------------
 template <typename T>
 vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObject* loggerObject,
                                                                           typename itk::TransformBaseTemplate<T>::Pointer transformItk,
@@ -1668,6 +1861,12 @@ vtkAbstractTransform* vtkITKTransformConverter::CreateVTKTransformFromITK(vtkObj
   {
     // Composition is handled by the caller (vtkMRMLTransformStorageNode)
     return nullptr;
+  }
+
+  // Model-based
+  if (vtkAbstractTransform* modelBasedTransformVtk = CreateVTKModelBasedTransformFromITK<T>(loggerObject, transformItk))
+  {
+    return modelBasedTransformVtk;
   }
 
   // Linear
@@ -1760,6 +1959,16 @@ itk::Object::Pointer vtkITKTransformConverter::CreateITKTransformFromVTK(vtkObje
       vtkHomogeneousTransform* linearTransformVtk = vtkHomogeneousTransform::SafeDownCast(singleTransformVtk);
       vtkMatrix4x4* transformMatrix = linearTransformVtk->GetMatrix();
       if (!SetITKLinearTransformFromVTK(loggerObject, primaryTransformItk, transformMatrix, center_LocalRAS))
+      {
+        // conversion failed
+        return nullptr;
+      }
+      return primaryTransformItk;
+    }
+    // Model-based (checked before BSpline, as vtkScatteredBSplineTransform is a vtkOrientedBSplineTransform)
+    else if (vtkMeshDisplacementTransform::SafeDownCast(singleTransformVtk) || vtkScatteredBSplineTransform::SafeDownCast(singleTransformVtk))
+    {
+      if (!SetITKModelBasedTransformFromVTK(loggerObject, primaryTransformItk, vtkAbstractTransform::SafeDownCast(singleTransformVtk)))
       {
         // conversion failed
         return nullptr;
