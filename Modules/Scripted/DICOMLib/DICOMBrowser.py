@@ -58,6 +58,12 @@ class SlicerDICOMBrowser(VTKObservationMixin, qt.QWidget):
 
         # Add ctkVisualDICOMBrowser
         self.dicomVisualBrowser = ctk.ctkDICOMVisualBrowserWidget()
+        # The visual browser has its own database object. Use the import settings of the main database,
+        # otherwise the tags of DICOM plugins are not pre-cached during import and examining the imported
+        # data becomes magnitudes slower, as values are then read from the files one by one.
+        visualBrowserDatabase = self.dicomVisualBrowser.dicomDatabase()
+        visualBrowserDatabase.tagsToPrecache = slicer.dicomDatabase.tagsToPrecache
+        visualBrowserDatabase.indexingThreadCount = slicer.dicomDatabase.indexingThreadCount
         thumbnailsSize = settingsValue("DICOM/thumbnailsSize", "small")
         if thumbnailsSize == "large":
             self.dicomVisualBrowser.thumbnailSizePreset = ctk.ctkDICOMVisualBrowserWidget.ThumbnailSizePresetOption.Large
