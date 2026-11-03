@@ -448,6 +448,9 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
         self.videoLengthSliderWidget.connect("valueChanged(double)", self.setVideoLength)
         self.videoFrameRateSliderWidget.connect("valueChanged(double)", self.setVideoFrameRate)
         self.numberOfStepsSliderWidget.connect("valueChanged(double)", self.setNumberOfSteps)
+        self.ffmpegPathSelector.connect("currentPathChanged(QString)", self.logic.setFfmpegPath)
+        # CTK does not emit currentPathChanged when the field is cleared.
+        self.ffmpegPathSelector.comboBox().connect("editTextChanged(QString)", self.onFfmpegPathTextChanged)
         self.watermarkEnabledCheckBox.connect("toggled(bool)", self.watermarkPositionWidget, "setEnabled(bool)")
         self.watermarkEnabledCheckBox.connect("toggled(bool)", self.watermarkSizeSliderWidget, "setEnabled(bool)")
         self.watermarkEnabledCheckBox.connect("toggled(bool)", self.watermarkPathSelector, "setEnabled(bool)")
@@ -462,6 +465,10 @@ class ScreenCaptureWidget(ScriptedLoadableModuleWidget):
 
     def openURL(self, URL):
         qt.QDesktopServices().openUrl(qt.QUrl(URL))
+
+    def onFfmpegPathTextChanged(self, path):
+        if not path:
+            self.logic.setFfmpegPath("")
 
     def onShowCreatedOutputFile(self):
         if not self.createdOutputFile:
@@ -979,6 +986,9 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
     def setFfmpegPath(self, ffmpegPath):
         # don't save it if already saved
         settings = qt.QSettings()
+        if not ffmpegPath:
+            settings.remove("General/ffmpegPath")
+            return
         if settings.contains("General/ffmpegPath"):
             if ffmpegPath == slicer.app.toSlicerHomeAbsolutePath(settings.value("General/ffmpegPath")):
                 return
@@ -1479,6 +1489,40 @@ class ScreenCaptureLogic(ScriptedLoadableModuleLogic):
                 break
             snapshotIndex += 1
         return [filename, snapshotIndex]
+
+
+class ScreenCaptureFfmpegPathTest(ScriptedLoadableModuleTest):
+
+    def test_FfmpegPathUpdatesAndClearsForOtherLogicInstances(self):
+        import tempfile
+
+        settings = qt.QSettings()
+        settingKey = "General/ffmpegPath"
+        hadSetting = settings.contains(settingKey)
+        previousSetting = settings.value(settingKey) if hadSetting else None
+        widget = slicer.modules.screencapture.widgetRepresentation().self()
+        previousPath = widget.ffmpegPathSelector.currentPath
+        try:
+            with tempfile.TemporaryDirectory() as tempDir:
+                ffmpegPath = os.path.join(tempDir, widget.logic.getFfmpegExecutableFilename())
+                with open(ffmpegPath, "wb"):
+                    pass
+                os.chmod(ffmpegPath, 0o755)
+                widget.ffmpegPathSelector.currentPath = ffmpegPath
+                savedPath = ScreenCaptureLogic().getFfmpegPath()
+                self.assertEqual(os.path.normcase(os.path.normpath(savedPath)),
+                                 os.path.normcase(os.path.normpath(ffmpegPath)))
+                widget.ffmpegPathSelector.currentPath = ffmpegPath[:-1]
+                self.assertEqual(ScreenCaptureLogic().getFfmpegPath(), savedPath)
+                widget.ffmpegPathSelector.currentPath = ""
+                self.assertEqual(ScreenCaptureLogic().getFfmpegPath(), "")
+                self.assertFalse(settings.contains(settingKey))
+        finally:
+            widget.ffmpegPathSelector.currentPath = previousPath
+            if hadSetting:
+                settings.setValue(settingKey, previousSetting)
+            else:
+                settings.remove(settingKey)
 
 
 class ScreenCaptureTest(ScriptedLoadableModuleTest):
