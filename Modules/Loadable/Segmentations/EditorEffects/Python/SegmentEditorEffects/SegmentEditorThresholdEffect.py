@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 import weakref
 
@@ -410,6 +411,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             lo, hi = masterImageData.GetScalarRange()
             self.thresholdSlider.setRange(lo, hi)
             self.thresholdSlider.singleStep = (hi - lo) / 1000.
+            self.thresholdSlider.decimals = self.thresholdDecimals(masterImageData)
             if (self.scriptedEffect.doubleParameter("MinimumThreshold") == self.scriptedEffect.doubleParameter("MaximumThreshold")):
                 # has not been initialized yet
                 self.scriptedEffect.setParameter("MinimumThreshold", lo + (hi - lo) * 0.25)
@@ -525,7 +527,8 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
     def onUseForPaint(self):
         parameterSetNode = self.scriptedEffect.parameterSetNode()
         parameterSetNode.SourceVolumeIntensityMaskOn()
-        parameterSetNode.SetSourceVolumeIntensityMaskRange(self.thresholdSlider.minimumValue, self.thresholdSlider.maximumValue)
+        # The same voxels as the preview shows and Apply would select
+        parameterSetNode.SetSourceVolumeIntensityMaskRange(*self.thresholdRange(self.scriptedEffect.sourceVolumeImageData()))
         # Switch to paint effect
         self.scriptedEffect.selectEffect("Paint")
 
@@ -598,6 +601,33 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
         else:
             logging.error(f"Unknown AutoThresholdMode {autoThresholdMode}")
 
+    def thresholdDecimals(self, imageData):
+        """Number of decimals that the threshold values are shown and set with: 2, and more for a
+        volume whose intensity range is below 1, so that the range is always shown with at least
+        two significant digits (0.00-0.01 would be all that a range of 0.01 could show).
+        """
+        if not imageData:
+            return 2
+        lo, hi = imageData.GetScalarRange()
+        if hi - lo <= 0.0:
+            return 2
+        return max(2, 2 - math.floor(math.log10(hi - lo)))
+
+    def thresholdRange(self, imageData):
+        """Get minimum and maximum threshold to apply to the image.
+
+        Floating-point voxel values are compared with a tolerance, otherwise a threshold value typed in at
+        the shown precision could exclude voxels that are shown with that value.
+        """
+        minimumThreshold = self.scriptedEffect.doubleParameter("MinimumThreshold")
+        maximumThreshold = self.scriptedEffect.doubleParameter("MaximumThreshold")
+        # Integer images are not extended, as vtkImageThreshold truncates thresholds to the scalar type
+        if imageData and imageData.GetScalarType() in (vtk.VTK_FLOAT, vtk.VTK_DOUBLE):
+            tolerance = 0.5 * 10.0 ** -self.thresholdDecimals(imageData)
+            minimumThreshold -= tolerance
+            maximumThreshold += tolerance
+        return minimumThreshold, maximumThreshold
+
     def onApply(self):
         if not self.scriptedEffect.confirmCurrentSegmentVisible():
             return
@@ -610,8 +640,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             originalImageToWorldMatrix = vtk.vtkMatrix4x4()
             modifierLabelmap.GetImageToWorldMatrix(originalImageToWorldMatrix)
             # Get parameters
-            min = self.scriptedEffect.doubleParameter("MinimumThreshold")
-            max = self.scriptedEffect.doubleParameter("MaximumThreshold")
+            min, max = self.thresholdRange(masterImageData)
 
             self.scriptedEffect.saveStateForUndo()
 
@@ -729,8 +758,7 @@ class SegmentEditorThresholdEffect(AbstractScriptedSegmentEditorEffect):
             return
 
         opacity = 0.5 + self.previewState / (2.0 * self.previewSteps)
-        min = self.scriptedEffect.doubleParameter("MinimumThreshold")
-        max = self.scriptedEffect.doubleParameter("MaximumThreshold")
+        min, max = self.thresholdRange(self.scriptedEffect.sourceVolumeImageData())
 
         # Get color of edited segment
         segmentID = self.scriptedEffect.parameterSetNode().GetSelectedSegmentID()

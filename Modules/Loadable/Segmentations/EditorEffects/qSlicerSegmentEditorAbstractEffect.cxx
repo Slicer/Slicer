@@ -51,6 +51,7 @@
 #include "qMRMLSliceView.h"
 #include "qMRMLThreeDWidget.h"
 #include "qMRMLThreeDView.h"
+#include "qMRMLUtils.h"
 #include "qSlicerApplication.h"
 #include "qSlicerCoreApplication.h"
 #include "vtkMRMLSliceLogic.h"
@@ -854,7 +855,7 @@ void qSlicerSegmentEditorAbstractEffect::setCommonParameterDefault(QString name,
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setParameter(QString name, double value)
 {
-  this->setParameter(name, QString::number(value));
+  this->setParameter(name, qMRMLUtils::toExactString(value));
 }
 
 //-----------------------------------------------------------------------------
@@ -870,7 +871,7 @@ void qSlicerSegmentEditorAbstractEffect::setParameterDefault(QString name, doubl
 //-----------------------------------------------------------------------------
 void qSlicerSegmentEditorAbstractEffect::setCommonParameter(QString name, double value)
 {
-  this->setCommonParameter(name, QString::number(value));
+  this->setCommonParameter(name, qMRMLUtils::toExactString(value));
 }
 
 //-----------------------------------------------------------------------------
