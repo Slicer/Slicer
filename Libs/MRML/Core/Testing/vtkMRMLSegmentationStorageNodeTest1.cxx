@@ -46,6 +46,100 @@ Care Ontario.
 
 // STD includes
 #include <iostream>
+#include <thread>
+#include <chrono>
+
+//----------------------------------------------------------------------------
+int TestConcurrentWriting(const char* tempDir)
+{
+  std::cout << "Testing concurrent writing protection..." << std::endl;
+
+  std::vector<std::thread> threads;
+  int numberOfThreads = 3;
+  bool writeResults[3] = { false, false, false };
+
+  vtkNew<vtkMRMLScene> scene;
+  vtkNew<vtkMRMLSegmentationNode> segmentationNode;
+  scene->AddNode(segmentationNode);
+
+  vtkNew<vtkOrientedImageData> imageData;
+  imageData->SetDimensions(500, 500, 500);
+  imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+  imageData->GetPointData()->GetScalars()->Fill(1);
+
+  vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+  vtkNew<vtkSegment> segment;
+  segment->SetName("TestSegment");
+  segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), imageData);
+  segmentation->AddSegment(segment);
+  // Fill the segment with label value 1
+  vtkOrientedImageData* segmentImageData = vtkOrientedImageData::SafeDownCast(segment->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()));
+  if (segmentImageData)
+  {
+    void* ptr = segmentImageData->GetScalarPointer();
+    if (ptr)
+    {
+      memset(ptr, 1, segmentImageData->GetScalarSize() * segmentImageData->GetNumberOfPoints());
+    }
+  }
+
+  vtkNew<vtkMRMLSegmentationStorageNode> storageNode;
+  scene->AddNode(storageNode);
+
+  // IMPORTANT: Each thread writes to the SAME file to test locking
+  std::string filename = vtksys::SystemTools::JoinPath({ tempDir, "/concurrent_segmentation.seg.nrrd" });
+  storageNode->SetFileName(filename.c_str());
+
+  // Lambda function for concurrent writing
+  auto writeSegmentation = [&](int threadId, bool* result)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10 + threadId * 500));
+    *result = storageNode->WriteData(segmentationNode);
+    if (*result)
+    {
+      *result = vtksys::SystemTools::FileExists(filename);
+    }
+  };
+
+  // Launch multiple threads to write concurrently to the SAME file
+  for (int threadId = 0; threadId < numberOfThreads; ++threadId)
+  {
+    threads.emplace_back(writeSegmentation, threadId, &writeResults[threadId]);
+  }
+
+  // Wait for all threads to complete
+  for (auto& thread : threads)
+  {
+    thread.join();
+  }
+
+  int successfulWrites = 0;
+  for (int threadId = 0; threadId < numberOfThreads; ++threadId)
+  {
+    if (writeResults[threadId])
+    {
+      successfulWrites++;
+      std::cout << "Thread " << threadId << " write succeeded" << std::endl;
+    }
+    else
+    {
+      std::cout << "Thread " << threadId << " write failed" << std::endl;
+    }
+  }
+
+  if (successfulWrites != numberOfThreads)
+  {
+    std::cerr << "Expected exactly " << numberOfThreads << " successful writes, got " << successfulWrites << std::endl;
+    std::cerr << "This suggests the atomic locking mechanism is not working properly" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Clean up
+  vtksys::SystemTools::RemoveFile(filename);
+
+  std::cout << "Concurrent writing test passed - atomic locking is working!" << std::endl;
+  return EXIT_SUCCESS;
+}
 
 int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 {
@@ -141,17 +235,17 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
     vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
     scene->AddNode(segmentationStorageNode);
     std::string emptySegmentationFilename = std::string(tempDir) + "/EmptySegmentation.seg.nrrd";
-    std::cout << "Write empty segmentation file: " << emptySegmentationFilename;
+    std::cout << "Write empty segmentation file: " << emptySegmentationFilename << std::endl;
     segmentationStorageNode->SetFileName(emptySegmentationFilename.c_str());
     CHECK_INT(segmentationStorageNode->WriteData(segmentationNode), 1);
 
     // Read from file
     vtkNew<vtkMRMLSegmentationNode> segmentationNodeFromFile;
     scene->AddNode(segmentationNodeFromFile);
-    segmentationStorageNode->ReadData(segmentationNodeFromFile);
+    CHECK_INT(segmentationStorageNode->ReadData(segmentationNodeFromFile), 1);
 
     // Check basic content
-    vtkSegmentation* segmentation = segmentationNode->GetSegmentation();
+    vtkSegmentation* segmentation = segmentationNodeFromFile->GetSegmentation();
     CHECK_NOT_NULL(segmentation);
     int numberOfSegments = segmentation->GetNumberOfSegments();
     CHECK_INT(numberOfSegments, 3);
@@ -164,6 +258,66 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
 
     // Clean up
     vtksys::SystemTools::RemoveFile(emptySegmentationFilename);
+  }
+
+  std::cout << "Testing single-voxel segmentation" << std::endl;
+  {
+    // A segmentation that contains exactly one voxel is written as a 1x1x1 image, just like an empty
+    // segmentation is, but its voxel is set. It must be read back as that voxel, not as an empty segmentation
+    // (which used to leave the segment extent pointing into an image without voxels and crashed the reader).
+    vtkNew<vtkMRMLSegmentationNode> segmentationNode;
+    scene->AddNode(segmentationNode);
+    vtkSegmentation* sourceSegmentation = segmentationNode->GetSegmentation();
+    sourceSegmentation->SetSourceRepresentationName(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName());
+
+    vtkNew<vtkOrientedImageData> labelmap;
+    labelmap->SetExtent(0, 0, 0, 0, 0, 0);
+    labelmap->AllocateScalars(VTK_UNSIGNED_CHAR, 1);
+    labelmap->GetPointData()->GetScalars()->Fill(1);
+    vtkNew<vtkSegment> segment;
+    segment->SetName("SingleVoxel");
+    segment->SetLabelValue(1);
+    segment->AddRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName(), labelmap);
+    sourceSegmentation->AddSegment(segment, "SingleVoxel");
+    sourceSegmentation->AddEmptySegment("Empty");
+
+    // Write to file
+    vtkNew<vtkMRMLSegmentationStorageNode> segmentationStorageNode;
+    scene->AddNode(segmentationStorageNode);
+    std::string singleVoxelSegmentationFilename = std::string(tempDir) + "/SingleVoxelSegmentation.seg.nrrd";
+    std::cout << "Write single-voxel segmentation file: " << singleVoxelSegmentationFilename << std::endl;
+    segmentationStorageNode->SetFileName(singleVoxelSegmentationFilename.c_str());
+    CHECK_INT(segmentationStorageNode->WriteData(segmentationNode), 1);
+
+    // Read from file
+    vtkNew<vtkMRMLSegmentationNode> segmentationNodeFromFile;
+    scene->AddNode(segmentationNodeFromFile);
+    CHECK_INT(segmentationStorageNode->ReadData(segmentationNodeFromFile), 1);
+
+    vtkSegmentation* segmentation = segmentationNodeFromFile->GetSegmentation();
+    CHECK_NOT_NULL(segmentation);
+    CHECK_INT(segmentation->GetNumberOfSegments(), 2);
+    CHECK_NOT_NULL(segmentation->GetSegment("Empty"));
+
+    // The voxel is still there, under the segment's label value
+    vtkSegment* segmentFromFile = segmentation->GetSegment("SingleVoxel");
+    CHECK_NOT_NULL(segmentFromFile);
+    vtkOrientedImageData* labelmapFromFile =
+      vtkOrientedImageData::SafeDownCast(segmentFromFile->GetRepresentation(vtkSegmentationConverter::GetBinaryLabelmapRepresentationName()));
+    CHECK_NOT_NULL(labelmapFromFile);
+    int extent[6] = { 0, -1, 0, -1, 0, -1 };
+    labelmapFromFile->GetExtent(extent);
+    CHECK_INT(extent[1] - extent[0] + 1, 1);
+    CHECK_INT(extent[3] - extent[2] + 1, 1);
+    CHECK_INT(extent[5] - extent[4] + 1, 1);
+    CHECK_INT(static_cast<int>(labelmapFromFile->GetScalarComponentAsDouble(extent[0], extent[2], extent[4], 0)), segmentFromFile->GetLabelValue());
+
+    // Unlike the empty segmentation, the single voxel defines a valid geometry
+    std::string segmentationGeometryString = segmentation->DetermineCommonLabelmapGeometry(vtkSegmentation::EXTENT_UNION_OF_EFFECTIVE_SEGMENTS);
+    CHECK_BOOL(segmentationGeometryString.empty(), false);
+
+    // Clean up
+    vtksys::SystemTools::RemoveFile(singleVoxelSegmentationFilename);
   }
 
   std::cout << "Testing reading of multi-frame NIfTI file as segmentation" << std::endl;
@@ -205,6 +359,9 @@ int vtkMRMLSegmentationStorageNodeTest1(int argc, char* argv[])
     // Clean up
     vtksys::SystemTools::RemoveFile(multiFrameFilename);
   }
+
+  // Test concurrent writing protection
+  CHECK_EXIT_SUCCESS(TestConcurrentWriting(tempDir));
 
   return EXIT_SUCCESS;
 }

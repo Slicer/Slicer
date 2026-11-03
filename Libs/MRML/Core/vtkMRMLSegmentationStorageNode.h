@@ -34,6 +34,7 @@
 #endif
 
 class vtkMRMLSegmentationNode;
+class vtkImageData;
 class vtkMatrix4x4;
 class vtkPolyData;
 class vtkOrientedImageData;
@@ -175,6 +176,9 @@ protected:
   static void GetSegmentColorFromString(double color[3], std::string colorString);
 
   static void AddToExtent(int extent[6], int extentToAdd[6]);
+
+  /// Return true if any voxel of the image is non-zero, in any scalar component.
+  static bool IsAnyVoxelSet(vtkImageData* image);
 
 protected:
   bool CropToMinimumExtent{ false };
