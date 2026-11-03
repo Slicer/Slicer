@@ -1,0 +1,25 @@
+NAME
+  Slicer::MRMLCore
+LIBRARY_NAME
+  MRMLCore
+DEPENDS
+  VTK::ChartsCore
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::CommonExecutionModel
+  VTK::ImagingColor
+  VTK::IOExport
+  VTK::IOGeometry
+  VTK::IOInfovis
+  VTK::IOPLY
+  VTK::IOSQL
+  VTK::RenderingOpenGL2
+  VTK::RenderingVolumeOpenGL2
+  VTK::TestingCore
+  Slicer::Teem
+  Slicer::ITK
+  Slicer::SegmentationCore
+TEST_DEPENDS
+  VTK::TestingRendering
+DESCRIPTION
+  "MRMLCore"

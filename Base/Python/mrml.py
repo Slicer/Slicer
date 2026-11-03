@@ -7,10 +7,10 @@ namespace.
 # and the "Slicer Python Console" environments. For more details, see Base/Python/slicer/__init__.py
 import vtk  # noqa: F401
 
-from MRMLCLIPython import *
-from MRMLCorePython import *
-from MRMLDisplayableManagerPython import *
-from MRMLLogicPython import *
+from slicer.MRMLCLI import *
+from slicer.MRMLCore import *
+from slicer.MRMLDisplayableManager import *
+from slicer.MRMLLogic import *
 
 # Cleanup: Removing things the user shouldn't have to see.
 del vtk

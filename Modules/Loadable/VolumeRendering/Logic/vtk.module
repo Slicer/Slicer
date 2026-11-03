@@ -1,0 +1,9 @@
+NAME
+  Slicer::VolumeRenderingModuleLogic
+LIBRARY_NAME
+  vtkSlicerVolumeRenderingModuleLogic
+DEPENDS
+  Slicer::VolumeRenderingModuleMRML
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerVolumeRenderingModuleLogic"

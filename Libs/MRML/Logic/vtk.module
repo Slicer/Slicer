@@ -1,0 +1,14 @@
+NAME
+  Slicer::MRMLLogic
+LIBRARY_NAME
+  MRMLLogic
+DEPENDS
+  Slicer::MRMLCore
+  VTK::ImagingGeneral
+  Slicer::Teem
+  Slicer::RemoteIO
+TEST_DEPENDS
+  VTK::TestingCore
+  VTK::TestingRendering
+DESCRIPTION
+  "vtkMRMLLogic"

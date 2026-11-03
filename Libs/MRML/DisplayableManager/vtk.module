@@ -1,0 +1,17 @@
+NAME
+  Slicer::MRMLDisplayableManager
+LIBRARY_NAME
+  MRMLDisplayableManager
+IMPLEMENTABLE
+IMPLEMENTS
+  Slicer::MRMLDisplayableManager
+DEPENDS
+  Slicer::MRMLLogic
+  VTK::RenderingAnnotation
+  VTK::RenderingContextOpenGL2
+  VTK::RenderingLabel
+TEST_DEPENDS
+  VTK::TestingCore
+  VTK::TestingRendering
+DESCRIPTION
+  "vtkMRMLDisplayableManager"

@@ -1,48 +1,25 @@
-project(vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager)
+set(classes vtkMRMLColorLegendDisplayableManager)
 
-set(KIT ${PROJECT_NAME})
+foreach(class IN LISTS classes)
+  vtk_object_factory_declare(BASE ${class} OVERRIDE ${class})
+endforeach()
 
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT")
+set_property(GLOBAL PROPERTY "_vtk_module_autoinit_include" "\"vtkAutoInit.h\"")
+vtk_object_factory_configure(
+  SOURCE_FILE vtk_object_factory_source
+  HEADER_FILE vtk_object_factory_header
+  EXPORT_MACRO "VTK_SLICER_COLORS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT")
 
-set(${KIT}_INCLUDE_DIRECTORIES
-  ${vtkSlicer${MODULE_NAME}ModuleLogic_SOURCE_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleLogic_BINARY_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleMRML_SOURCE_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleMRML_BINARY_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleVTKWidgets_SOURCE_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleVTKWidgets_BINARY_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerColorsModuleMRMLDisplayableManagerExport.h"
+  OUTPUT_VAR wrapper_header_file
 )
 
-set(displayable_manager_SRCS
-  vtkMRMLColorLegendDisplayableManager.cxx
-  )
-
-SlicerConfigureDisplayableManagerObjectFactory(
-  TARGET_NAME ${KIT}
-  SRCS "${displayable_manager_SRCS}"
-  EXPORT_MACRO "${${KIT}_EXPORT_DIRECTIVE}"
-  EXPORT_HEADER "${KIT}Export.h"
-  OUTPUT_SRCS_VAR displayable_manager_instantiator_SRCS
-  )
-
-set(${KIT}_SRCS
-  ${displayable_manager_instantiator_SRCS}
-  ${displayable_manager_SRCS}
-  )
-
-set(${KIT}_TARGET_LIBRARIES
-  ${MRML_LIBRARIES}
-  vtkSlicer${MODULE_NAME}ModuleLogic
-  vtkSlicer${MODULE_NAME}ModuleMRML
-  vtkSlicer${MODULE_NAME}ModuleVTKWidgets
-)
-
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleLogic(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
+vtk_module_add_module(Slicer::ColorsModuleMRMLDisplayableManager
+  EXPORT_MACRO_PREFIX VTK_SLICER_COLORS_MODULE_MRMLDISPLAYABLEMANAGER
+  CLASSES ${classes}
+  SOURCES ${vtk_object_factory_source}
+  HEADERS ${wrapper_header_file}
+  PRIVATE_HEADERS ${vtk_object_factory_header}
+  EXCLUDE_HEADER_TEST
 )

@@ -4,9 +4,6 @@ set(MODULE_NAME "Segmentations")
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
-add_subdirectory(MRML)
-add_subdirectory(Logic)
-add_subdirectory(MRMLDM)
 add_subdirectory(EditorEffects)
 add_subdirectory(Widgets)
 add_subdirectory(SubjectHierarchyPlugins)
@@ -15,15 +12,11 @@ add_subdirectory(SubjectHierarchyPlugins)
 set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
 set(MODULE_INCLUDE_DIRECTORIES
-  ${vtkSlicerSegmentationsModuleMRML_INCLUDE_DIRS}
-  ${vtkSlicerSegmentationsModuleLogic_INCLUDE_DIRS}
-  ${vtkSlicerSegmentationsModuleMRMLDisplayableManager_INCLUDE_DIRS}
   ${qSlicerSegmentationsModuleWidgets_INCLUDE_DIRS}
   ${qSlicerSegmentationsEditorEffects_INCLUDE_DIRS}
   ${qSlicerSegmentationsSubjectHierarchyPlugins_INCLUDE_DIRS}
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}
   ${qSlicerTerminologiesModuleWidgets_INCLUDE_DIRS}
-  ${vtkSlicerTerminologiesModuleLogic_INCLUDE_DIRS}
   )
 
 set(MODULE_SRCS

@@ -651,6 +651,8 @@ set(Slicer_VTK_COMPONENTS
   FiltersParallel
   GUISupportQtSQL
   IOExport
+  IOExportGL2PS
+  IOGeometry
   IOImage
   IOLegacy
   IOPLY
@@ -935,14 +937,6 @@ foreach(dep QT ${Slicer_DEPENDENCIES})
 endforeach()
 
 #-----------------------------------------------------------------------------
-# Update CMake module path
-#------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${vtkAddon_CMAKE_DIR}
-  ${CMAKE_MODULE_PATH}
-  )
-
-#-----------------------------------------------------------------------------
 # CMake Qt automatic code generation
 #-----------------------------------------------------------------------------
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
@@ -1034,13 +1028,17 @@ endif()
 # will be removed.
 
 #-----------------------------------------------------------------------------
+# vtkAddon
+#-----------------------------------------------------------------------------
+# The legacy Slicer module build macros use vtkAddon's wrapping infrastructure.
+find_package(vtkAddon REQUIRED)
+
+#-----------------------------------------------------------------------------
 # VTK
 #-----------------------------------------------------------------------------
 find_package(VTK REQUIRED)
-set(VTK_LIBRARIES "")
 find_package(VTK ${Slicer_VTK_MINIMUM_SUPPORTED_VERSION} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED)
 set(VTK_GUI_SUPPORT_QT_TARGET_NAME "VTK::GUISupportQt")
-
 if(NOT TARGET ${VTK_GUI_SUPPORT_QT_TARGET_NAME})
   message(FATAL_ERROR "error: VTK was not configured to use Qt, you probably need "
                     "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
@@ -1056,14 +1054,16 @@ include(${CTK_USE_FILE})
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #-----------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${CTK_CMAKE_DIR}
-  ${CMAKE_MODULE_PATH}
-  ${CTK_CMAKE_UTILITIES_DIR})
+list(APPEND CMAKE_MODULE_PATH
+  "${vtkAddon_CMAKE_DIR}"
+  "${CTK_CMAKE_DIR}"
+  "${CTK_CMAKE_UTILITIES_DIR}"
+)
 
 #-----------------------------------------------------------------------------
-# CMake Function(s) and Macro(s) from CTK
+# CMake Function(s) and Macro(s) from vtkAddon and CTK
 #-----------------------------------------------------------------------------
+include(vtkMacroKitPythonWrap)
 include(ctkFunctionAddExecutableUtf8)
 
 #-----------------------------------------------------------------------------
@@ -1216,8 +1216,71 @@ endif()
 # Subdirectories
 #-----------------------------------------------------------------------------
 
-add_subdirectory(Libs)
+include(SlicerVTKModuleHeaderWrapper)
+include(SlicerVTKModuleBuild)
+include(SlicerVTKModuleAutoInit)
+slicer_vtk_module_build(MODULES
+  # Base and libs
+  Slicer::BaseLogic
+  Slicer::RemoteIO
+  Slicer::ITK
+  Slicer::SegmentationCore
+  Slicer::Teem
+  Slicer::MRMLCore
+  Slicer::MRMLCLI
+  Slicer::MRMLLogic
+  Slicer::MRMLDisplayableManager
+  # Loadable modules
+  Slicer::AnnotationsModuleLogic
+  Slicer::AnnotationsModuleMRML
+  Slicer::CamerasModuleLogic
+  Slicer::ColorsModuleLogic
+  Slicer::ColorsModuleMRML
+  Slicer::ColorsModuleMRMLDisplayableManager
+  Slicer::ColorsModuleVTKWidgets
+  Slicer::CropVolumeModuleLogic
+  Slicer::CropVolumeModuleMRML
+  Slicer::DataModuleLogic
+  Slicer::DICOMLibModuleLogic
+  Slicer::GeneralizedReformatModuleLogic
+  Slicer::GeneralizedReformatModuleMRML
+  Slicer::LayerDMModuleLogic
+  Slicer::LayerDMModuleMRML
+  Slicer::LayerDMModuleMRMLDisplayableManager
+  Slicer::MarkupsModuleLogic
+  Slicer::MarkupsModuleMRML
+  Slicer::MarkupsModuleMRMLDisplayableManager
+  Slicer::MarkupsModuleVTKWidgets
+  Slicer::ModelsModuleLogic
+  Slicer::MultiVolumeExplorerModuleLogic
+  Slicer::MultiVolumeExplorerModuleMRML
+  Slicer::PlotsModuleLogic
+  Slicer::ReformatModuleLogic
+  Slicer::SceneViewsModuleLogic
+  Slicer::SegmentationsModuleLogic
+  Slicer::SegmentationsModuleMRML
+  Slicer::SegmentationsModuleMRMLDisplayableManager
+  Slicer::SequencesModuleLogic
+  Slicer::SequencesModuleMRML
+  Slicer::SubjectHierarchyModuleLogic
+  Slicer::TablesModuleLogic
+  Slicer::TemplateKeyModuleMRML
+  Slicer::TemplateKeyModuleVTKWidgets
+  Slicer::TemplateKeyModuleLogic
+  Slicer::TerminologiesModuleLogic
+  Slicer::TextsModuleLogic
+  Slicer::TransformsModuleLogic
+  Slicer::TransformsModuleMRMLDisplayableManager
+  Slicer::UnitsModuleLogic
+  Slicer::ViewControllersModuleLogic
+  Slicer::VolumeRenderingModuleLogic
+  Slicer::VolumeRenderingModuleMRML
+  Slicer::VolumeRenderingModuleMRMLDisplayableManager
+  Slicer::VolumesModuleLogic
+)
+
 add_subdirectory(Base)
+add_subdirectory(Libs)
 add_subdirectory(Resources)
 add_subdirectory(Utilities/Scripts)
 if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT)
@@ -1384,7 +1447,7 @@ endforeach()
 
 # Add target configuring 'vtkSlicerVersionConfigure.h' at build time.
 include(SlicerConfigureVersionHeaderTarget)
-add_dependencies(SlicerBaseLogic SlicerConfigureVersionHeader)
+add_dependencies(BaseLogic SlicerConfigureVersionHeader)
 add_dependencies(MRMLCore SlicerConfigureVersionHeader)
 
 list(APPEND files vtkSlicerVersionConfigure.h)

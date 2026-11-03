@@ -1,0 +1,10 @@
+NAME
+  Slicer::MultiVolumeExplorerModuleLogic
+LIBRARY_NAME
+  vtkSlicerMultiVolumeExplorerModuleLogic
+DEPENDS
+  Slicer::MultiVolumeExplorerModuleMRML
+  Slicer::VolumesModuleLogic
+  Slicer::ColorsModuleLogic
+DESCRIPTION
+  "vtkSlicerMultiVolumeExplorerModuleLogic"

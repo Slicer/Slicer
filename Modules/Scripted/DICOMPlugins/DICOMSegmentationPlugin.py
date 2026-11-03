@@ -6,7 +6,7 @@ import subprocess
 import tempfile
 import shutil
 import vtk
-import vtkSegmentationCorePython as vtkSegmentationCore
+import vtkSegmentationCore
 
 import slicer
 from DICOMLib import DICOMLoadable, DICOMPlugin, DICOMUtils

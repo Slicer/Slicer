@@ -60,7 +60,7 @@ class SegmentEditorScriptedSegmentEditorEffectModuleTemplateTest(ScriptedLoadabl
 
         self.delayDisplay("Starting test_ScriptedSegmentEditorEffectModuleTemplate1")
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
         import SampleData
         from SegmentStatistics import SegmentStatisticsLogic
 

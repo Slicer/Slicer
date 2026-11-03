@@ -1,0 +1,11 @@
+NAME
+  Slicer::RemoteIO
+LIBRARY_NAME
+  RemoteIO
+DEPENDS
+  Slicer::MRMLCore
+TEST_DEPENDS
+  VTK::TestingCore
+  VTK::TestingRendering
+DESCRIPTION
+  "vtkRemoteIO"

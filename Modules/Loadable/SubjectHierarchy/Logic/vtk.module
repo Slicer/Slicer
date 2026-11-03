@@ -1,0 +1,9 @@
+NAME
+  Slicer::SubjectHierarchyModuleLogic
+LIBRARY_NAME
+  vtkSlicerSubjectHierarchyModuleLogic
+DEPENDS
+  Slicer::MRMLCore
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerSubjectHierarchyModuleLogic"

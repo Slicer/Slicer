@@ -45,7 +45,7 @@ class LabelmapSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         # ... developer may add extra options to configure other parameters
 
     def computeStatistics(self, segmentID):
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         requestedKeys = self.getRequestedKeys()
 

@@ -1,0 +1,9 @@
+NAME
+  Slicer::TransformsModuleLogic
+LIBRARY_NAME
+  vtkSlicerTransformsModuleLogic
+DEPENDS
+  Slicer::MarkupsModuleMRML
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerTransformsModuleLogic"

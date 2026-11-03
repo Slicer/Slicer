@@ -1,40 +1,20 @@
-project(vtkSlicer${MODULE_NAME}ModuleLogic)
+vtk_module_find_package(PACKAGE RapidJSON PRIVATE_IF_SHARED)
 
-set(KIT ${PROJECT_NAME})
+set(classes
+  vtkSlicerVolumesLogic
+  vtkSlicerVolumesReader
+)
 
-find_package(RapidJSON REQUIRED)
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerVolumesModuleLogicExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT")
+vtk_module_add_module(Slicer::VolumesModuleLogic
+  EXPORT_MACRO_PREFIX VTK_SLICER_VOLUMES_MODULE_LOGIC
+  CLASSES ${classes}
+  HEADERS ${wrapper_header_file}
+  EXCLUDE_HEADER_TEST
+)
 
-set(${KIT}_INCLUDE_DIRECTORIES
-  )
-
-set(${KIT}_SRCS
-  vtkSlicerVolumesReader.cxx
-  vtkSlicerVolumesReader.h
-  vtkSlicer${MODULE_NAME}Logic.cxx
-  vtkSlicer${MODULE_NAME}Logic.h
-  )
-
-set(${KIT}_TARGET_LIBRARIES
-  ${ITK_LIBRARIES}
-  RapidJSON
-  )
-
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleLogic(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
-  )
-
-#-----------------------------------------------------------------------------
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/VolumeDisplayPresets.json
-  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/VolumeDisplayPresets.json
-  COPYONLY)
-install(
-  FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/VolumeDisplayPresets.json
-  DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME} COMPONENT Runtime)
+vtk_module_link(Slicer::VolumesModuleLogic PRIVATE RapidJSON)

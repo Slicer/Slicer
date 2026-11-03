@@ -1,0 +1,13 @@
+NAME
+  Slicer::ITK
+LIBRARY_NAME
+  vtkITK
+DEPENDS
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::CommonExecutionModel
+TEST_DEPENDS
+  VTK::TestingCore
+  VTK::TestingRendering
+DESCRIPTION
+  "vtkITK"

@@ -60,7 +60,7 @@ class SegmentEditorTemplateKeyTest(ScriptedLoadableModuleTest):
 
         self.delayDisplay("Starting test_TemplateKey1")
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
         import SampleData
         from SegmentStatistics import SegmentStatisticsLogic
 

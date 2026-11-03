@@ -1,4 +1,4 @@
-set(KIT ${PROJECT_NAME})
+set(KIT SlicerColorsModuleLogic)
 
 #-----------------------------------------------------------------------------
 set(KIT_TEST_SRCS
@@ -8,6 +8,8 @@ set(KIT_TEST_SRCS
 #-----------------------------------------------------------------------------
 slicerMacroConfigureModuleCxxTestDriver(
   NAME ${KIT}
+  LINK_TARGET Slicer::ColorsModuleLogic
+  TARGET_LIBRARIES Slicer::ColorsModuleLogic
   SOURCES ${KIT_TEST_SRCS}
   WITH_VTK_DEBUG_LEAKS_CHECK
   WITH_VTK_ERROR_OUTPUT_CHECK
