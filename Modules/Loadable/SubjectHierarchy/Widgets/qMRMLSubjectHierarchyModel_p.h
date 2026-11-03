@@ -36,6 +36,7 @@
 
 // Qt includes
 #include <QFlags>
+#include <QHash>
 #include <QMap>
 
 // SubjectHierarchy includes
@@ -50,6 +51,9 @@
 // VTK includes
 #include <vtkCallbackCommand.h>
 #include <vtkSmartPointer.h>
+
+// STD includes
+#include <set>
 
 class QStandardItemModel;
 class vtkSlicerTerminologiesModuleLogic;
@@ -70,10 +74,53 @@ public:
   virtual ~qMRMLSubjectHierarchyModelPrivate();
   void init();
 
-  /// This method is called by qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy() to speed up
-  /// the loading. By explicitly specifying the \a index, it skips item lookup within their parents
+  /// Insert the subject hierarchy item (and its parent if not yet in the model) at the given row under its parent.
+  /// By explicitly specifying the \a index, it skips item lookup within their parents
   /// happening in qMRMLSubjectHierarchyModel::subjectHierarchyItemIndex(vtkIdType).
   virtual QStandardItem* insertSubjectHierarchyItem(vtkIdType itemID, int index);
+
+  /// Create the model items (one for each column) of a subject hierarchy item.
+  /// The items are not inserted in the model.
+  QList<QStandardItem*> createItemRow(vtkIdType itemID);
+
+  /// Add all the subject hierarchy items in the subtree of \a item (including \a item) to the RowCache.
+  void addToRowCacheRecursively(QStandardItem* item);
+  /// Remove all the subject hierarchy items in the subtree of \a item (including \a item) from the RowCache.
+  void removeFromRowCacheRecursively(QStandardItem* item);
+
+  /// Insert an item that was added to the subject hierarchy during batch processing (and therefore is not
+  /// in the model yet) along with its ancestors that are not in the model yet.
+  /// Returns true if the item was inserted.
+  bool insertItemAddedInBatch(vtkIdType itemID);
+
+  /// Request the views to show the item expanded or collapsed, according to the expanded state of the
+  /// subject hierarchy item. If \a newRow is true then the row of the item has just been inserted in the model
+  /// (and so it is collapsed in the views), therefore only expand request is emitted.
+  /// Nothing is emitted if expand requests are suppressed.
+  void requestExpandedState(vtkIdType itemID, bool newRow);
+
+  /// Called when an item event is received without item ID. This happens when item events are compressed
+  /// while the subject hierarchy node is being modified (between StartModify and EndModify).
+  /// The changed items are not known, therefore the model is rebuilt.
+  void onItemEventWithoutItemID();
+
+  /// Returns true if the model obviously does not match the subject hierarchy (some items are missing from the model,
+  /// or the model contains items that are not in the subject hierarchy anymore).
+  /// It is a quick check that does not compare the structure of the hierarchy.
+  bool isOutOfSync() const;
+
+  /// Make sure that the model is up-to-date at the end of an import or batch processing:
+  /// observe the subject hierarchy node of the scene (if the observed node is not in the scene anymore)
+  /// and request rebuild if the model is out of sync.
+  void validateAfterBatchProcessing();
+
+  /// Returns true if the scene is batch processing (or importing), or if the end of the batch processing
+  /// has not been processed yet by the model. In this state per-item updates are not applied to the model,
+  /// instead the whole model is rebuilt at the end of the batch processing.
+  /// Note that the scene is no longer in batch processing state while the EndImportEvent and EndBatchProcessEvent
+  /// observers are invoked, but observers that are invoked before the model (such as the subject hierarchy plugin
+  /// logic that resolves the imported items) may still add many items.
+  bool isBatchProcessing() const;
 
   /// Convenience function to get name for subject hierarchy item
   QString subjectHierarchyItemName(vtkIdType itemID);
@@ -114,6 +161,32 @@ public:
   bool NoneEnabled;
   QString NoneDisplay;
 
+  /// Set when the structure of the subject hierarchy is changed (item added, removed, reparented, reordered,
+  /// or the node is modified without item events) while the scene is batch processing (or importing).
+  /// Per-item updates are skipped in this state and the whole model is rebuilt when the
+  /// batch processing ends (and when the import ends).
+  bool RebuildPending;
+  /// Items that were modified while the scene was batch processing (or importing). The model items
+  /// of these subject hierarchy items are updated when the batch processing ends. Modifying the
+  /// existing items (instead of rebuilding the whole model) keeps the state of the views (scroll position,
+  /// selection, widgets in the cells) intact, for example when the visibility of a folder is changed
+  /// (which modifies all the items in the branch in a batch).
+  std::set<vtkIdType> PendingItemUpdates;
+  /// Items that were added while the scene was batch processing (or importing) and so they are not
+  /// inserted in the model until the model is rebuilt. If such an item is looked up (e.g., by an observer that
+  /// selects a newly added node in a view) then the item is inserted in the model on demand.
+  std::set<vtkIdType> ItemsAddedInBatch;
+  /// Set while an item added during batch processing is inserted in the model, to prevent recursive on-demand insertion.
+  bool InsertingItemAddedInBatch;
+  /// Modification time of the subject hierarchy node when the model was last rebuilt.
+  /// Used to prevent rebuilding the model multiple times if multiple compressed item events are received.
+  vtkMTimeType RebuildSubjectHierarchyMTime;
+  /// Set between the start and the end of the scene batch processing (see isBatchProcessing).
+  bool BatchProcessing;
+  /// Set while model items are created detached from the model (during rebuild), when
+  /// expand/collapse requests cannot be processed by the views yet.
+  bool SuppressExpandRequests;
+
   QIcon VisibleIcon;
   QIcon HiddenIcon;
   QIcon PartiallyVisibleIcon;
@@ -144,11 +217,14 @@ public:
   // unreachable when browsing the model
   QList<QList<QStandardItem*>> Orphans;
 
-  // Map from subject hierarchy item to row.
-  // It just stores the result of the latest lookup by \sa indexFromSubjectHierarchyItem,
-  // not guaranteed to contain up-to-date information, should be just used as a search hint.
-  // If the item cannot be found at the given index then we need to browse through all model items.
-  mutable QMap<vtkIdType, QPersistentModelIndex> RowCache;
+  // Map from subject hierarchy item ID to the model item (in the first column) of the subject hierarchy item.
+  // It is kept up-to-date from the rowsInserted and rowsAboutToBeRemoved signals of the model
+  // (QStandardItemModel emits these signals for all item insertions and removals, including
+  // moving items with takeRow/insertRow), therefore it only contains items that are in the model.
+  // An item pointer is used instead of a persistent model index, because inserting a row in a
+  // QStandardItemModel updates all the persistent indexes (which would make inserting an item
+  // in a model of N items an O(N) operation).
+  QHash<vtkIdType, QStandardItem*> RowCache;
 };
 
 #endif
