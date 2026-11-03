@@ -456,12 +456,15 @@ protected:
     return true;
   };
 
-  typedef vtkSmartPointer<vtkMRMLSliceLayerLogic> LayerListItem;
+  // The logics observer manager owns each distinct layer in this list.
+  typedef vtkMRMLSliceLayerLogic* LayerListItem;
   typedef std::vector<LayerListItem> LayerList;
   typedef std::vector<LayerListItem>::iterator LayerListIterator;
   typedef std::vector<LayerListItem>::const_iterator LayerListConstIterator;
 
   LayerList Layers;
+  // Layers temporarily being configured before their observation is installed.
+  LayerList ConfiguringLayers;
 
   bool AddingSliceModelNodes;
 
