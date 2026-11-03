@@ -63,6 +63,8 @@ class DICOMPluginTestsTest(ScriptedLoadableModuleTest):
         self.test_DICOMTID1500Plugin()
         self.setUp()
         self.test_DICOMM3DPlugin()
+        self.setUp()
+        self.test_visualBrowserPrecachesPluginTags()
 
     # -------------------------------------------------------------------------
     # Test: _dcmqi_binary helper
@@ -288,3 +290,24 @@ class DICOMPluginTestsTest(ScriptedLoadableModuleTest):
             shutil.rmtree(tmpDir)
 
         self.delayDisplay("test_DICOMM3DPlugin passed!")
+
+    # -------------------------------------------------------------------------
+    # Test: pre-caching of DICOM plugin tags in the visual DICOM browser
+    # -------------------------------------------------------------------------
+
+    def test_visualBrowserPrecachesPluginTags(self):
+        """Test that the visual DICOM browser pre-caches the tags of all DICOM plugins during import.
+
+        The visual browser has its own database object, which does not get the tags
+        of the DICOM plugins from the main database object by default.
+        """
+        self.delayDisplay("Starting test_visualBrowserPrecachesPluginTags")
+
+        browserWidget = slicer.modules.dicom.widgetRepresentation().self().browserWidget
+        tagsToPrecache = browserWidget.dicomVisualBrowser.dicomDatabase().tagsToPrecache
+
+        for pluginName, pluginClass in slicer.modules.dicomPlugins.items():
+            for tag in pluginClass().tags.values():
+                self.assertIn(tag.upper(), tagsToPrecache, f"Tag of {pluginName} is not pre-cached")
+
+        self.delayDisplay("test_visualBrowserPrecachesPluginTags passed!")
