@@ -24,13 +24,22 @@
 #include "vtkSlicerConfigure.h"
 
 // Slicer MRML includes
+#include "vtkCacheManager.h"
+#include "vtkMRMLCommandLineModuleNode.h"
+#include "vtkMRMLMessageCollection.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLModelHierarchyNode.h"
+#include "vtkMRMLStorageNode.h"
 
 // VTK includes
+#include <vtkCommand.h>
 #include <vtkNew.h>
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
 
 // STD includes
+#include <fstream>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
@@ -357,6 +366,57 @@ int vtkSlicerApplicationLogicTest1(int, char*[])
         }
       }
     }
+  }
+
+  //-----------------------------------------------------------------------------
+  // Test reporting of errors of reading the output of a CLI in the CLI node
+  //-----------------------------------------------------------------------------
+  {
+    vtkNew<vtkSlicerApplicationLogic> appLogic;
+    vtkNew<vtkMRMLScene> mrmlScene;
+    vtkNew<vtkCacheManager> cacheManager;
+    mrmlScene->SetCacheManager(cacheManager);
+    appLogic->SetMRMLScene(mrmlScene.GetPointer());
+    appLogic->CreateProcessingThread();
+
+    vtkNew<vtkPoints> points;
+    points->InsertNextPoint(0.0, 0.0, 0.0);
+    vtkNew<vtkPolyData> polyData;
+    polyData->SetPoints(points);
+    vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(mrmlScene->AddNewNodeByClass("vtkMRMLModelNode"));
+    modelNode->SetAndObservePolyData(polyData);
+    modelNode->AddDefaultStorageNode();
+    vtkMRMLStorageNode* storageNode = modelNode->GetStorageNode();
+    CHECK_NOT_NULL(storageNode);
+
+    vtkNew<vtkMRMLCommandLineModuleNode> cliNode;
+    mrmlScene->AddNode(cliNode);
+
+    const std::string validFileName = "applicationLogicValidCLIOutput.vtk";
+    storageNode->SetFileName(validFileName.c_str());
+    CHECK_BOOL(storageNode->WriteData(modelNode), true);
+    const std::string invalidFileName = "applicationLogicInvalidCLIOutput.vtk";
+    std::ofstream(invalidFileName) << "This is not a VTK file\n";
+
+    // Messages of earlier operations of the storage node do not count as read errors
+    storageNode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, "earlier error");
+    cliNode->SetStatus(vtkMRMLCommandLineModuleNode::Completing, false);
+    CHECK_BOOL(appLogic->RequestReadFile(modelNode->GetID(), validFileName.c_str(), 0, 1, cliNode->GetID()) != 0, true);
+    appLogic->ProcessReadData();
+    CHECK_INT(cliNode->GetStatus(), vtkMRMLCommandLineModuleNode::Completing);
+    CHECK_STD_STRING(cliNode->GetErrorText(), "");
+
+    // Read error is added to the error text of the CLI and it does not contain messages of earlier operations.
+    // The status of the CLI is not changed.
+    storageNode->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, "earlier error");
+    cliNode->SetErrorText("Error output of the CLI", false);
+    CHECK_BOOL(appLogic->RequestReadFile(modelNode->GetID(), invalidFileName.c_str(), 0, 1, cliNode->GetID()) != 0, true);
+    appLogic->ProcessReadData();
+    CHECK_INT(cliNode->GetStatus(), vtkMRMLCommandLineModuleNode::Completing);
+    const std::string errorText = cliNode->GetErrorText();
+    CHECK_BOOL(errorText.find("Error output of the CLI") != std::string::npos, true);
+    CHECK_BOOL(errorText.find(invalidFileName) != std::string::npos, true);
+    CHECK_BOOL(errorText.find("earlier error") == std::string::npos, true);
   }
 
   return EXIT_SUCCESS;

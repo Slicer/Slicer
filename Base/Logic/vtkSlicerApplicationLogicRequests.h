@@ -14,6 +14,7 @@
 #include <vtkMRMLCommandLineModuleNode.h>
 #include <vtkMRMLDisplayNode.h>
 #include <vtkMRMLLabelMapVolumeNode.h>
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLModelHierarchyNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLStorageNode.h>
@@ -42,13 +43,14 @@ protected:
 class ReadDataRequestFile : public DataRequest
 {
 public:
-  ReadDataRequestFile(const std::string& node, const std::string& filename, int displayData, int deleteFile, int uid = 0)
+  ReadDataRequestFile(const std::string& node, const std::string& filename, int displayData, int deleteFile, int uid = 0, const std::string& cliNode = std::string())
     : DataRequest(uid)
   {
     m_TargetNode = node;
     m_Filename = filename;
     m_DisplayData = displayData;
     m_DeleteFile = deleteFile;
+    m_CLINode = cliNode;
   }
 
   void Execute(vtkSlicerApplicationLogic* appLogic) override
@@ -63,6 +65,9 @@ public:
     vtkMRMLCommandLineModuleNode* clp = vtkMRMLCommandLineModuleNode::SafeDownCast(nd);
 
     bool useURI = appLogic->GetMRMLScene()->GetCacheManager()->IsRemoteReference(m_Filename.c_str());
+
+    bool readFailed = false;
+    std::string readError;
 
     vtkMRMLStorableNode* storableNode = vtkMRMLStorableNode::SafeDownCast(nd);
     if (storableNode)
@@ -121,11 +126,17 @@ public:
           // "SkipNoData", which would prevent the file from loading.
           // Change the write state back to "Idle" to make sure the file is loaded.
           storageNode->SetWriteStateIdle();
+          // Errors of this read are reported below, do not report messages of earlier operations
+          storageNode->GetUserMessages()->ClearMessages();
           if (useURI)
           {
             storageNode->SetURI(m_Filename.c_str());
             vtkDebugWithObjectMacro(appLogic, "ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", uri = " << storageNode->GetURI());
-            storageNode->ReadData(nd, /*temporary*/ true);
+            if (!storageNode->ReadData(nd, /*temporary*/ true))
+            {
+              readError = storageNode->GetUserMessages()->GetAllMessagesAsString();
+              readFailed = true;
+            }
             if (createdNewStorageNode)
             {
               storageNode->SetURI(nullptr); // clear temporary URI
@@ -136,7 +147,11 @@ public:
             storageNode->SetFileName(m_Filename.c_str());
             vtkDebugWithObjectMacro(appLogic,
                                     "ProcessReadNodeData: calling ReadData on the storage node " << storageNode->GetID() << ", filename = " << storageNode->GetFileName());
-            storageNode->ReadData(nd, /*temporary*/ true);
+            if (!storageNode->ReadData(nd, /*temporary*/ true))
+            {
+              readError = storageNode->GetUserMessages()->GetAllMessagesAsString();
+              readFailed = true;
+            }
             if (createdNewStorageNode)
             {
               storageNode->SetFileName(nullptr); // clear temp file name
@@ -146,12 +161,19 @@ public:
         catch (itk::ExceptionObject& exc)
         {
           vtkErrorWithObjectMacro(appLogic, "Exception while reading " << m_Filename << ", " << exc);
+          readError = exc.GetDescription();
+          readFailed = true;
         }
         catch (...)
         {
           vtkErrorWithObjectMacro(appLogic, "Unknown exception while reading " << m_Filename);
+          readFailed = true;
         }
       }
+    }
+    if (readFailed)
+    {
+      this->ReportReadErrorToCLINode(appLogic, nd, readError);
     }
     // if the node was a CommandLineModule node, then read the file
     // (no storage node for these, yet)
@@ -227,10 +249,31 @@ public:
   }
 
 protected:
+  /// Add the error to the error text of the CLI node that requested reading (if any).
+  void ReportReadErrorToCLINode(vtkSlicerApplicationLogic* appLogic, vtkMRMLNode* targetNode, const std::string& readError)
+  {
+    vtkMRMLCommandLineModuleNode* cliNode = vtkMRMLCommandLineModuleNode::SafeDownCast(appLogic->GetMRMLScene()->GetNodeByID(m_CLINode.c_str()));
+    if (!cliNode)
+    {
+      return;
+    }
+    std::string errorText = cliNode->GetErrorText();
+    if (!errorText.empty() && errorText.back() != '\n')
+    {
+      errorText += "\n";
+    }
+    errorText += std::string("Failed to load output into node ") + (targetNode->GetName() ? targetNode->GetName() : "(unnamed)") + " from file " + m_Filename + "\n";
+    errorText += readError;
+    // The status of the CLI could be set to CompletedWithErrors here, because the output is not loaded.
+    // The status is left unchanged only to preserve backward compatibility.
+    cliNode->SetErrorText(errorText);
+  }
+
   std::string m_TargetNode;
   std::string m_Filename;
   int m_DisplayData;
   int m_DeleteFile;
+  std::string m_CLINode;
 };
 
 //----------------------------------------------------------------------------

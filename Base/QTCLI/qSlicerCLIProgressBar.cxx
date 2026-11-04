@@ -397,9 +397,11 @@ void qSlicerCLIProgressBar::updateUiFromCommandLineModuleNode(vtkObject* command
 
   // If user chose to show details then all
   std::string errorText = node->GetErrorText();
-  bool showDetails = (d->DetailsTextExpandButton->isChecked()                                    //
-                      || (node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors //
-                          && !errorText.empty()));
+  bool completed = (node->GetStatus() == vtkMRMLCommandLineModuleNode::Completed //
+                    || node->GetStatus() == vtkMRMLCommandLineModuleNode::CompletedWithErrors);
+  // Error text is displayed even if the CLI completed without errors, as it may contain warnings or output loading errors
+  bool showDetails = (d->DetailsTextExpandButton->isChecked() //
+                      || (completed && !errorText.empty()));
   d->DetailsTextBrowser->setVisible(showDetails);
 
   // While the module is running, avoid too frequent updates of the process output

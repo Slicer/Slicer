@@ -96,6 +96,7 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         self.test_CLIStatusEventOnErrorTestSynchronous()
         self.test_CLIStatusEventOnErrorTestAsynchronous()
         self.test_SubjectHierarchyReference()
+        self.test_CLIProgressBarDetails()
 
     # Testing a the status event on a normal execution
     def test_CLIStatusEventTestSynchronous(self):
@@ -247,3 +248,28 @@ class CLIEventTestTest(ScriptedLoadableModuleTest):
         # After pending events are processed, the output volume must be in the same subject hierarchy folder
         slicer.app.processEvents()
         self.assertEqual(shNode.GetItemParent(shNode.GetItemByDataNode(outputVolume)), shNode.GetItemParent(shNode.GetItemByDataNode(inputVolume)))
+
+    # Testing that error text of a completed CLI is displayed automatically in the progress bar
+    def test_CLIProgressBarDetails(self):
+        cliNode = slicer.cli.createNode(slicer.modules.cli4test)
+        progressBar = slicer.qSlicerCLIProgressBar()
+        progressBar.setCommandLineModuleNode(cliNode)
+        detailsTextBrowser = progressBar.findChild("QTextBrowser", "DetailsTextBrowser")
+
+        for status, errorText, expectedVisible in [
+            (cliNode.Completed, "", False),
+            (cliNode.Running, "error", False),
+            (cliNode.Completed, "error", True),
+            (cliNode.Scheduled, "", False),
+            (cliNode.CompletedWithErrors, "error", True),
+            (cliNode.CompletedWithErrors, "", False),
+        ]:
+            cliNode.SetErrorText(errorText, False)
+            cliNode.SetStatus(status, False)
+            cliNode.Modified()
+            slicer.app.processEvents()
+            self.assertEqual(not detailsTextBrowser.isHidden(), expectedVisible, f"status={status}, errorText={errorText}")
+
+        progressBar.setCommandLineModuleNode(None)
+        progressBar.deleteLater()
+        slicer.mrmlScene.RemoveNode(cliNode)

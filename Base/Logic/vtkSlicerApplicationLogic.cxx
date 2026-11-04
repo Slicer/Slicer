@@ -424,7 +424,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestModified(vtkObject* obj)
 }
 
 //----------------------------------------------------------------------------
-vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char* refNode, const char* filename, int displayData, int deleteFile)
+vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char* refNode, const char* filename, int displayData, int deleteFile, const char* cliNode)
 {
   // only request to read a file if the ReadData queue is up
   this->ReadDataQueueActiveLock.lock();
@@ -439,7 +439,7 @@ vtkMTimeType vtkSlicerApplicationLogic::RequestReadFile(const char* refNode, con
   this->ReadDataQueueLock.lock();
   this->RequestTimeStamp.Modified();
   vtkMTimeType uid = this->RequestTimeStamp.GetMTime();
-  (*this->InternalReadDataQueue).push(new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid));
+  (*this->InternalReadDataQueue).push(new ReadDataRequestFile(refNode, filename, displayData, deleteFile, uid, cliNode ? cliNode : ""));
   this->ReadDataQueueLock.unlock();
   return uid;
 }
