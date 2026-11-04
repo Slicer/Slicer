@@ -52,6 +52,7 @@
 #include <vtkObjectFactory.h>
 #include <vtkPlane.h>
 #include <vtkPointLocator.h>
+#include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
@@ -421,9 +422,20 @@ void vtkMRMLModelSliceDisplayableManager::vtkInternal::UpdateCutterInput(const P
   pipeline->CellIdsNearPlane->Reset();
   pipeline->CellLocator->FindCellsAlongPlane(origin, normal, 0.0, pipeline->CellIdsNearPlane);
   pipeline->CellsNearPlane->SetCellList(pipeline->CellIdsNearPlane);
-  // The cells come out as an unstructured grid, and are made a surface again before the cut, so
-  // that what the cutter produces is what it produces from the model itself.
-  pipeline->Cutter->SetInputConnection(pipeline->CellsNearPlaneSurface->GetOutputPort());
+  // vtkExtractCells outputs an unstructured grid even if the model is polydata, and vtkPlaneCutter
+  // selects its algorithm based on the input data type.
+  if (vtkPolyData::SafeDownCast(mesh))
+  {
+    // Surface mesh: convert the extracted cells back to polydata, so that the cutter processes
+    // them the same way as it would process the complete model.
+    pipeline->Cutter->SetInputConnection(pipeline->CellsNearPlaneSurface->GetOutputPort());
+  }
+  else
+  {
+    // Volumetric mesh: cut the extracted cells directly. If only their faces were cut then the result
+    // would be the outline of the cross-section instead of the filled cross-section.
+    pipeline->Cutter->SetInputConnection(pipeline->CellsNearPlane->GetOutputPort());
+  }
 }
 
 //---------------------------------------------------------------------------

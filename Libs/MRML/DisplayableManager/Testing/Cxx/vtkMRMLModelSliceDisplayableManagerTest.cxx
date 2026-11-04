@@ -33,29 +33,40 @@
 #include <vtkMRMLSliceNode.h>
 
 // VTK includes
+#include <vtkActor2D.h>
+#include <vtkActor2DCollection.h>
 #include <vtkCamera.h>
+#include <vtkDataSetTriangleFilter.h>
 #include <vtkErrorCode.h>
 #include <vtkImageData.h>
 #include <vtkInteractorEventRecorder.h>
 #include <vtkNew.h>
 #include <vtkPNGWriter.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataMapper2D.h>
 #include <vtkRegressionTestImage.h>
 #include <vtkRenderer.h>
 #include <vtkRendererCollection.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderWindowInteractor.h>
+#include <vtkRTAnalyticSource.h>
 #include <vtkSmartPointer.h>
 #include <vtkSphereSource.h>
+#include <vtkUnstructuredGrid.h>
 #include <vtkWindowToImageFilter.h>
 
 // STD includes
+#include <iostream>
+
 bool TestBatchRemoveDisplayNode();
+bool TestVolumetricMeshIntersectionIsFilled();
 
 //----------------------------------------------------------------------------
 int vtkMRMLModelSliceDisplayableManagerTest(int vtkNotUsed(argc), char* vtkNotUsed(argv)[])
 {
   bool res = true;
   res = TestBatchRemoveDisplayNode() && res;
+  res = TestVolumetricMeshIntersectionIsFilled() && res;
   return res ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
@@ -130,5 +141,70 @@ bool TestBatchRemoveDisplayNode()
   // manager doesn't use the deleted nodes.
   vtkMRMLNode* sliceNode = scene->GetNodeByID("vtkMRMLSliceNodeRed");
   sliceNode->Modified();
+  return true;
+}
+
+//----------------------------------------------------------------------------
+/// Number of polygons in the intersection of the model shown in the slice view
+vtkIdType GetNumberOfIntersectionPolygons(vtkRenderer* renderer)
+{
+  vtkActor2DCollection* actors = renderer->GetActors2D();
+  actors->InitTraversal();
+  while (vtkActor2D* actor = actors->GetNextActor2D())
+  {
+    vtkPolyDataMapper2D* mapper = vtkPolyDataMapper2D::SafeDownCast(actor->GetMapper());
+    if (mapper && actor->GetVisibility() && mapper->GetInputAlgorithm())
+    {
+      mapper->GetInputAlgorithm()->Update();
+      return mapper->GetInput()->GetNumberOfPolys();
+    }
+  }
+  return 0;
+}
+
+//----------------------------------------------------------------------------
+/// The intersection of a volumetric mesh stays filled when it is updated without the mesh having
+/// changed, which is when only the cells that the slice plane crosses are cut.
+bool TestVolumetricMeshIntersectionIsFilled()
+{
+  vtkSmartPointer<vtkRenderWindow> renderWindow = CreateRenderWindow();
+  vtkRenderer* renderer = renderWindow->GetRenderers()->GetFirstRenderer();
+  vtkNew<vtkMRMLScene> scene;
+  vtkSmartPointer<vtkMRMLDisplayableManagerGroup> displayableManagerGroup = CreateDisplayableManager(scene.GetPointer(), renderer);
+
+  vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetNodeByID("vtkMRMLSliceNodeRed"));
+  sliceNode->SetDimensions(600, 600, 1);
+  sliceNode->SetFieldOfView(50.0, 50.0, 1.0);
+  sliceNode->UpdateMatrices();
+  sliceNode->SetSliceOffset(0.5);
+
+  // A tetrahedral mesh that has enough cells for a cell locator to be used
+  vtkNew<vtkRTAnalyticSource> image;
+  image->SetWholeExtent(-12, 12, -12, 12, -12, 12);
+  vtkNew<vtkDataSetTriangleFilter> tetrahedra;
+  tetrahedra->SetInputConnection(image->GetOutputPort());
+  tetrahedra->Update();
+
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLModelNode"));
+  modelNode->SetAndObserveMesh(tetrahedra->GetOutput());
+  modelNode->CreateDefaultDisplayNodes();
+  vtkMRMLModelDisplayNode* displayNode = vtkMRMLModelDisplayNode::SafeDownCast(modelNode->GetDisplayNode());
+  displayNode->SetVisibility(true);
+  displayNode->SetVisibility2D(true);
+
+  // Updates that do not change the mesh, and then a slice that the locator has not seen yet
+  const vtkIdType polygonsOfWholeMeshCut = GetNumberOfIntersectionPolygons(renderer);
+  displayNode->SetOpacity(0.8);
+  displayNode->SetOpacity(0.5);
+  const vtkIdType polygonsAfterDisplayChange = GetNumberOfIntersectionPolygons(renderer);
+  sliceNode->SetSliceOffset(1.5);
+  const vtkIdType polygonsAfterSliceMove = GetNumberOfIntersectionPolygons(renderer);
+
+  if (polygonsOfWholeMeshCut == 0 || polygonsAfterDisplayChange != polygonsOfWholeMeshCut || polygonsAfterSliceMove == 0)
+  {
+    std::cerr << "Line " << __LINE__ << ": intersection of a volumetric mesh is not filled: " //
+              << polygonsOfWholeMeshCut << ", " << polygonsAfterDisplayChange << ", " << polygonsAfterSliceMove << " polygons" << std::endl;
+    return false;
+  }
   return true;
 }
