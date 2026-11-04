@@ -402,6 +402,8 @@ int vtkSlicerModelsLogic::SaveModel(const char* filename, vtkMRMLModelNode* mode
     storageNode->SetFileName(filename);
   }
 
+  // Do not report messages of earlier operations
+  storageNode->GetUserMessages()->ClearMessages();
   int success = storageNode->WriteData(modelNode);
   if (!success)
   {

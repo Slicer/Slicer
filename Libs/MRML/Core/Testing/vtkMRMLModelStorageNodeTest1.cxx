@@ -11,10 +11,12 @@ Program:   3D Slicer
 =========================================================================auto=*/
 
 #include "vtkMRMLCoreTestingMacros.h"
+#include "vtkMRMLMessageCollection.h"
 #include "vtkMRMLModelStorageNode.h"
 #include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 
+#include <vtkCommand.h>
 #include <vtkCylinderSource.h>
 #include <vtkGeometryFilter.h>
 #include <vtkNew.h>
@@ -31,6 +33,7 @@ Program:   3D Slicer
 //---------------------------------------------------------------------------
 int TestReadWriteData(vtkMRMLScene* scene, const char* extension, vtkPointSet* mesh, int coordinateSystem, bool cellsMayBeSubdivided = false);
 int TestReadOBJWithCoordinateUnitComment(vtkMRMLScene* scene, const char* comment, double expectedScale);
+int TestReadWriteAfterFailedWrite(vtkMRMLScene* scene, vtkPointSet* mesh);
 void CreateVoxelMeshes(vtkUnstructuredGrid* ug, vtkPolyData* poly);
 
 //---------------------------------------------------------------------------
@@ -67,6 +70,9 @@ int vtkMRMLModelStorageNodeTest1(int argc, char* argv[])
   // (written by Materialise Mimics and 3-matic) is used for scaling the coordinates to millimeters.
   CHECK_EXIT_SUCCESS(TestReadOBJWithCoordinateUnitComment(scene, "# vertex coordinates are measured in units, where 1 unit = 1.000000 mm", 1.0));
   CHECK_EXIT_SUCCESS(TestReadOBJWithCoordinateUnitComment(scene, "# vertex coordinates are measured in units, where 1 unit = 1000.000000 mm", 1000.0));
+
+  // Test that an error message of an earlier operation does not make later operations fail.
+  CHECK_EXIT_SUCCESS(TestReadWriteAfterFailedWrite(scene, poly));
 
   std::cout << "Test passed." << std::endl;
   return EXIT_SUCCESS;
@@ -190,6 +196,44 @@ int TestReadOBJWithCoordinateUnitComment(vtkMRMLScene* scene, const char* commen
       CHECK_DOUBLE_TOLERANCE(coordinate[componentIndex], originalPoints[pointIndex][componentIndex] * expectedScale, 1e-4);
     }
   }
+
+  scene->RemoveNode(modelNode);
+  return EXIT_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+int TestReadWriteAfterFailedWrite(vtkMRMLScene* scene, vtkPointSet* mesh)
+{
+  std::cout << "Testing reading and writing after a failed write" << std::endl;
+
+  std::string rootDirectory = scene->GetRootDirectory();
+  std::string fileName = rootDirectory + "/vtkMRMLModelNodeTest1AfterFailedWrite.vtk";
+  std::string notWritableFileName = rootDirectory + "/NotExistingFolder/vtkMRMLModelNodeTest1AfterFailedWrite.vtk";
+
+  vtkNew<vtkMRMLModelNode> modelNode;
+  modelNode->SetAndObserveMesh(mesh);
+  CHECK_NOT_NULL(scene->AddNode(modelNode));
+  modelNode->AddDefaultStorageNode();
+  vtkMRMLModelStorageNode* storageNode = vtkMRMLModelStorageNode::SafeDownCast(modelNode->GetStorageNode());
+  CHECK_NOT_NULL(storageNode);
+
+  storageNode->SetFileName(fileName.c_str());
+  CHECK_BOOL(storageNode->WriteData(modelNode), true);
+
+  // The failed write leaves an error message in the storage node
+  storageNode->SetFileName(notWritableFileName.c_str());
+  CHECK_BOOL(storageNode->WriteData(modelNode), false);
+  int numberOfErrors = storageNode->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent);
+  CHECK_BOOL(numberOfErrors > 0, true);
+
+  // Later operations succeed and the earlier message is still available
+  storageNode->SetFileName(fileName.c_str());
+  modelNode->SetAndObservePolyData(nullptr);
+  CHECK_BOOL(storageNode->ReadData(modelNode), true);
+  CHECK_NOT_NULL(modelNode->GetMesh());
+  CHECK_INT(modelNode->GetMesh()->GetNumberOfPoints(), mesh->GetNumberOfPoints());
+  CHECK_BOOL(storageNode->WriteData(modelNode), true);
+  CHECK_INT(storageNode->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent), numberOfErrors);
 
   scene->RemoveNode(modelNode);
   return EXIT_SUCCESS;

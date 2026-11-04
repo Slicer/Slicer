@@ -142,6 +142,8 @@ bool vtkMRMLNodeWriter::WriteNode(vtkMRMLStorableNode* node, vtkMRMLIOProperties
       storageNode->SetCompressionParameter(properties->GetStringProperty("compressionParameter"));
     }
   }
+  // Do not report messages of earlier operations
+  storageNode->GetUserMessages()->ClearMessages();
   bool success = storageNode->WriteData(node);
   if (success)
   {

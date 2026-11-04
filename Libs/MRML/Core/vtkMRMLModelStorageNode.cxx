@@ -203,6 +203,9 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 
   vtkDebugMacro("ReadDataInternal (" << (this->ID ? this->ID : "(unknown)") << "): extension = " << extension.c_str());
 
+  // The message collection may contain errors of earlier operations
+  const int errorsBefore = this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent);
+
   int coordinateSystemInFileHeader = -1;
   vtkSmartPointer<vtkPointSet> meshFromFile;
   try
@@ -427,7 +430,7 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
     return 0;
   }
 
-  if (this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
+  if (this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > errorsBefore)
   {
     // User messages are already logged, no need for logging more
     return 0;
@@ -527,6 +530,9 @@ int vtkMRMLModelStorageNode::ReadDataInternal(vtkMRMLNode* refNode)
 int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 {
   vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(refNode);
+
+  // The message collection may contain errors of earlier operations
+  const int errorsBefore = this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent);
 
   std::string fullName = this->GetFullNameFromFileName();
   if (fullName.empty())
@@ -792,7 +798,7 @@ int vtkMRMLModelStorageNode::WriteDataInternal(vtkMRMLNode* refNode)
 
   // If no errors have been reported then check if the output file exists
   // because some writers might miss reporting file creation errors.
-  if (success && this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == 0 && !vtksys::SystemTools::FileExists(fullName))
+  if (success && this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) == errorsBefore && !vtksys::SystemTools::FileExists(fullName))
   {
     vtkErrorToMessageCollectionMacro(this->GetUserMessages(),
                                      "vtkMRMLModelStorageNode::WriteDataInternal",

@@ -23,17 +23,22 @@
 
 // MRML includes
 #include "vtkMRMLCoreTestingMacros.h"
+#include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLStorageNode.h>
 
 // VTK includes
+#include <vtkCommand.h>
 #include <vtkNew.h>
+#include <vtkPoints.h>
 #include <vtkPolyData.h>
 
 //-----------------------------------------------------------------------------
 int testAddEmptyFile(const char* filePath);
 int testAddFile(const char* filePath);
 int testAddModelWithPolyData(bool withPolyData);
+int testSaveModelMessages();
 
 //-----------------------------------------------------------------------------
 int vtkSlicerModelsLogicAddFileTest(int argc, char* argv[])
@@ -64,6 +69,7 @@ int vtkSlicerModelsLogicAddFileTest(int argc, char* argv[])
   }
   CHECK_EXIT_SUCCESS(testAddModelWithPolyData(false));
   CHECK_EXIT_SUCCESS(testAddModelWithPolyData(true));
+  CHECK_EXIT_SUCCESS(testSaveModelMessages());
 
   return EXIT_SUCCESS;
 }
@@ -131,6 +137,33 @@ int testAddModelWithPolyData(bool withPolyData)
   vtkMRMLModelNode* model = modelsLogic->AddModel(poly);
   CHECK_POINTER(model->GetPolyData(), poly);
   CHECK_NOT_NULL(model->GetModelDisplayNode());
+
+  return EXIT_SUCCESS;
+}
+
+//-----------------------------------------------------------------------------
+int testSaveModelMessages()
+{
+  vtkNew<vtkPoints> points;
+  points->InsertNextPoint(0.0, 0.0, 0.0);
+  vtkNew<vtkPolyData> polyData;
+  polyData->SetPoints(points);
+
+  vtkNew<vtkSlicerModelsLogic> modelsLogic;
+  vtkNew<vtkMRMLScene> scene;
+  modelsLogic->SetMRMLScene(scene);
+  vtkMRMLModelNode* model = modelsLogic->AddModel(polyData);
+  CHECK_NOT_NULL(model);
+  model->AddDefaultStorageNode();
+  model->GetStorageNode()->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, "earlier error");
+
+  // Failed saving reports its own errors but not the messages of earlier operations of the storage node
+  vtkNew<vtkMRMLMessageCollection> userMessages;
+  TESTING_OUTPUT_ASSERT_ERRORS_BEGIN();
+  CHECK_INT(modelsLogic->SaveModel("NotExistingFolder/NotWritable.vtk", model, -1, userMessages), 0);
+  TESTING_OUTPUT_ASSERT_ERRORS_END();
+  CHECK_BOOL(userMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0, true);
+  CHECK_BOOL(userMessages->GetAllMessagesAsString().find("earlier error") == std::string::npos, true);
 
   return EXIT_SUCCESS;
 }
