@@ -29,6 +29,7 @@
 #include <vtkMRMLJsonElement.h>
 #include <vtkMRMLMessageCollection.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLStorageNode.h>
 #include <vtkMRMLTextNode.h>
 
 // VTK includes
@@ -630,6 +631,26 @@ int vtkMRMLFileIOManagerTest1(int argc, char* argv[])
     CHECK_INT(appFileIOManager->GetNumberOfReaders(), numberOfReaders);
     // Module logic may be deleted after the application logic
     appLogic->SetModuleLogic("MyModule", moduleLogic);
+  }
+
+  // The node writer does not report messages of earlier operations of the storage node
+  {
+    vtkNew<vtkMRMLScene> nodeWriterScene;
+    vtkNew<vtkMRMLFileIOManager> nodeWriterManager;
+    nodeWriterManager->SetScene(nodeWriterScene);
+    vtkSmartPointer<vtkMRMLNodeWriter> textNodeWriter = vtkMRMLNodeWriter::CreateNodeWriter("Texts", "TextFile", { "vtkMRMLTextNode" }, false);
+    nodeWriterManager->RegisterWriter(textNodeWriter);
+    vtkMRMLTextNode* writtenTextNode = vtkMRMLTextNode::SafeDownCast(nodeWriterScene->AddNewNodeByClass("vtkMRMLTextNode"));
+    writtenTextNode->SetText("text");
+    writtenTextNode->SetForceCreateStorageNode(vtkMRMLTextNode::CreateStorageNodeAlways);
+    writtenTextNode->AddDefaultStorageNode();
+    writtenTextNode->GetStorageNode()->GetUserMessages()->AddMessage(vtkCommand::ErrorEvent, "earlier error");
+    vtkNew<vtkMRMLIOProperties> nodeWriterProperties;
+    nodeWriterProperties->SetStringProperty("fileName", directory + "/NodeWriter.txt");
+    nodeWriterProperties->SetStringProperty("nodeID", writtenTextNode->GetID());
+    vtkNew<vtkMRMLMessageCollection> nodeWriterMessages;
+    CHECK_BOOL(nodeWriterManager->SaveNodes("TextFile", nodeWriterProperties, nodeWriterMessages), true);
+    CHECK_INT(nodeWriterMessages->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent), 0);
   }
 
   vtksys::SystemTools::RemoveADirectory(directory);

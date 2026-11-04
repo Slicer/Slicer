@@ -1271,12 +1271,15 @@ int vtkMRMLStorageNode::WriteData(vtkMRMLNode* refNode)
     return 0;
   }
 
+  // The message collection may contain errors of earlier operations
+  const int errorsBefore = this->GetUserMessages() ? this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) : 0;
+
   int success = this->WriteDataInternal(refNode);
 
-  // If there were error messages, then do not return that we were successful
+  // If there were new error messages, then do not return that we were successful
   if (success                    //
       && this->GetUserMessages() //
-      && this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > 0)
+      && this->GetUserMessages()->GetNumberOfMessagesOfType(vtkCommand::ErrorEvent) > errorsBefore)
   {
     success = 0;
   }
