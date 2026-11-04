@@ -2088,7 +2088,7 @@ void vtkSlicerCLIModuleLogic::ApplyTask(void* clientdata)
         }
 
         bool deleteFile = this->GetDeleteTemporaryFiles();
-        vtkMTimeType requestUID = this->GetApplicationLogic()->RequestReadFile((*id2fn0).first.c_str(), (*id2fn0).second.c_str(), displayData, deleteFile);
+        vtkMTimeType requestUID = this->GetApplicationLogic()->RequestReadFile((*id2fn0).first.c_str(), (*id2fn0).second.c_str(), displayData, deleteFile, node0->GetID());
         this->Internal->SetLastRequest(node0, requestUID);
 
         // If we are reloading a file, then we know that it is a file

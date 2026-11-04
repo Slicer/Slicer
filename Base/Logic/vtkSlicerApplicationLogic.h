@@ -104,8 +104,10 @@ public:
   /// Return the request UID (monotonically increasing) of the request or 0 if
   /// the request failed to be registered. When the request is processed,
   /// RequestProcessedEvent is invoked with the request UID as calldata.
+  /// If cliNode is specified (ID of a vtkMRMLCommandLineModuleNode) and the data cannot be read then the error is
+  /// added to the error text of the CLI node.
   /// \sa RequestReadScene(), RequestWriteData(), RequestModified()
-  vtkMTimeType RequestReadFile(const char* refNode, const char* filename, int displayData = false, int deleteFile = false);
+  vtkMTimeType RequestReadFile(const char* refNode, const char* filename, int displayData = false, int deleteFile = false, const char* cliNode = nullptr);
 
   /// Request setting of parent transform.
   /// The request will executed on the main thread.
