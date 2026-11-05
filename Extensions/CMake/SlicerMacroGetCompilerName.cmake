@@ -26,7 +26,7 @@ macro(SlicerMacroGetCompilerName COMPILER_NAME_VAR)
   if(WIN32)
     set(BUILD_NAME_SYSTEM_NAME "Win32")
   endif()
-  if(UNIX OR BORLAND)
+  if(UNIX)
     get_filename_component(DART_CXX_NAME
       "${CMAKE_CXX_COMPILER}" ${DART_NAME_COMPONENT})
   else()
