@@ -109,8 +109,13 @@ void qSlicerSslTester::testHttpsConnection_data()
       << (QList<QSslError::SslError>())
       << QNetworkReply::NoError << 301;
 
-  QTest::newRow("slicer-secured-MovedPermanently-301")
+  QTest::newRow("slicer-secured-NoError-200")
       << "https://slicer.org"
+      << (QList<QSslError::SslError>())
+      << QNetworkReply::NoError << 200;
+
+  QTest::newRow("slicer-secured-with-redirect-NoError-301")
+      << "https://www.slicer.org"
       << (QList<QSslError::SslError>())
       << QNetworkReply::NoError << 301;
 
