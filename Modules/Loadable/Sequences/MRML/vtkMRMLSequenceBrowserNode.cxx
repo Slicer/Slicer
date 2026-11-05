@@ -43,7 +43,7 @@
 // STD includes
 #include <sstream>
 #include <algorithm> // for std::find
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32)
 # define SNPRINTF _snprintf
 #else
 # define SNPRINTF snprintf

@@ -30,7 +30,6 @@
 if(NOT DEFINED Slicer_REQUIRED_C_FLAGS OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
 
   include(SlicerFunctionCheckCompilerFlags)
-  include(SlicerFunctionGetGccVersion)
 
   set(tmp_c_flags)
   set(tmp_cxx_flags)
@@ -40,13 +39,7 @@ if(NOT DEFINED Slicer_REQUIRED_C_FLAGS OR NOT DEFINED Slicer_REQUIRED_CXX_FLAGS)
     SlicerFunctionCheckCompilerFlags("-fdiagnostics-show-option" cflags)
     SlicerFunctionCheckCompilerFlags("-Wl,--no-undefined" cflags)
 
-    slicerFunctionGetGccVersion(${CMAKE_CXX_COMPILER} GCC_VERSION)
-    # With older version of gcc supporting the flag -fstack-protector-all, an extra dependency to libssp.so
-    # is introduced. If gcc is smaller than 4.4.0 and the build type is Release let's not include the flag.
-    # Doing so should allow to build package made for distribution using older linux distro.
-    if(GCC_VERSION VERSION_GREATER "4.4.0" OR (CMAKE_BUILD_TYPE STREQUAL "Debug" AND GCC_VERSION VERSION_LESS "4.4.0"))
-      SlicerFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
-    endif()
+    SlicerFunctionCheckCompilerFlags("-fstack-protector-all" cflags)
     if(MINGW)
       # suppress warnings about auto imported symbols
       set(tmp_cxx_flags "-Wl,--enable-auto-import ${tmp_cxx_flags}")

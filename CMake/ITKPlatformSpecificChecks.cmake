@@ -2,25 +2,21 @@ include(itkCheckCXXAcceptsFlags)
 
 # On Visual Studio 8 MS deprecated C. This removes all 1.276E1265 security
 # warnings
-if(WIN32)
-   if(NOT CYGWIN)
-     if(NOT MINGW)
-       if(NOT ITK_ENABLE_VISUAL_STUDIO_DEPRECATED_C_WARNINGS)
-         add_definitions(
-           -D_CRT_FAR_MAPPINGS_NO_DEPRECATE
-           -D_CRT_IS_WCTYPE_NO_DEPRECATE
-           -D_CRT_MANAGED_FP_NO_DEPRECATE
-           -D_CRT_NONSTDC_NO_DEPRECATE
-           -D_CRT_SECURE_NO_DEPRECATE
-           -D_CRT_SECURE_NO_DEPRECATE_GLOBALS
-           -D_CRT_SETERRORMODE_BEEP_SLEEP_NO_DEPRECATE
-           -D_CRT_TIME_FUNCTIONS_NO_DEPRECATE
-           -D_CRT_VCCLRIT_NO_DEPRECATE
-           -D_SCL_SECURE_NO_DEPRECATE
-           )
-       endif()
-     endif()
-   endif()
+if(WIN32 AND NOT MINGW)
+  if(NOT ITK_ENABLE_VISUAL_STUDIO_DEPRECATED_C_WARNINGS)
+    add_definitions(
+      -D_CRT_FAR_MAPPINGS_NO_DEPRECATE
+      -D_CRT_IS_WCTYPE_NO_DEPRECATE
+      -D_CRT_MANAGED_FP_NO_DEPRECATE
+      -D_CRT_NONSTDC_NO_DEPRECATE
+      -D_CRT_SECURE_NO_DEPRECATE
+      -D_CRT_SECURE_NO_DEPRECATE_GLOBALS
+      -D_CRT_SETERRORMODE_BEEP_SLEEP_NO_DEPRECATE
+      -D_CRT_TIME_FUNCTIONS_NO_DEPRECATE
+      -D_CRT_VCCLRIT_NO_DEPRECATE
+      -D_SCL_SECURE_NO_DEPRECATE
+      )
+  endif()
 endif()
 
 if(WIN32)
@@ -30,17 +26,12 @@ if(WIN32)
   # plugin type applications to use a dll for ITKCommon which will contain
   # the static for Modified time.
   if(CMAKE_COMPILER_IS_GNUCXX)
-    # CMake adds --enable-all-exports on Cygwin (since Cygwin is
-    # supposed to be UNIX-like), but we need to add it explicitly for
-    # a native windows build with the MinGW tools.
+    # Export all symbols explicitly for a native Windows build with the MinGW tools.
     if(MINGW)
       set(CMAKE_SHARED_LIBRARY_CREATE_C_FLAGS
         "-shared -Wl,--export-all-symbols -Wl,--enable-auto-import")
       set(CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS
         "-shared -Wl,--export-all-symbols -Wl,--enable-auto-import")
-      set(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-auto-import")
-    endif()
-    if(CYGWIN)
       set(CMAKE_EXE_LINKER_FLAGS "-Wl,--enable-auto-import")
     endif()
   #else()
@@ -63,16 +54,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
    set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -Wno-deprecated")
  endif()
  if(APPLE)
-   # -no-cpp-precomp and -Wno-long-double were compiler flags present
-   # only in Apple's gcc and not in the FSF gcc. The flags are obsolete
-   # and totally removed in gcc 4.2 and later. I believe they are only
-   # needed with gcc 3.3 and earlier.
-   execute_process(COMMAND "${CMAKE_C_COMPILER}" --version
-     OUTPUT_VARIABLE _version ERROR_VARIABLE _version)
-   if("${_version}" MATCHES "gcc.*3\\.3.*Apple")
-     set(ITK_REQUIRED_C_FLAGS "${ITK_REQUIRED_C_FLAGS} -no-cpp-precomp")
-     set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -no-cpp-precomp")
-   endif()
    itkCHECK_CXX_ACCEPTS_FLAGS("-Wno-long-double" CXX_HAS_LONGDOUBLE_FLAG)
    if(CXX_HAS_LONGDOUBLE_FLAG)
      set(ITK_REQUIRED_C_FLAGS "${ITK_REQUIRED_C_FLAGS} -Wno-long-double")
@@ -91,33 +72,11 @@ endif()
 
 #-----------------------------------------------------------------------------
 
-# for the gnu compiler a -D_PTHREADS is needed on sun
-# for the native compiler a -mt flag is needed on the sun
-if(CMAKE_SYSTEM MATCHES "SunOS.*")
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -D_PTHREADS")
-    set(ITK_REQUIRED_LINK_FLAGS "${ITK_REQUIRED_LINK_FLAGS} -lrt")
-  else()
-    set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -mt")
-    set(ITK_REQUIRED_C_FLAGS "${ITK_REQUIRED_C_FLAGS} -mt")
-  endif()
-endif()
-
 # mingw thread support
 if(MINGW)
   set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -mthreads")
   set(ITK_REQUIRED_C_FLAGS "${ITK_REQUIRED_C_FLAGS} -mthreads")
   set(ITK_REQUIRED_LINK_FLAGS "${ITK_REQUIRED_LINK_FLAGS} -mthreads")
-endif()
-
-# Add flags for the SUN compiler to provide all the methods for std::allocator.
-#
-itkCHECK_CXX_ACCEPTS_FLAGS("-features=no%anachronisms" SUN_COMPILER)
-if(SUN_COMPILER)
-  itkCHECK_CXX_ACCEPTS_FLAGS("-library=stlport4" SUN_COMPILER_HAS_STL_PORT_4)
-  if(SUN_COMPILER_HAS_STL_PORT_4)
-    set(ITK_REQUIRED_CXX_FLAGS "${ITK_REQUIRED_CXX_FLAGS} -library=stlport4")
-  endif()
 endif()
 
 #-----------------------------------------------------------------------------
