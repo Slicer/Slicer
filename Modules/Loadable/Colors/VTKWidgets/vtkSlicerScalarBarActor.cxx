@@ -38,7 +38,7 @@
 
 #include <stdio.h> // for snprintf
 
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32)
 # define SNPRINTF _snprintf
 #else
 # define SNPRINTF snprintf
