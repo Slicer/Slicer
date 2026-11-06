@@ -58,7 +58,17 @@ void vtkSlicerModelsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   vtkNew<vtkIntArray> sceneEvents;
   sceneEvents->InsertNextValue(vtkMRMLScene::NodeRemovedEvent);
   sceneEvents->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  sceneEvents->InsertNextValue(vtkMRMLScene::EndBatchProcessEvent);
   this->SetAndObserveMRMLSceneEventsInternal(newScene, sceneEvents.GetPointer());
+}
+
+//-----------------------------------------------------------------------------
+void vtkSlicerModelsLogic::OnMRMLSceneEndBatchProcess()
+{
+  this->Superclass::OnMRMLSceneEndBatchProcess();
+  // The folder display nodes of the imported model hierarchy nodes are only needed by EndImportEvent observers
+  // (for converting legacy scene views). EndBatchProcessEvent is invoked after EndImportEvent.
+  this->ImportedModelHierarchyFolderDisplayNodes.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -76,6 +86,9 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
     vtkErrorMacro("OnMRMLSceneEndImport: Unable to access subject hierarchy node");
     return;
   }
+
+  // Model hierarchy node IDs of a previous import may be reused in this import
+  this->ImportedModelHierarchyFolderDisplayNodes.clear();
 
   // Convert model hierarchy nodes into subject hierarchy folders
   vtkMRMLNode* node = nullptr;
@@ -114,10 +127,11 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
       if (folderDisplayNode)
       {
         folderDisplayNode->SetName(mhNode->GetName()); // this name will appear for the user, so use the hierarchy node name
-        folderDisplayNode->SetColor(mhDisplayNode->GetColor());
-        folderDisplayNode->SetSelectedColor(mhDisplayNode->GetSelectedColor());
-        folderDisplayNode->SetOpacity(mhDisplayNode->GetOpacity());
-        folderDisplayNode->SetFolderDisplayOverrideAllowed(mhDisplayNode->GetSelected());
+        vtkSlicerModelsLogic::SetFolderDisplayPropertiesFromModelHierarchy(folderDisplayNode, mhNode);
+        // Legacy scene views store the model hierarchy node and its display node, they need to find
+        // the folder display node that replaced the model hierarchy display node
+        // (see vtkSlicerSceneViewsModuleLogic::ConvertSceneViewNodeToSequenceBrowserNode).
+        this->ImportedModelHierarchyFolderDisplayNodes[mhNode->GetID()] = folderDisplayNode;
         scene->RemoveNode(mhDisplayNode);
       }
       else
@@ -218,6 +232,36 @@ void vtkSlicerModelsLogic::OnMRMLSceneEndImport()
       }
     }
   }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerModelsLogic::SetFolderDisplayPropertiesFromModelHierarchy(vtkMRMLFolderDisplayNode* folderDisplayNode, vtkMRMLModelHierarchyNode* hierarchyNode)
+{
+  vtkMRMLModelDisplayNode* hierarchyDisplayNode = (hierarchyNode ? hierarchyNode->GetModelDisplayNode() : nullptr);
+  if (!folderDisplayNode || !hierarchyDisplayNode)
+  {
+    return;
+  }
+  MRMLNodeModifyBlocker blocker(folderDisplayNode);
+  folderDisplayNode->SetColor(hierarchyDisplayNode->GetColor());
+  folderDisplayNode->SetSelectedColor(hierarchyDisplayNode->GetSelectedColor());
+  folderDisplayNode->SetFolderDisplayOverrideAllowed(hierarchyDisplayNode->GetSelected());
+  bool applyDisplayPropertiesOnBranch = !hierarchyNode->GetExpanded();
+  folderDisplayNode->SetApplyDisplayPropertiesOnBranch(applyDisplayPropertiesOnBranch);
+  // Visibility and opacity of a folder display node are always applied to the branch
+  folderDisplayNode->SetVisibility(applyDisplayPropertiesOnBranch ? hierarchyDisplayNode->GetVisibility() : 1);
+  folderDisplayNode->SetOpacity(applyDisplayPropertiesOnBranch ? hierarchyDisplayNode->GetOpacity() : 1.0);
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLFolderDisplayNode* vtkSlicerModelsLogic::GetImportedModelHierarchyFolderDisplayNode(const std::string& modelHierarchyNodeID)
+{
+  auto folderDisplayNodeIt = this->ImportedModelHierarchyFolderDisplayNodes.find(modelHierarchyNodeID);
+  if (folderDisplayNodeIt == this->ImportedModelHierarchyFolderDisplayNodes.end())
+  {
+    return nullptr;
+  }
+  return folderDisplayNodeIt->second;
 }
 
 //----------------------------------------------------------------------------
