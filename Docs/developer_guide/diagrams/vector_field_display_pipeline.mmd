@@ -1,0 +1,52 @@
+flowchart TB
+    subgraph data [Displayable node]
+        direction LR
+        volume["Vector volume"]
+        model["Model<br/>point or cell data"]
+        transform["Transform"]
+    end
+
+    %% One per display node, shared by all views, the display widget and export
+    subgraph shared ["vtkMRMLVectorFieldPipeline (one per display node, shared)"]
+        fieldSource["Field source (GetFieldConnection)<br/>vtkVectorFieldSampler, the mesh points or cells,<br/>or the voxels in RAS (streamlines of a volume)"]
+        mask["vtkMRMLVectorFieldMask<br/>region test (GetMaskedFieldConnection, optional)"]
+        toWorld["vtkTransformFilter<br/>non-linear parent transform (optional)"]
+        glyph["vtkVectorFieldGlyph<br/>glyph points and shape"]
+        geometry["vtkVectorFieldGeometry<br/>grid, contours or streamlines"]
+        streamlineToWorld["vtkTransformPolyDataFilter<br/>non-linear parent transform (optional)"]
+    end
+
+    data --> fieldSource --> mask --> toWorld
+    toWorld -->|glyph| glyph
+    toWorld -->|grid, contour| geometry
+    mask -->|"streamline (traced in the coordinates of the field)"| geometry
+    geometry -->|streamline| streamlineToWorld
+
+    %% One per 3D view: mappers and actors only
+    subgraph threeD ["vtkMRMLVectorField3DViewPipeline (each 3D view)"]
+        glypher["vtkGlyph3DMapper"] --> actor["vtkActor<br/>user matrix: linear parent transform"]
+        mapper["vtkPolyDataMapper"] --> actor
+        nonWarpedMapper["vtkPolyDataMapper"] --> nonWarpedActor["vtkActor<br/>undeformed grid lines"]
+    end
+
+    glyph -->|ConfigureMapper| glypher
+    geometry -->|grid, contour| mapper
+    streamlineToWorld --> mapper
+    geometry -->|undeformed grid lines| nonWarpedMapper
+
+    %% One per slice view: samples the field in the slice plane and draws it flat
+    subgraph slice ["vtkMRMLVectorField2DViewPipeline (each slice view)"]
+        sliceSampler["vtkVectorFieldSampler in the slice plane<br/>(volume, transform, volumetric mesh)"] --> sliceMask["vtkMRMLVectorFieldMask<br/>region test (optional)"]
+        slab["mesh points near the slice<br/>(other meshes)"]
+        cutter["vtkPlaneCutter<br/>(contours of a mesh)"]
+        sliceGeometry["vtkVectorFieldGlyph or vtkVectorFieldGeometry<br/>own instances, flat"]
+        projection["streamlines near the slice, faded"]
+        toXY["vtkTransformPolyDataFilter<br/>RAS to slice XY"] --> actor2D["vtkPolyDataMapper2D, vtkActor2D<br/>(and a pair for undeformed grid lines)"]
+    end
+
+    data --> sliceSampler
+    sliceMask --> sliceGeometry
+    mask --> slab --> sliceGeometry
+    mask --> cutter --> sliceGeometry
+    sliceGeometry --> toXY
+    geometry -->|"streamline lines, before tubes (GetStreamlineConnection)"| projection --> toXY

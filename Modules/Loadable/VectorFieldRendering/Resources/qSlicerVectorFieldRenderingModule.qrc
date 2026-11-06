@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="/">
+    <file>Icons/VectorFieldRendering.png</file>
+  </qresource>
+</RCC>
