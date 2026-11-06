@@ -34,6 +34,7 @@
 
 // MRML include
 #include <vtkMRMLColorTableNode.h>
+#include <vtkMRMLVectorFieldDisplayNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLScene.h>
@@ -41,6 +42,7 @@
 
 // VTK includes
 #include <vtkDataArray.h>
+#include <vtkNew.h>
 #include <vtkPointData.h>
 #include <vtkPointSet.h>
 #include <vtkProperty.h>
@@ -70,6 +72,10 @@ public:
   QList<vtkMRMLModelDisplayNode*> modelDisplayNodesFromSelection() const;
   QList<vtkMRMLDisplayNode*> displayNodesFromSelection() const;
 
+  /// Return all vtkMRMLVectorFieldDisplayNode display nodes of the model node, in the order
+  /// they are referenced by the model node.
+  QList<vtkMRMLVectorFieldDisplayNode*> glyphDisplayNodesForModel(vtkMRMLModelNode* modelNode) const;
+
   // Current display nodes, used to display the current display properties in the widget.
   // They are the first display node that belong to the first current subject hierarchy item.
   // - The model-specific display node pointer is a quick accessor to the model specific
@@ -80,6 +86,9 @@ public:
   vtkWeakPointer<vtkMRMLDisplayNode> CurrentDisplayNode;
   /// Model node that the currently displayed display node belongs to.
   vtkMRMLModelNode* currentModelNode() const;
+  /// Model node observed for changes of its display nodes, to keep the list of
+  /// glyph displays up to date
+  vtkWeakPointer<vtkMRMLModelNode> ObservedModelNode;
 
   vtkSmartPointer<vtkProperty> Property;
   QList<vtkIdType> CurrentSubjectHierarchyItemIDs;
@@ -133,6 +142,10 @@ void qMRMLModelDisplayNodeWidgetPrivate::init()
              q,
              SIGNAL(scalarRangeModeValueChanged(vtkMRMLDisplayNode::ScalarRangeFlagType)));
   q->connect(this->ScalarsDisplayWidget, SIGNAL(displayNodeChanged()), q, SIGNAL(displayNodeChanged()));
+
+  q->connect(this->GlyphDisplayNodesListWidget, SIGNAL(currentRowChanged(int)), q, SLOT(onGlyphDisplayNodeSelectionChanged()));
+  q->connect(this->AddGlyphDisplayNodeButton, SIGNAL(clicked()), q, SLOT(addGlyphDisplayNode()));
+  q->connect(this->RemoveGlyphDisplayNodeButton, SIGNAL(clicked()), q, SLOT(removeGlyphDisplayNode()));
 
   if (this->CurrentModelDisplayNode.GetPointer())
   {
@@ -208,6 +221,26 @@ QList<vtkMRMLDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::displayNodesFromS
     }
   }
   return displayNodes;
+}
+
+//------------------------------------------------------------------------------
+QList<vtkMRMLVectorFieldDisplayNode*> qMRMLModelDisplayNodeWidgetPrivate::glyphDisplayNodesForModel(vtkMRMLModelNode* modelNode) const
+{
+  QList<vtkMRMLVectorFieldDisplayNode*> glyphDisplayNodes;
+  if (!modelNode)
+  {
+    return glyphDisplayNodes;
+  }
+  int numberOfDisplayNodes = modelNode->GetNumberOfDisplayNodes();
+  for (int i = 0; i < numberOfDisplayNodes; ++i)
+  {
+    vtkMRMLVectorFieldDisplayNode* glyphDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(modelNode->GetNthDisplayNode(i));
+    if (glyphDisplayNode)
+    {
+      glyphDisplayNodes << glyphDisplayNode;
+    }
+  }
+  return glyphDisplayNodes;
 }
 
 //------------------------------------------------------------------------------
@@ -346,6 +379,24 @@ void qMRMLModelDisplayNodeWidget::setCurrentSubjectHierarchyItemIDs(QList<vtkIdT
 }
 
 //------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::addScalarsWidget(QWidget* widget)
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+  if (!widget)
+  {
+    return;
+  }
+  d->gridLayout->addWidget(widget, d->gridLayout->rowCount(), 0, 1, 2);
+}
+
+//------------------------------------------------------------------------------
+qMRMLVectorFieldDisplayWidget* qMRMLModelDisplayNodeWidget::vectorFieldDisplayWidget() const
+{
+  Q_D(const qMRMLModelDisplayNodeWidget);
+  return d->GlyphDisplayWidget;
+}
+
+//------------------------------------------------------------------------------
 void qMRMLModelDisplayNodeWidget::setMRMLModelDisplayNode(vtkMRMLNode* node)
 {
   this->setMRMLModelDisplayNode(vtkMRMLModelDisplayNode::SafeDownCast(node));
@@ -373,7 +424,148 @@ void qMRMLModelDisplayNodeWidget::setMRMLDisplayNode(vtkMRMLDisplayNode* display
   // Set display node to scalars display widget
   d->ScalarsDisplayWidget->setMRMLDisplayNode(displayNode);
 
+  // Observe the model node to keep the list of glyph displays up to date when display nodes are added
+  // or removed (also from outside this widget).
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(displayNode ? displayNode->GetDisplayableNode() : nullptr);
+  qvtkReconnect(d->ObservedModelNode, modelNode, vtkMRMLDisplayableNode::DisplayModifiedEvent, this, SLOT(updateGlyphDisplayNodesList()));
+  d->ObservedModelNode = modelNode;
+  this->updateGlyphDisplayNodesList();
+
   this->updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::updateGlyphDisplayNodesList()
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+
+  QList<vtkMRMLVectorFieldDisplayNode*> glyphDisplayNodes = d->glyphDisplayNodesForModel(d->currentModelNode());
+
+  // Keep the current selection if that glyph display node still exists
+  QString selectedNodeID;
+  QListWidgetItem* selectedItem = d->GlyphDisplayNodesListWidget->currentItem();
+  if (selectedItem)
+  {
+    selectedNodeID = selectedItem->data(Qt::UserRole).toString();
+  }
+
+  bool wasBlocked = d->GlyphDisplayNodesListWidget->blockSignals(true);
+  d->GlyphDisplayNodesListWidget->clear();
+  int selectedRow = -1;
+  for (vtkMRMLVectorFieldDisplayNode* const glyphDisplayNode : glyphDisplayNodes)
+  {
+    QString nodeID = QString::fromUtf8(glyphDisplayNode->GetID() ? glyphDisplayNode->GetID() : "");
+    QString nodeName = QString::fromUtf8(glyphDisplayNode->GetName() ? glyphDisplayNode->GetName() : "");
+    if (nodeName.isEmpty())
+    {
+      nodeName = qMRMLModelDisplayNodeWidget::tr("Glyph display");
+    }
+    QListWidgetItem* item = new QListWidgetItem(nodeName, d->GlyphDisplayNodesListWidget);
+    item->setData(Qt::UserRole, nodeID);
+    if (nodeID == selectedNodeID)
+    {
+      selectedRow = d->GlyphDisplayNodesListWidget->count() - 1;
+    }
+  }
+  if (selectedRow < 0 && d->GlyphDisplayNodesListWidget->count() > 0)
+  {
+    selectedRow = 0;
+  }
+  d->GlyphDisplayNodesListWidget->setCurrentRow(selectedRow);
+  d->GlyphDisplayNodesListWidget->blockSignals(wasBlocked);
+
+  d->AddGlyphDisplayNodeButton->setEnabled(d->currentModelNode() != nullptr);
+  d->RemoveGlyphDisplayNodeButton->setEnabled(selectedRow >= 0);
+
+  this->onGlyphDisplayNodeSelectionChanged();
+}
+
+//------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::onGlyphDisplayNodeSelectionChanged()
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+
+  vtkMRMLVectorFieldDisplayNode* selectedGlyphDisplayNode = nullptr;
+  QListWidgetItem* selectedItem = d->GlyphDisplayNodesListWidget->currentItem();
+  vtkMRMLScene* scene = this->mrmlScene();
+  if (selectedItem && scene)
+  {
+    QString nodeID = selectedItem->data(Qt::UserRole).toString();
+    selectedGlyphDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(scene->GetNodeByID(nodeID.toUtf8().constData()));
+  }
+  d->RemoveGlyphDisplayNodeButton->setEnabled(selectedGlyphDisplayNode != nullptr);
+  d->GlyphDisplayWidget->setMRMLVectorFieldDisplayNode(selectedGlyphDisplayNode);
+  d->GlyphDisplayWidget->setVisible(selectedGlyphDisplayNode != nullptr);
+}
+
+//------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::addGlyphDisplayNode()
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+
+  vtkMRMLModelNode* modelNode = d->currentModelNode();
+  if (!modelNode || !modelNode->GetScene())
+  {
+    return;
+  }
+
+  vtkMRMLScene* scene = modelNode->GetScene();
+  vtkMRMLVectorFieldDisplayNode* glyphDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(scene->AddNewNodeByClass("vtkMRMLVectorFieldDisplayNode"));
+  if (!glyphDisplayNode)
+  {
+    return;
+  }
+  // Color the glyphs with the same color table that the model uses, so that a color
+  // table is selected in the Coloring section from the start.
+  if (d->CurrentModelDisplayNode.GetPointer() && d->CurrentModelDisplayNode->GetColorNodeID())
+  {
+    glyphDisplayNode->SetAndObserveColorNodeID(d->CurrentModelDisplayNode->GetColorNodeID());
+  }
+  modelNode->AddAndObserveDisplayNodeID(glyphDisplayNode->GetID());
+
+  // Select the new glyph display node
+  this->updateGlyphDisplayNodesList();
+  for (int row = 0; row < d->GlyphDisplayNodesListWidget->count(); ++row)
+  {
+    QListWidgetItem* item = d->GlyphDisplayNodesListWidget->item(row);
+    if (item && item->data(Qt::UserRole).toString() == QString::fromUtf8(glyphDisplayNode->GetID()))
+    {
+      d->GlyphDisplayNodesListWidget->setCurrentRow(row);
+      break;
+    }
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLModelDisplayNodeWidget::removeGlyphDisplayNode()
+{
+  Q_D(qMRMLModelDisplayNodeWidget);
+
+  vtkMRMLModelNode* modelNode = d->currentModelNode();
+  QListWidgetItem* selectedItem = d->GlyphDisplayNodesListWidget->currentItem();
+  vtkMRMLScene* scene = this->mrmlScene();
+  if (!modelNode || !selectedItem || !scene)
+  {
+    return;
+  }
+  QString nodeID = selectedItem->data(Qt::UserRole).toString();
+  vtkMRMLVectorFieldDisplayNode* glyphDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(scene->GetNodeByID(nodeID.toUtf8().constData()));
+  if (!glyphDisplayNode)
+  {
+    return;
+  }
+
+  // Remove the display node reference from the model node, then remove the node itself
+  for (int i = modelNode->GetNumberOfDisplayNodes() - 1; i >= 0; --i)
+  {
+    if (modelNode->GetNthDisplayNode(i) == glyphDisplayNode)
+    {
+      modelNode->RemoveNthDisplayNodeID(i);
+    }
+  }
+  scene->RemoveNode(glyphDisplayNode);
+
+  this->updateGlyphDisplayNodesList();
 }
 
 //------------------------------------------------------------------------------

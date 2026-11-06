@@ -18,52 +18,60 @@
   Research Unit program of Cancer Care Ontario with funds provided by the
   Ontario Ministry of Health and Long-Term Care.
 
+  This file was further developed with funding from the Children's Hospital of
+  Philadelphia Frontier Program.
+
 ==============================================================================*/
 
-#ifndef __vtkMRMLTransformsDisplayableManager2D_h
-#define __vtkMRMLTransformsDisplayableManager2D_h
+#ifndef __vtkMRMLVectorFieldSliceDisplayableManager_h
+#define __vtkMRMLVectorFieldSliceDisplayableManager_h
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractSliceViewDisplayableManager.h"
-#include "vtkSlicerTransformsModuleMRMLDisplayableManagerExport.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
-/// \brief Displayable manager for showing transforms in slice (2D) views.
+class vtkMRMLDisplayableNode;
+
+/// \brief Displays vector fields in slice views.
 ///
-/// Displays transforms in slice viewers as glyphs, deformed grid, or
-/// contour lines
+/// Resampleable fields (volume, transform, volumetric mesh) are sampled in the slice plane; surface mesh points are
+/// shown within the slice thickness. Glyphs are drawn flat in the slice, other modes are cut or projected to it.
 ///
-class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformsDisplayableManager2D : public vtkMRMLAbstractSliceViewDisplayableManager
+/// \sa vtkMRMLVectorFieldDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVectorFieldSliceDisplayableManager : public vtkMRMLAbstractSliceViewDisplayableManager
 {
 
 public:
-  static vtkMRMLTransformsDisplayableManager2D* New();
-  vtkTypeMacro(vtkMRMLTransformsDisplayableManager2D, vtkMRMLAbstractSliceViewDisplayableManager);
+  static vtkMRMLVectorFieldSliceDisplayableManager* New();
+  vtkTypeMacro(vtkMRMLVectorFieldSliceDisplayableManager, vtkMRMLAbstractSliceViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  // DisplayableNode handling customizations
+  void AddDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
+  void RemoveDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
+
 protected:
-  vtkMRMLTransformsDisplayableManager2D();
-  ~vtkMRMLTransformsDisplayableManager2D() override;
+  vtkMRMLVectorFieldSliceDisplayableManager();
+  ~vtkMRMLVectorFieldSliceDisplayableManager() override;
 
   void UnobserveMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
-  /// Update Actors based on transforms in the scene
   void UpdateFromMRML() override;
-
   void OnMRMLSceneStartClose() override;
   void OnMRMLSceneEndClose() override;
-
   void OnMRMLSceneEndBatchProcess() override;
 
-  /// Initialize the displayable manager based on its associated
-  /// vtkMRMLSliceNode
+  /// Initialize the displayable manager based on its associated vtkMRMLSliceNode
   void Create() override;
 
+  int AddingDisplayableNode;
+
 private:
-  vtkMRMLTransformsDisplayableManager2D(const vtkMRMLTransformsDisplayableManager2D&) = delete;
-  void operator=(const vtkMRMLTransformsDisplayableManager2D&) = delete;
+  vtkMRMLVectorFieldSliceDisplayableManager(const vtkMRMLVectorFieldSliceDisplayableManager&) = delete;
+  void operator=(const vtkMRMLVectorFieldSliceDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

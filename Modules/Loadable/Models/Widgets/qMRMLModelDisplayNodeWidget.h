@@ -32,6 +32,7 @@
 #include "qSlicerModelsModuleWidgetsExport.h"
 
 class qMRMLModelDisplayNodeWidgetPrivate;
+class qMRMLVectorFieldDisplayWidget;
 class vtkMRMLColorNode;
 class vtkMRMLDisplayNode;
 class vtkMRMLModelDisplayNode;
@@ -45,6 +46,14 @@ class Q_SLICER_QTMODULES_MODELS_WIDGETS_EXPORT qMRMLModelDisplayNodeWidget : pub
   Q_PROPERTY(bool clippingConfigurationButtonVisible READ clippingConfigurationButtonVisible WRITE setClippingConfigurationButtonVisible)
 
 public:
+  /// Add a widget to the Scalars section, for what belongs with the scalars the model is
+  /// colored by (the color legend). The widget is reparented.
+  void addScalarsWidget(QWidget* widget);
+
+  /// The widget that edits the vector field display of the model, for adding sections to its
+  /// coloring (qMRMLVectorFieldDisplayWidget::addColoringWidget())
+  qMRMLVectorFieldDisplayWidget* vectorFieldDisplayWidget() const;
+
   typedef qMRMLWidget Superclass;
   qMRMLModelDisplayNodeWidget(QWidget* parent = nullptr);
   ~qMRMLModelDisplayNodeWidget() override;
@@ -123,9 +132,19 @@ public slots:
   /// Show/hide "Configure..." button for clipping
   void setClippingConfigurationButtonVisible(bool);
 
+public slots:
+  /// Add a new glyph display to the current model node and select it in the Glyphs section.
+  void addGlyphDisplayNode();
+  /// Remove the glyph display that is selected in the Glyphs section from the current model node.
+  void removeGlyphDisplayNode();
+
 protected slots:
   void updateWidgetFromMRML();
   void updateDisplayNodesFromProperty();
+  /// Refresh the list of the current model node's glyph displays in the Glyphs section.
+  void updateGlyphDisplayNodesList();
+  /// Show the properties of the glyph display selected in the Glyphs section.
+  void onGlyphDisplayNodeSelectionChanged();
 
 protected:
   QScopedPointer<qMRMLModelDisplayNodeWidgetPrivate> d_ptr;

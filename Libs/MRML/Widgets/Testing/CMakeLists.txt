@@ -70,6 +70,7 @@ set(TEST_SOURCES
   qMRMLNodeFactoryTest1.cxx
   qMRMLPlotViewTest1.cxx
   qMRMLScalarInvariantComboBoxTest1.cxx
+  qMRMLScalarsDisplayWidgetTest1.cxx
   qMRMLSceneCategoryModelTest1.cxx
   qMRMLSceneColorTableModelTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
@@ -92,6 +93,7 @@ set(TEST_SOURCES
   qMRMLTreeViewTest1.cxx
   qMRMLUtf8Test1.cxx
   qMRMLUtilsTest1.cxx
+  qMRMLVectorFieldDisplayWidgetTest1.cxx
   qMRMLVolumeInfoWidgetTest1.cxx
   qMRMLVolumeThresholdWidgetTest1.cxx
   qMRMLVolumeThresholdWidgetTest2.cxx
@@ -140,6 +142,8 @@ set(Tests_UtilityFiles
 
 include_directories( ${CMAKE_CURRENT_BINARY_DIR})
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR})
+# Test data shared by the vector field tests
+include_directories( ${MRMLCore_SOURCE_DIR}/Testing)
 
 ctk_add_executable_utf8(${KIT}CxxTests ${Tests} ${Tests_UtilityFiles})
 target_link_libraries(${KIT}CxxTests ${KIT})
@@ -191,6 +195,7 @@ simple_test( qMRMLColorModelTest1 )
 simple_test( qMRMLColorTableComboBoxTest1 )
 simple_test( qMRMLDisplayNodeViewComboBoxTest )
 simple_test( qMRMLDisplayNodeWidgetTest1 )
+simple_test( qMRMLVectorFieldDisplayWidgetTest1 )
 simple_test( qMRMLLayoutManagerTest1 )
 simple_test( qMRMLLayoutManagerTest2 )
 simple_test( qMRMLLayoutManagerTest3 )
@@ -220,6 +225,7 @@ simple_test( qMRMLNodeComboBoxLazyUpdateTest1 )
 simple_test( qMRMLNodeFactoryTest1 )
 simple_test( qMRMLPlotViewTest1 )
 simple_test( qMRMLScalarInvariantComboBoxTest1 )
+simple_test( qMRMLScalarsDisplayWidgetTest1 )
 simple_test( qMRMLSceneCategoryModelTest1 )
 simple_test( qMRMLSceneColorTableModelTest1 )
 simple_test( qMRMLSceneFactoryWidgetTest1 )

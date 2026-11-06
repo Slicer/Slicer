@@ -212,6 +212,8 @@ set(MRMLWidgets_SRCS
   qMRMLTreeView_p.h
   qMRMLUtils.cxx
   qMRMLUtils.h
+  qMRMLVectorFieldDisplayWidget.cxx
+  qMRMLVectorFieldDisplayWidget.h
   qMRMLViewControllerBar.cxx
   qMRMLViewControllerBar.h
   qMRMLViewControllerBar_p.h
@@ -258,6 +260,7 @@ set(MRMLWidgets_UI_SRCS
   Resources/UI/qMRMLThreeDViewControllerWidget.ui
   Resources/UI/qMRMLThreeDViewInformationWidget.ui
   Resources/UI/qMRMLTransformSliders.ui
+  Resources/UI/qMRMLVectorFieldDisplayWidget.ui
   Resources/UI/qMRMLVolumeInfoWidget.ui
   Resources/UI/qMRMLVolumeThresholdWidget.ui
   Resources/UI/qMRMLWindowLevelWidget.ui

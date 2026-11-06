@@ -8,6 +8,8 @@ set(KIT_TEST_SRCS
   vtkSlicerTransformLogicTest1.cxx
   vtkSlicerTransformLogicTest2.cxx
   vtkSlicerTransformLogicTest3.cxx
+  vtkSlicerTransformLogicImportTest1.cxx
+  vtkSlicerTransformLogicVisualizationTest1.cxx
   vtkSlicerTransformsReaderTest1.cxx
   )
 
@@ -23,4 +25,6 @@ slicerMacroConfigureModuleCxxTestDriver(
 simple_test( vtkSlicerTransformLogicTest1 ${DATA_DIR}/affineTransform.txt)
 simple_test( vtkSlicerTransformLogicTest2 ${DATA_DIR}/cube.vtk)
 simple_test( vtkSlicerTransformLogicTest3 ${DATA_DIR}/cube.vtk ${DATA_DIR}/transformedCube.vtk)
+simple_test( vtkSlicerTransformLogicImportTest1 ${TEMP})
+simple_test( vtkSlicerTransformLogicVisualizationTest1 )
 simple_test( vtkSlicerTransformsReaderTest1 ${DATA_DIR}/affineTransform.txt ${TEMP})

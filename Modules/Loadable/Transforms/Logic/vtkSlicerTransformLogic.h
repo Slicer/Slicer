@@ -32,20 +32,24 @@
 class vtkMRMLDisplayableNode;
 class vtkMRMLMarkupsNode;
 class vtkMRMLMessageCollection;
+class vtkMRMLModelNode;
 class vtkMRMLScalarVolumeNode;
 class vtkMRMLScene;
 class vtkMRMLSliceNode;
 class vtkMRMLTransformableNode;
 class vtkMRMLTransformDisplayNode;
 class vtkMRMLTransformNode;
+class vtkMRMLVectorVolumeNode;
 class vtkMRMLVolumeNode;
 
 // VTK includes
+class vtkDataArray;
 class vtkImageData;
 class vtkMatrix4x4;
 class vtkPoints;
 class vtkPointSet;
 class vtkPolyData;
+class vtkScatteredBSplineTransform;
 class vtkUnstructuredGrid;
 
 class VTK_SLICER_TRANSFORMS_MODULE_LOGIC_EXPORT vtkSlicerTransformLogic : public vtkSlicerModuleLogic
@@ -111,6 +115,24 @@ public:
   vtkMRMLTransformNode* ConvertToGridTransform(vtkMRMLTransformNode* inputTransformNode,
                                                vtkMRMLVolumeNode* referenceVolumeNode = nullptr,
                                                vtkMRMLTransformNode* existingOutputTransformNode = nullptr);
+
+  /// Set the transform to a grid transform (to parent, so CreateDisplacementVolumeFromTransform round-trips) from the RAS
+  /// voxel displacements (copied) of a 3-component vector volume. Returns false for other volumes or under a non-linear transform.
+  bool ImportTransformFromDisplacementVolume(vtkMRMLTransformNode* transformNode, vtkMRMLVectorVolumeNode* displacementVolumeNode);
+
+  /// Fit a vtkScatteredBSplineTransform (SetScatteredTransformDefaults()) to the displacements at the points of a model
+  /// (named point data array, or active vectors), in mesh coordinates. Returns false if the mesh has no such array.
+  /// If keepLinked, it becomes the transform to parent with the model as displacement model: it follows the mesh, stays
+  /// editable, and is saved in the scene. Otherwise the node gets a fixed B-spline copy that can be saved to a file.
+  bool ImportTransformFromModel(vtkMRMLTransformNode* transformNode, vtkMRMLModelNode* modelNode, const char* displacementArrayName = nullptr, bool keepLinked = true);
+
+  /// The named point data array of a mesh, or its active vectors if no name is given.
+  /// Returns nullptr if the mesh has no points or the array does not have 3 components.
+  static vtkDataArray* GetDisplacementArray(vtkPointSet* mesh, const char* displacementArrayName);
+
+  /// Set scattered B-spline defaults for the displacements of a mesh (not set as input): GridBoundsMargin a tenth of the
+  /// points diagonal, then linear trend; control points down to 1/100 of the fitted region apart; tolerance 1/1000 of the max.
+  static void SetScatteredTransformDefaults(vtkScatteredBSplineTransform* transform, vtkPointSet* mesh, const char* displacementArrayName);
 
   /// Take samples from the displacement field and store the magnitude in an image volume
   /// The extents of the output image must be set before calling this method.

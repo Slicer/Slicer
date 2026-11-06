@@ -29,6 +29,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLGlyphableVolumeDisplayNodeTest1.cxx
   vtkMRMLGlyphableVolumeSliceDisplayNodeTest1.cxx
   vtkMRMLGridTransformNodeTest1.cxx
+  vtkMRMLTransformNodeScatteredTest1.cxx
   vtkMRMLHierarchyNodeTest1.cxx
   vtkMRMLHierarchyNodeTest3.cxx
   vtkMRMLI18NTest1.cxx
@@ -91,6 +92,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLTransformableNodeReferenceSaveImportTest.cxx
   vtkMRMLTransformableNodeOnNodeReferenceAddTest.cxx
   vtkMRMLTransformDisplayNodeTest1.cxx
+  vtkMRMLTransformDisplayNodeLegacySceneTest1.cxx
   vtkMRMLTransformNodeTest1.cxx
   vtkMRMLTransformSequenceStorageNodeNiftiTest.cxx
   vtkMRMLTransformSequenceStorageNodeNrrdTest.cxx
@@ -100,6 +102,14 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLTransformStorageNodeTest3.cxx
   vtkMRMLTransformableNodeTest1.cxx
   vtkMRMLUnitNodeTest1.cxx
+  vtkMRMLVectorFieldDisplayNodeTest1.cxx
+  vtkMRMLVectorFieldPipelineTest1.cxx
+  vtkMRMLVectorFieldGeometryTest1.cxx
+  vtkMRMLVectorFieldSamplePointSourceTest1.cxx
+  vtkVectorFieldGeometryTest1.cxx
+  vtkVectorFieldGlyphTest1.cxx
+  vtkVectorFieldGridTest1.cxx
+  vtkVectorFieldSamplerTest1.cxx
   vtkMRMLVectorVolumeDisplayNodeTest1.cxx
   vtkMRMLVectorVolumeNodeTest1.cxx
   vtkMRMLViewNodeTest1.cxx
@@ -152,6 +162,7 @@ simple_test( vtkMRMLDisplayNodeTest1 )
 simple_test( vtkMRMLGlyphableVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLGlyphableVolumeSliceDisplayNodeTest1 )
 simple_test( vtkMRMLGridTransformNodeTest1 )
+simple_test( vtkMRMLTransformNodeScatteredTest1 )
 simple_test( vtkMRMLHierarchyNodeTest1 )
 simple_test( vtkMRMLHierarchyNodeTest3 )
 simple_test( vtkMRMLDisplayableHierarchyNodeDisplayPropertiesTest )
@@ -218,11 +229,20 @@ simple_test( vtkMRMLTransformableNodeReferenceSaveImportTest )
 simple_test( vtkMRMLTransformableNodeOnNodeReferenceAddTest )
 simple_test( vtkMRMLTransformableNodeTest1 )
 simple_test( vtkMRMLTransformDisplayNodeTest1 )
+simple_test( vtkMRMLTransformDisplayNodeLegacySceneTest1 )
 simple_test( vtkMRMLTransformNodeTest1 )
 simple_test( vtkMRMLTransformStorageNodeTest1 ${TEMP})
 simple_test( vtkMRMLTransformStorageNodeTest2 ${TEMP})
 simple_test( vtkMRMLTransformStorageNodeTest3 ${TEMP})
 simple_test( vtkMRMLUnitNodeTest1 )
+simple_test( vtkMRMLVectorFieldDisplayNodeTest1 )
+simple_test( vtkMRMLVectorFieldPipelineTest1 )
+simple_test( vtkMRMLVectorFieldGeometryTest1 )
+simple_test( vtkMRMLVectorFieldSamplePointSourceTest1 )
+simple_test( vtkVectorFieldGeometryTest1 )
+simple_test( vtkVectorFieldGlyphTest1 )
+simple_test( vtkVectorFieldGridTest1 )
+simple_test( vtkVectorFieldSamplerTest1 )
 simple_test( vtkMRMLVectorVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLVectorVolumeNodeTest1 )
 simple_test( vtkMRMLViewNodeTest1 )

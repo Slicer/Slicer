@@ -22,6 +22,9 @@
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLLinearTransformsDisplayableManager.h"
+
+// MRML includes
+#include <vtkMRMLTransformInteractionDisplayNode.h>
 #include <vtkMRMLTransformHandleWidget.h>
 
 // MRMLDM includes
@@ -336,6 +339,20 @@ void vtkMRMLLinearTransformsDisplayableManager::ProcessMRMLNodesEvents(vtkObject
   {
     vtkMRMLNode* callDataNode = reinterpret_cast<vtkMRMLDisplayNode*>(callData);
     vtkMRMLTransformDisplayNode* displayNode = vtkMRMLTransformDisplayNode::SafeDownCast(callDataNode);
+    if (!displayNode && vtkMRMLTransformInteractionDisplayNode::SafeDownCast(callDataNode))
+    {
+      // The handle properties are stored in the interaction display node of the transform;
+      // the widgets are still keyed by its transform display node.
+      for (int i = 0; i < transformNode->GetNumberOfDisplayNodes(); i++)
+      {
+        vtkMRMLTransformDisplayNode* transformDisplayNode = vtkMRMLTransformDisplayNode::SafeDownCast(transformNode->GetNthDisplayNode(i));
+        if (transformDisplayNode)
+        {
+          displayNode = transformDisplayNode;
+          break;
+        }
+      }
+    }
 
     if (displayNode && (event == vtkMRMLDisplayableNode::DisplayModifiedEvent))
     {

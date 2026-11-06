@@ -18,7 +18,11 @@
 // Qt includes
 #include <QDebug>
 
+// Qt includes
+#include <QStandardItem>
+
 // CTK includes
+#include <ctkVTKDataSetModel.h>
 #include "ctkUtils.h"
 
 // qMRML includes
@@ -30,6 +34,7 @@
 #include <vtkMRMLColorTableNode.h>
 #include <vtkMRMLDisplayableNode.h>
 #include <vtkMRMLDisplayNode.h>
+#include <vtkMRMLVectorFieldDisplayNode.h>
 #include <vtkMRMLModelDisplayNode.h>
 
 // VTK includes
@@ -37,6 +42,14 @@
 
 // STD includes
 #include <algorithm>
+
+//-----------------------------------------------------------------------------
+namespace
+{
+/// Marks the "(Default)" item that stands for the host's array. Must not clash with the data set model's own
+/// roles (ctkVTK::PointerRole is Qt::UserRole + 1).
+const int DefaultArrayItemRole = Qt::UserRole + 100;
+} // namespace
 
 //-----------------------------------------------------------------------------
 class qMRMLScalarsDisplayWidgetPrivate : public Ui_qMRMLScalarsDisplayWidget
@@ -50,7 +63,27 @@ public:
   qMRMLScalarsDisplayWidgetPrivate(qMRMLScalarsDisplayWidget& object);
   void init();
 
-  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes() const;
+  /// The array the host falls back to.
+  QString DefaultScalarArrayName;
+
+  /// Put the "(Default)" entry at the top of the list of arrays, or take it out. The list
+  /// is rebuilt from the data set whenever that changes, so this runs after every update.
+  void updateDefaultArrayItem();
+  /// Whether the "(Default)" entry heads the list at the moment. Asked of the list each time:
+  /// the list is rebuilt, without the entry, whenever the data set is modified.
+  bool isDefaultArrayItemPresent() const;
+
+  /// Whether the threshold controls are shown at all. A host with its own thresholding turns them off,
+  /// and they stay off whatever the display node.
+  bool ThresholdVisible{ true };
+
+  /// Thresholding helpers that work with any display node type that supports it
+  /// (model and glyph display nodes).
+  static bool isThresholdSupported(vtkMRMLDisplayNode* displayNode);
+  static bool thresholdEnabled(vtkMRMLDisplayNode* displayNode);
+  static void setThresholdEnabled(vtkMRMLDisplayNode* displayNode, bool enabled);
+  static void thresholdRange(vtkMRMLDisplayNode* displayNode, double range[2]);
+  static void setThresholdRange(vtkMRMLDisplayNode* displayNode, double min, double max);
 
 public:
   QList<vtkWeakPointer<vtkMRMLDisplayNode>> CurrentDisplayNodes;
@@ -95,18 +128,86 @@ void qMRMLScalarsDisplayWidgetPrivate::init()
 }
 
 //------------------------------------------------------------------------------
-QList<vtkMRMLModelDisplayNode*> qMRMLScalarsDisplayWidgetPrivate::currentModelDisplayNodes() const
+// Model and vector field display nodes have the same threshold methods but no common base class declaring
+// them, so these helpers dispatch on the node type.
+
+//------------------------------------------------------------------------------
+bool qMRMLScalarsDisplayWidgetPrivate::isThresholdSupported(vtkMRMLDisplayNode* displayNode)
 {
-  QList<vtkMRMLModelDisplayNode*> modelDisplayNodes;
-  for (vtkMRMLDisplayNode* const displayNode : this->CurrentDisplayNodes)
+  return vtkMRMLModelDisplayNode::SafeDownCast(displayNode) != nullptr //
+         || vtkMRMLVectorFieldDisplayNode::SafeDownCast(displayNode) != nullptr;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLScalarsDisplayWidgetPrivate::thresholdEnabled(vtkMRMLDisplayNode* displayNode)
+{
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+  if (modelDisplayNode)
   {
-    vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
-    if (modelDisplayNode)
-    {
-      modelDisplayNodes << modelDisplayNode;
-    }
+    return modelDisplayNode->GetThresholdEnabled();
   }
-  return modelDisplayNodes;
+  vtkMRMLVectorFieldDisplayNode* glyphDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(displayNode);
+  if (glyphDisplayNode)
+  {
+    return glyphDisplayNode->GetThresholdEnabled();
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLScalarsDisplayWidgetPrivate::setThresholdEnabled(vtkMRMLDisplayNode* displayNode, bool enabled)
+{
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+  if (modelDisplayNode)
+  {
+    modelDisplayNode->SetThresholdEnabled(enabled);
+    return;
+  }
+  vtkMRMLVectorFieldDisplayNode* glyphDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(displayNode);
+  if (glyphDisplayNode)
+  {
+    glyphDisplayNode->SetThresholdEnabled(enabled);
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLScalarsDisplayWidgetPrivate::thresholdRange(vtkMRMLDisplayNode* displayNode, double range[2])
+{
+  range[0] = 0.0;
+  range[1] = -1.0; // invalid range
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+  if (modelDisplayNode)
+  {
+    modelDisplayNode->GetThresholdRange(range);
+    return;
+  }
+  vtkMRMLVectorFieldDisplayNode* glyphDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(displayNode);
+  if (glyphDisplayNode)
+  {
+    glyphDisplayNode->GetThresholdRange(range);
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLScalarsDisplayWidgetPrivate::setThresholdRange(vtkMRMLDisplayNode* displayNode, double min, double max)
+{
+  double oldRange[2] = { 0.0, -1.0 };
+  qMRMLScalarsDisplayWidgetPrivate::thresholdRange(displayNode, oldRange);
+  if (oldRange[0] == min && oldRange[1] == max)
+  {
+    return;
+  }
+  vtkMRMLModelDisplayNode* modelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(displayNode);
+  if (modelDisplayNode)
+  {
+    modelDisplayNode->SetThresholdRange(min, max);
+    return;
+  }
+  vtkMRMLVectorFieldDisplayNode* glyphDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(displayNode);
+  if (glyphDisplayNode)
+  {
+    glyphDisplayNode->SetThresholdRange(min, max);
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -243,6 +344,16 @@ bool qMRMLScalarsDisplayWidget::scalarsVisibility() const
 void qMRMLScalarsDisplayWidget::onCurrentArrayActivated()
 {
   Q_D(qMRMLScalarsDisplayWidget);
+  if (d->isDefaultArrayItemPresent() && d->ActiveScalarComboBox->currentIndex() == 0)
+  {
+    // "(Default)" entry: select the actual array first, because the attribute location is read from the
+    // selected row and the default row holds no array.
+    bool wasBlocking = d->ActiveScalarComboBox->blockSignals(true);
+    d->ActiveScalarComboBox->setCurrentArray(d->DefaultScalarArrayName);
+    d->ActiveScalarComboBox->blockSignals(wasBlocking);
+    this->setActiveScalarName(d->DefaultScalarArrayName);
+    return;
+  }
   this->setActiveScalarName(d->ActiveScalarComboBox->currentArrayName());
 }
 
@@ -400,11 +511,81 @@ void qMRMLScalarsDisplayWidget::setTresholdEnabled(bool b)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes = d->currentModelDisplayNodes();
-  for (vtkMRMLModelDisplayNode* const modelDisplayNode : currentModelDisplayNodes)
+  for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
   {
-    modelDisplayNode->SetThresholdEnabled(b);
+    qMRMLScalarsDisplayWidgetPrivate::setThresholdEnabled(displayNode, b);
   }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLScalarsDisplayWidgetPrivate::updateDefaultArrayItem()
+{
+  // Build the row completely before handing it to the model (as the model does for "no array"): the model
+  // reads an array from each row and would look for one in a row that is still being populated.
+  ctkVTKDataSetModel* dataSetModel = qobject_cast<ctkVTKDataSetModel*>(this->ActiveScalarComboBox->model());
+  if (!dataSetModel)
+  {
+    return;
+  }
+  bool wanted = !this->DefaultScalarArrayName.isEmpty();
+  bool present = this->isDefaultArrayItemPresent();
+  if (wanted && !present)
+  {
+    QStandardItem* defaultItem = new QStandardItem();
+    defaultItem->setData(QVariant::fromValue(qlonglong(0)), ctkVTK::PointerRole);
+    defaultItem->setData(dataSetModel->nullItemLocation(), ctkVTK::LocationRole);
+    defaultItem->setData(true, DefaultArrayItemRole);
+    defaultItem->setText(qMRMLScalarsDisplayWidget::tr("(Default)"));
+    dataSetModel->insertRow(0, defaultItem);
+  }
+  else if (!wanted && present)
+  {
+    dataSetModel->removeRow(0);
+  }
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLScalarsDisplayWidgetPrivate::isDefaultArrayItemPresent() const
+{
+  ctkVTKDataSetModel* dataSetModel = qobject_cast<ctkVTKDataSetModel*>(this->ActiveScalarComboBox->model());
+  QStandardItem* firstItem = (dataSetModel ? dataSetModel->item(0) : nullptr);
+  return (firstItem && firstItem->data(DefaultArrayItemRole).toBool());
+}
+
+//------------------------------------------------------------------------------
+QString qMRMLScalarsDisplayWidget::defaultScalarArrayName() const
+{
+  Q_D(const qMRMLScalarsDisplayWidget);
+  return d->DefaultScalarArrayName;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLScalarsDisplayWidget::setDefaultScalarArrayName(const QString& arrayName)
+{
+  Q_D(qMRMLScalarsDisplayWidget);
+  if (d->DefaultScalarArrayName == arrayName)
+  {
+    return;
+  }
+  d->DefaultScalarArrayName = arrayName;
+  this->updateWidgetFromMRML();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLScalarsDisplayWidget::isThresholdVisible() const
+{
+  Q_D(const qMRMLScalarsDisplayWidget);
+  return d->ThresholdVisible;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLScalarsDisplayWidget::setThresholdVisible(bool visible)
+{
+  Q_D(qMRMLScalarsDisplayWidget);
+  d->ThresholdVisible = visible;
+  d->ThresholdLabel->setVisible(visible);
+  d->ThresholdCheckBox->setVisible(visible);
+  d->ThresholdRangeWidget->setVisible(visible);
 }
 
 //------------------------------------------------------------------------------
@@ -412,16 +593,9 @@ void qMRMLScalarsDisplayWidget::setThresholdRange(double min, double max)
 {
   Q_D(qMRMLScalarsDisplayWidget);
 
-  QList<vtkMRMLModelDisplayNode*> currentModelDisplayNodes = d->currentModelDisplayNodes();
-  for (vtkMRMLModelDisplayNode* const modelDisplayNode : currentModelDisplayNodes)
+  for (vtkMRMLDisplayNode* const displayNode : d->CurrentDisplayNodes)
   {
-    double oldMin = modelDisplayNode->GetThresholdMin();
-    double oldMax = modelDisplayNode->GetThresholdMax();
-    if (oldMin == min && oldMax == max)
-    {
-      return;
-    }
-    modelDisplayNode->SetThresholdRange(min, max);
+    qMRMLScalarsDisplayWidgetPrivate::setThresholdRange(displayNode, min, max);
   }
 }
 
@@ -473,12 +647,11 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
   Q_D(qMRMLScalarsDisplayWidget);
 
   vtkMRMLDisplayNode* firstDisplayNode = (d->CurrentDisplayNodes.size() > 0 ? d->CurrentDisplayNodes[0] : nullptr);
-  vtkMRMLModelDisplayNode* firstModelDisplayNode = vtkMRMLModelDisplayNode::SafeDownCast(firstDisplayNode);
-
-  // The Threshold section is only available for models
-  d->ThresholdLabel->setVisible(firstModelDisplayNode != nullptr);
-  d->ThresholdCheckBox->setVisible(firstModelDisplayNode != nullptr);
-  d->ThresholdRangeWidget->setVisible(firstModelDisplayNode != nullptr);
+  // The Threshold section is only available for display nodes that support thresholding
+  bool thresholdSupported = (qMRMLScalarsDisplayWidgetPrivate::isThresholdSupported(firstDisplayNode) && d->ThresholdVisible);
+  d->ThresholdLabel->setVisible(thresholdSupported);
+  d->ThresholdCheckBox->setVisible(thresholdSupported);
+  d->ThresholdRangeWidget->setVisible(thresholdSupported);
 
   this->setEnabled(firstDisplayNode != nullptr);
   if (!firstDisplayNode)
@@ -571,13 +744,14 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
   d->DisplayedScalarRangeWidget->blockSignals(wasBlocking);
 
   double thresholdRange[2] = { 0.0, 0.0 };
-  if (firstModelDisplayNode)
+  if (thresholdSupported)
   {
-    firstModelDisplayNode->GetThresholdRange(thresholdRange);
+    qMRMLScalarsDisplayWidgetPrivate::thresholdRange(firstDisplayNode, thresholdRange);
   }
+  bool isThresholdEnabled = thresholdSupported && qMRMLScalarsDisplayWidgetPrivate::thresholdEnabled(firstDisplayNode);
 
   wasBlocking = d->ThresholdRangeWidget->blockSignals(true);
-  d->ThresholdRangeWidget->setEnabled(firstModelDisplayNode && firstModelDisplayNode->GetThresholdEnabled());
+  d->ThresholdRangeWidget->setEnabled(isThresholdEnabled);
   d->ThresholdRangeWidget->setRange(dataRange[0] - precision, dataRange[1] + precision);
   if (thresholdRange[0] <= thresholdRange[1])
   {
@@ -597,8 +771,8 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
   d->ThresholdRangeWidget->blockSignals(wasBlocking);
 
   wasBlocking = d->ThresholdCheckBox->blockSignals(true);
-  d->ThresholdCheckBox->setEnabled(firstModelDisplayNode);
-  d->ThresholdCheckBox->setChecked(firstModelDisplayNode && firstModelDisplayNode->GetThresholdEnabled());
+  d->ThresholdCheckBox->setEnabled(thresholdSupported);
+  d->ThresholdCheckBox->setChecked(isThresholdEnabled);
   d->ThresholdCheckBox->blockSignals(wasBlocking);
 
   wasBlocking = d->DisplayedScalarRangeModeComboBox->blockSignals(true);
@@ -613,9 +787,16 @@ void qMRMLScalarsDisplayWidget::updateWidgetFromMRML()
     {
       d->ActiveScalarComboBox->setDataSet(firstDisplayNode->GetScalarDataSet());
     }
-    if (d->ActiveScalarComboBox->currentArrayName() != firstDisplayNode->GetActiveScalarName())
+    d->updateDefaultArrayItem();
+    QString activeScalarName = QString::fromUtf8(firstDisplayNode->GetActiveScalarName() ? firstDisplayNode->GetActiveScalarName() : "");
+    if (d->isDefaultArrayItemPresent() && activeScalarName == d->DefaultScalarArrayName)
     {
-      d->ActiveScalarComboBox->setCurrentArray(firstDisplayNode->GetActiveScalarName());
+      // Following the array the host chose is shown as such, not as that array by name
+      d->ActiveScalarComboBox->setCurrentIndex(0);
+    }
+    else if (d->ActiveScalarComboBox->currentArrayName() != activeScalarName)
+    {
+      d->ActiveScalarComboBox->setCurrentArray(activeScalarName);
       // Array location would need to be set in d->ActiveScalarComboBox if
       // same scalar name is used in multiple locations.
     }

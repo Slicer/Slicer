@@ -1,0 +1,89 @@
+flowchart TB
+    %% Data nodes that carry the field
+    subgraph data [Displayable node]
+        direction LR
+        volume["Vector volume<br/>vtkImageData"]
+        model["Model<br/>mesh point or cell data"]
+        transform["Transform<br/>transform to world"]
+    end
+
+    %% Built once per display node and shared by all views
+    subgraph displayNode ["vtkMRMLVectorFieldDisplayNode (shared by all views)"]
+        subgraph fieldSource ["Field source (GetFieldConnection), one of"]
+            direction LR
+            imageSampler["vtkVectorFieldSampler<br/>(image)"]
+            imageSource["image source of vtkMRMLVectorFieldPipeline<br/>(streamline mode: the voxels in RAS)"]
+            meshSampler["vtkVectorFieldSampler<br/>(mesh: volumetric mesh)"]
+            scatteredSampler["vtkVectorFieldSampler<br/>(scattered: InterpolateBetweenPoints)"]
+            meshAsIs["mesh points or cells<br/>vtkPointDataToCellData + vtkCellCenters<br/>or vtkCellDataToPointData"]
+            transformSampler["vtkVectorFieldSampler<br/>(transform)"]
+        end
+        region["vtkMRMLVectorFieldMask<br/>marks where the field is shown<br/>(GetMaskedFieldConnection, if a region test is needed)"]
+        fieldToWorld["vtkTransformFilter<br/>(non-linear parent transform)"]
+        subgraph modePipeline ["Filters of the 3D views, configured by vtkMRMLVectorFieldPipeline"]
+            glyphFilter["vtkVectorFieldGlyph<br/>threshold, region test, random or spaced subset,<br/>directional scale; glyph points (GetGlyphPointsConnection)<br/>and glyph shape (GetGlyphSourceConnection)"]
+            subgraph modeGeometry ["vtkVectorFieldGeometry: grid, contour, streamline (GetOutputPolyDataConnection)"]
+                grid["vtkVectorFieldGrid<br/>lattice lines, warped; undeformed lines on a second output<br/>(optional); region clip, tubes (diameter > 0), fill (optional)"]
+                fieldMagnitude["vtkArrayCalculator<br/>magnitude (mesh only)"] --> contour["vtkContourFilter"]
+                seeds["seed points, random subset of at most<br/>MaximumNumberOfStreamlineSeeds"] --> tracer["vtkStreamTracer"]
+                streamlineDomain["cells in the masking region and cells that reach<br/>into the threshold range (both optional):<br/>the others are hidden in an image,<br/>left out of a mesh by vtkThreshold;<br/>a non-axis-aligned image in its axis-aligned space"] --> tracer
+                tracer --> streamlinesToField["vtkTransformPolyDataFilter<br/>(back from the axis-aligned space<br/>of a non-axis-aligned image, optional)"]
+                streamlinesToField --> streamlineThreshold["vtkArrayCalculator + vtkAssignAttribute<br/>+ 2 vtkClipPolyData<br/>(line ends at the threshold, optional)"]
+                contour --> regionClip["vtkAssignAttribute + vtkClipPolyData<br/>(region clip, optional)"]
+                streamlineThreshold --> regionClip
+                regionClip --> tuber["vtkTubeFilter<br/>(streamline, diameter > 0)"]
+            end
+        end
+        streamlineWarper["vtkTransformPolyDataFilter<br/>(streamlines, non-linear parent transform)"]
+    end
+
+    volume --> imageSampler
+    volume --> imageSource
+    model --> meshSampler
+    model --> scatteredSampler
+    model --> meshAsIs
+    transform --> transformSampler
+    fieldSource --> region
+    region --> fieldToWorld
+    fieldToWorld -->|glyph| glyphFilter
+    fieldToWorld -->|grid| grid
+    fieldToWorld -->|contour| fieldMagnitude
+    region -->|"streamline (traced once, in the coordinates of the field)"| streamlineDomain
+    tuber -->|streamline| streamlineWarper
+
+    %% One mapper and actor per 3D view
+    subgraph threeD ["vtkMRMLVectorFieldDisplayableManager (each 3D view)"]
+        glypher["vtkGlyph3DMapper"] --> actor["vtkActor<br/>(user matrix: linear parent transform)"]
+        polyDataMapper["vtkPolyDataMapper"] --> actor
+        nonWarpedMapper["vtkPolyDataMapper"] --> nonWarpedActor["vtkActor<br/>(non-warped grid, solid color)"]
+    end
+
+    glyphFilter -->|"glyph points and shape (ConfigureMapper)"| glypher
+    grid -->|grid| polyDataMapper
+    grid -->|"undeformed lines (GetNonWarpedGridConnection)"| nonWarpedMapper
+    tuber -->|contour| polyDataMapper
+    streamlineWarper -->|streamline| polyDataMapper
+
+    %% One pipeline per slice view
+    subgraph slice ["vtkMRMLVectorFieldSliceDisplayableManager (each slice view)"]
+        sliceSampler["slice sampler: vtkVectorFieldSampler,<br/>sampling the slice plane (UpdateSliceFieldSampler)"] --> sliceRegionFilter["vtkMRMLVectorFieldMask<br/>(region test)"]
+        modelWarper["vtkTransformFilter<br/>(parent transform)"] --> sliceDistance["vtkSampleImplicitFunctionFilter<br/>distance to the slice"]
+        sliceDistance --> slabThreshold["vtkThresholdPoints<br/>slab of the slice thickness"]
+        meshCutter["vtkPlaneCutter<br/>(contour of a mesh)"] --> sliceFieldToGeometry["vtkVectorFieldGeometry and vtkVectorFieldGlyph<br/>(own instances, flat: lines, isolines,<br/>glyph geometry in RAS:<br/>outlines in the slice plane, projected vectors)"]
+        sliceFieldToGeometry --> modeColorMagnitude["vtkArrayCalculator<br/>(color by vector magnitude)"]
+        streamlineToWorld["vtkTransformPolyDataFilter<br/>(parent transform)"] --> streamlineProjection["slice projection filter of the manager<br/>streamlines near the slice, faded"]
+        modeColorMagnitude --> transformer["vtkTransformPolyDataFilter<br/>RAS to slice XY"]
+        streamlineProjection --> transformer
+        transformer --> mapper2D["vtkPolyDataMapper2D"]
+        mapper2D --> actor2D["vtkActor2D"]
+        sliceFieldToGeometry -->|"undeformed lines"| nonWarpedTransformer["vtkTransformPolyDataFilter<br/>RAS to slice XY"]
+        nonWarpedTransformer --> nonWarpedMapper2D["vtkPolyDataMapper2D"]
+        nonWarpedMapper2D --> nonWarpedActor2D["vtkActor2D<br/>(non-warped grid, solid color)"]
+    end
+
+    data --> sliceSampler
+    region -->|"glyphs on mesh points, contour of a mesh"| modelWarper
+    sliceRegionFilter -->|"glyph, grid, contour"| sliceFieldToGeometry
+    slabThreshold -->|"glyphs on mesh points"| sliceFieldToGeometry
+    modelWarper -->|"contour, mesh"| meshCutter
+    regionClip -->|"streamline lines (GetStreamlineConnection)"| streamlineToWorld

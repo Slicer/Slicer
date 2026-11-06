@@ -18,51 +18,59 @@
   Research Unit program of Cancer Care Ontario with funds provided by the
   Ontario Ministry of Health and Long-Term Care.
 
+  This file was further developed with funding from the Children's Hospital of
+  Philadelphia Frontier Program.
+
 ==============================================================================*/
 
-#ifndef __vtkMRMLTransformsDisplayableManager3D_h
-#define __vtkMRMLTransformsDisplayableManager3D_h
+#ifndef __vtkMRMLVectorFieldDisplayableManager_h
+#define __vtkMRMLVectorFieldDisplayableManager_h
 
 // MRMLDisplayableManager includes
 #include "vtkMRMLAbstractThreeDViewDisplayableManager.h"
+#include "vtkMRMLDisplayableManagerExport.h"
 
-#include "vtkSlicerTransformsModuleMRMLDisplayableManagerExport.h"
+class vtkMRMLDisplayableNode;
 
-/// \brief Display transforms in 3D views
+/// \brief Displays vector fields as glyphs in 3D views.
 ///
-/// Displays transforms in 3D viewers as glyphs, deformed grid, or
-/// contour surfaces
+/// Maps the shared glyph points or poly data of vtkMRMLVectorFieldDisplayNode (of a model, vector volume, or
+/// transform); the field is only sampled when the renderer pulls the data.
 ///
-class VTK_SLICER_TRANSFORMS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkMRMLTransformsDisplayableManager3D : public vtkMRMLAbstractThreeDViewDisplayableManager
+/// \sa vtkMRMLVectorFieldSliceDisplayableManager
+class VTK_MRML_DISPLAYABLEMANAGER_EXPORT vtkMRMLVectorFieldDisplayableManager : public vtkMRMLAbstractThreeDViewDisplayableManager
 {
 public:
-  static vtkMRMLTransformsDisplayableManager3D* New();
-  vtkTypeMacro(vtkMRMLTransformsDisplayableManager3D, vtkMRMLAbstractThreeDViewDisplayableManager);
+  static vtkMRMLVectorFieldDisplayableManager* New();
+  vtkTypeMacro(vtkMRMLVectorFieldDisplayableManager, vtkMRMLAbstractThreeDViewDisplayableManager);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
+  // DisplayableNode handling customizations
+  void AddDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
+  void RemoveDisplayableNode(vtkMRMLDisplayableNode* displayableNode);
+
 protected:
-  vtkMRMLTransformsDisplayableManager3D();
-  ~vtkMRMLTransformsDisplayableManager3D() override;
+  vtkMRMLVectorFieldDisplayableManager();
+  ~vtkMRMLVectorFieldDisplayableManager() override;
 
   void UnobserveMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
   void OnMRMLSceneNodeRemoved(vtkMRMLNode* node) override;
   void ProcessMRMLNodesEvents(vtkObject* caller, unsigned long event, void* callData) override;
 
-  /// Update Actors based on transforms in the scene
   void UpdateFromMRML() override;
-
   void OnMRMLSceneStartClose() override;
   void OnMRMLSceneEndClose() override;
-
   void OnMRMLSceneEndBatchProcess() override;
 
   /// Initialize the displayable manager
   void Create() override;
 
+  int AddingDisplayableNode;
+
 private:
-  vtkMRMLTransformsDisplayableManager3D(const vtkMRMLTransformsDisplayableManager3D&) = delete;
-  void operator=(const vtkMRMLTransformsDisplayableManager3D&) = delete;
+  vtkMRMLVectorFieldDisplayableManager(const vtkMRMLVectorFieldDisplayableManager&) = delete;
+  void operator=(const vtkMRMLVectorFieldDisplayableManager&) = delete;
 
   class vtkInternal;
   vtkInternal* Internal;

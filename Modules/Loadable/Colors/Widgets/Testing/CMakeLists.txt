@@ -1,6 +1,7 @@
 set(KIT ${PROJECT_NAME})
 
 set(TEST_SOURCES
+  qMRMLColorLegendGroupBoxTest1.cxx
   qMRMLColorListViewTest1.cxx
   qMRMLColorPickerWidgetTest1.cxx
   qMRMLColorPickerWidgetTest2.cxx
@@ -27,6 +28,7 @@ ctk_add_executable_utf8(${KIT}CxxTests ${Tests} ${Tests_MOC_CXX})
 target_link_libraries(${KIT}CxxTests ${KIT})
 
 #-----------------------------------------------------------------------------
+simple_test( qMRMLColorLegendGroupBoxTest1 )
 simple_test( qMRMLColorListViewTest1 )
 simple_test( qMRMLColorPickerWidgetTest1 )
 simple_test( qMRMLColorPickerWidgetTest2 )

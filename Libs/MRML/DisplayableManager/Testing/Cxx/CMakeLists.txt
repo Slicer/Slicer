@@ -13,6 +13,7 @@ set(KIT_TEST_SRCS
   vtkMRMLDisplayableManagerFactoriesTest1.cxx
   vtkMRMLSliceViewDisplayableManagerFactoryTest.cxx
   vtkMRMLAccuratePickerTest.cxx
+  vtkMRMLVectorFieldDisplayableManagerTest1.cxx
   )
 create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   ${KIT_TEST_SRCS}
@@ -21,6 +22,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
+  # Test data shared by the vector field tests
+  ${MRMLCore_SOURCE_DIR}/Testing
   )
 
 set(DisplayableManagerTest_SRCS

@@ -16,6 +16,8 @@ set(${KIT}_SRCS
   qSlicerLabelMapVolumeDisplayWidget.h
   qSlicerScalarVolumeDisplayWidget.cxx
   qSlicerScalarVolumeDisplayWidget.h
+  qSlicerVectorVolumeDisplayWidget.cxx
+  qSlicerVectorVolumeDisplayWidget.h
   qSlicerVolumeDisplayWidget.cxx
   qSlicerVolumeDisplayWidget.h
   qSlicerDTISliceDisplayWidget.cxx
@@ -28,6 +30,7 @@ set(${KIT}_UI_SRCS
   Resources/UI/qSlicerDTISliceDisplayWidget.ui
   Resources/UI/qSlicerLabelMapVolumeDisplayWidget.ui
   Resources/UI/qSlicerScalarVolumeDisplayWidget.ui
+  Resources/UI/qSlicerVectorVolumeDisplayWidget.ui
   )
 
 set(${KIT}_RESOURCES

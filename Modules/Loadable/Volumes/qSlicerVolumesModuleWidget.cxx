@@ -38,10 +38,19 @@
 // Colors includes
 #include <vtkSlicerColorLogic.h>
 #include <vtkMRMLColorLegendDisplayNode.h>
+#include <vtkMRMLVectorFieldDisplayNode.h>
 
 // Volumes includes
+#include "qSlicerVectorVolumeDisplayWidget.h"
+#include "qSlicerVolumeDisplayWidget.h"
 #include "qSlicerVolumesModuleWidget.h"
 #include "ui_qSlicerVolumesModuleWidget.h"
+
+// Colors widgets includes
+#include <qMRMLColorLegendGroupBox.h>
+
+// MRML widgets includes
+#include <qMRMLVectorFieldDisplayWidget.h>
 
 #include "vtkSlicerVolumesLogic.h"
 
@@ -49,7 +58,38 @@
 class qSlicerVolumesModuleWidgetPrivate : public Ui_qSlicerVolumesModuleWidget
 {
 public:
+  /// Display node that the color legend describes: the vector field display node for vector volumes (the image
+  /// itself is RGB, which no legend can describe), otherwise the volume display node.
+  static vtkMRMLDisplayNode* colorLegendPrimaryDisplayNode(vtkMRMLVolumeNode* volumeNode);
 };
+
+//-----------------------------------------------------------------------------
+vtkMRMLDisplayNode* qSlicerVolumesModuleWidgetPrivate::colorLegendPrimaryDisplayNode(vtkMRMLVolumeNode* volumeNode)
+{
+  if (!volumeNode)
+  {
+    return nullptr;
+  }
+  int numberOfDisplayNodes = volumeNode->GetNumberOfDisplayNodes();
+  for (int i = 0; i < numberOfDisplayNodes; ++i)
+  {
+    vtkMRMLVectorFieldDisplayNode* vectorFieldDisplayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
+    if (vectorFieldDisplayNode)
+    {
+      return vectorFieldDisplayNode;
+    }
+  }
+  // Otherwise the volume display node, which is the one the image is drawn with
+  for (int i = 0; i < numberOfDisplayNodes; ++i)
+  {
+    vtkMRMLVolumeDisplayNode* volumeDisplayNode = vtkMRMLVolumeDisplayNode::SafeDownCast(volumeNode->GetNthDisplayNode(i));
+    if (volumeDisplayNode)
+    {
+      return volumeDisplayNode;
+    }
+  }
+  return nullptr;
+}
 
 //-----------------------------------------------------------------------------
 qSlicerVolumesModuleWidget::qSlicerVolumesModuleWidget(QWidget* _parent)
@@ -76,6 +116,22 @@ void qSlicerVolumesModuleWidget::setup()
 
   QObject::connect(d->ColorLegendCollapsibleButton, SIGNAL(contentsCollapsed(bool)), this, SLOT(colorLegendCollapsibleButtonCollapsed(bool)));
 
+  // The vector field of a vector volume has a color legend of its own, for the colors of the
+  // field
+  qSlicerVectorVolumeDisplayWidget* vectorVolumeWidget = d->VolumeDisplayWidget->vectorVolumeDisplayWidget();
+  qMRMLVectorFieldDisplayWidget* vectorFieldWidget = (vectorVolumeWidget ? vectorVolumeWidget->vectorFieldDisplayWidget() : nullptr);
+  if (vectorFieldWidget)
+  {
+    qMRMLColorLegendGroupBox* vectorFieldColorLegend = new qMRMLColorLegendGroupBox;
+    vectorFieldColorLegend->setObjectName("VectorFieldColorLegendGroupBox");
+    vectorFieldWidget->addColoringWidget(vectorFieldColorLegend);
+    QObject::connect(vectorFieldWidget,
+                     &qMRMLVectorFieldDisplayWidget::mrmlVectorFieldDisplayNodeChanged,
+                     vectorFieldColorLegend,
+                     [vectorFieldColorLegend](vtkMRMLVectorFieldDisplayNode* displayNode) { vectorFieldColorLegend->setPrimaryDisplayNode(displayNode); });
+    vectorFieldColorLegend->setPrimaryDisplayNode(vectorFieldWidget->mrmlVectorFieldDisplayNode());
+  }
+
   // Set up labelmap conversion
   d->ConvertVolumeFrame->setVisible(false);
   QObject::connect(d->ConvertVolumeButton, SIGNAL(clicked()), this, SLOT(convertVolume()));
@@ -97,9 +153,10 @@ void qSlicerVolumesModuleWidget::updateWidgetFromMRML()
 
   // Color legend section
   vtkMRMLColorLegendDisplayNode* colorLegendNode = nullptr;
-  if (currentVolumeNode)
+  vtkMRMLDisplayNode* colorLegendPrimaryDisplayNode = qSlicerVolumesModuleWidgetPrivate::colorLegendPrimaryDisplayNode(currentVolumeNode);
+  if (colorLegendPrimaryDisplayNode)
   {
-    colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(currentVolumeNode);
+    colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(colorLegendPrimaryDisplayNode);
   }
   d->ColorLegendDisplayNodeWidget->setMRMLColorLegendDisplayNode(colorLegendNode);
   if (!colorLegendNode)
@@ -242,8 +299,9 @@ void qSlicerVolumesModuleWidget::colorLegendCollapsibleButtonCollapsed(bool coll
   }
 
   vtkMRMLVolumeNode* currentVolume = vtkMRMLVolumeNode::SafeDownCast(d->ActiveVolumeNodeSelector->currentNode());
-  vtkMRMLColorLegendDisplayNode* colorLegendNode = vtkSlicerColorLogic::GetColorLegendDisplayNode(currentVolume);
-  if (!colorLegendNode && currentVolume)
+  vtkMRMLDisplayNode* colorLegendPrimaryDisplayNode = qSlicerVolumesModuleWidgetPrivate::colorLegendPrimaryDisplayNode(currentVolume);
+  vtkMRMLColorLegendDisplayNode* colorLegendNode = colorLegendPrimaryDisplayNode ? vtkSlicerColorLogic::GetColorLegendDisplayNode(colorLegendPrimaryDisplayNode) : nullptr;
+  if (!colorLegendNode && colorLegendPrimaryDisplayNode)
   {
     // color legend node does not exist, we need to create it now
 
@@ -253,7 +311,7 @@ void qSlicerVolumesModuleWidget::colorLegendCollapsibleButtonCollapsed(bool coll
     {
       mrmlAppLogic->PauseRender();
     }
-    colorLegendNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(currentVolume);
+    colorLegendNode = vtkSlicerColorLogic::AddDefaultColorLegendDisplayNode(colorLegendPrimaryDisplayNode);
     if (colorLegendNode)
     {
       colorLegendNode->SetVisibility(false); // just because the groupbox is opened, don't show color legend yet
