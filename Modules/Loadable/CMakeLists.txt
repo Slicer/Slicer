@@ -31,7 +31,7 @@ set(qtmodules
   Volumes
   VolumeRendering # Volume Rendering depends of Volumes
   CropVolume # CropVolume depends of Volumes
-  VectorFieldRendering # VectorFieldRendering depends on Colors, Models, Volumes and Transforms
+  VectorFieldRendering # VectorFieldRendering depends on Colors, LayerDM, Models, Volumes and Transforms
   )
 if(Slicer_BUILD_MULTIVOLUME_SUPPORT AND Slicer_USE_PYTHONQT)
   list(APPEND qtmodules
