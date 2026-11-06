@@ -167,6 +167,9 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
   of << " EditorScalingEnabled=\"" << this->EditorScalingEnabled << "\"";
 
   vtkMRMLWriteXMLBooleanMacro(EditorVisibility3D, EditorVisibility3D);
+  vtkMRMLWriteXMLBooleanMacro(EditorTranslationSliceEnabled, EditorTranslationSliceEnabled);
+  vtkMRMLWriteXMLBooleanMacro(EditorRotationSliceEnabled, EditorRotationSliceEnabled);
+  vtkMRMLWriteXMLBooleanMacro(EditorScalingSliceEnabled, EditorScalingSliceEnabled);
   vtkMRMLWriteXMLBooleanMacro(EditorTranslationSliceAnywhereEnabled, EditorTranslationSliceAnywhereEnabled);
   vtkMRMLWriteXMLFloatMacro(EditorTranslationSliceAnywhereSensitivity, EditorTranslationSliceAnywhereSensitivity);
   vtkMRMLWriteXMLFloatMacro(InteractionSizeAbsolute, InteractionSizeAbsolute);
@@ -239,6 +242,9 @@ void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
   READ_FROM_ATT(EditorScalingEnabled);
 
   vtkMRMLReadXMLBooleanMacro(EditorVisibility3D, EditorVisibility3D);
+  vtkMRMLReadXMLBooleanMacro(EditorTranslationSliceEnabled, EditorTranslationSliceEnabled);
+  vtkMRMLReadXMLBooleanMacro(EditorRotationSliceEnabled, EditorRotationSliceEnabled);
+  vtkMRMLReadXMLBooleanMacro(EditorScalingSliceEnabled, EditorScalingSliceEnabled);
   vtkMRMLReadXMLBooleanMacro(EditorTranslationSliceAnywhereEnabled, EditorTranslationSliceAnywhereEnabled);
   vtkMRMLReadXMLFloatMacro(EditorTranslationSliceAnywhereSensitivity, EditorTranslationSliceAnywhereSensitivity);
   vtkMRMLReadXMLFloatMacro(InteractionSizeAbsolute, InteractionSizeAbsolute);
@@ -306,7 +312,12 @@ void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy 
   vtkMRMLCopyBooleanMacro(EditorVisibility3D);
   vtkMRMLCopyBooleanMacro(EditorTranslationSliceAnywhereEnabled);
   vtkMRMLCopyFloatMacro(EditorTranslationSliceAnywhereSensitivity);
+  vtkMRMLCopyBooleanMacro(EditorTranslationSliceEnabled);
+  vtkMRMLCopyBooleanMacro(EditorRotationSliceEnabled);
   vtkMRMLCopyBooleanMacro(EditorScalingSliceEnabled);
+  vtkMRMLCopyBooleanMacro(InteractionSizeAbsolute);
+  vtkMRMLCopyFloatMacro(InteractionSizeMm);
+  vtkMRMLCopyFloatMacro(InteractionScalePercent);
   vtkMRMLCopyFloatMacro(InteractionHandleOpacity);
   vtkMRMLCopyVectorMacro(RotationHandleComponentVisibility3D, bool, 4);
   vtkMRMLCopyVectorMacro(ScaleHandleComponentVisibility3D, bool, 4);
