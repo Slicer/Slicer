@@ -32,7 +32,7 @@ if(Slicer_BUILD_EXTENSIONMANAGER_SUPPORT AND Slicer_USE_PYTHONQT)
   ctkMacroCompilePythonScript(
     TARGET_NAME SlicerWizard
     SCRIPTS "${SlicerWizard_PYTHON_SCRIPTS}"
-    DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python/SlicerWizard
-    INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}/Python
-    )
+    DESTINATION_DIR "${Slicer_BINARY_DIR}/${Slicer_SITE_PACKAGES_DIR}/SlicerWizard"
+    INSTALL_DIR "${Slicer_INSTALL_SITE_PACKAGES_DIR}"
+  )
 endif()

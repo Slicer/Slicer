@@ -1,0 +1,11 @@
+NAME
+  Slicer::MarkupsModuleLogic
+LIBRARY_NAME
+  vtkSlicerMarkupsModuleLogic
+DEPENDS
+  Slicer::MarkupsModuleMRML
+  Slicer::MarkupsModuleVTKWidgets
+  Slicer::AnnotationsModuleMRML
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerMarkupsModuleLogic"

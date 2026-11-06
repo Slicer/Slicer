@@ -1,31 +1,20 @@
-project(vtkSlicer${MODULE_NAME}ModuleLogic)
+vtk_module_find_package(PACKAGE vtkAddon)
 
-set(KIT ${PROJECT_NAME})
-
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT")
-
-set(${KIT}_INCLUDE_DIRECTORIES
-  ${vtkSlicer${MODULE_NAME}ModuleMRML_SOURCE_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleMRML_BINARY_DIR}
+set(classes
+  vtkSlicerGeneralizedReformatLogic
+  vtkMRMLScalarVectorDWIVolumeResampler
   )
 
-set(${KIT}_SRCS
-  vtkSlicer${MODULE_NAME}Logic.cxx
-  vtkSlicer${MODULE_NAME}Logic.h
-  vtkMRMLScalarVectorDWIVolumeResampler.cxx
-  vtkMRMLScalarVectorDWIVolumeResampler.h
-  )
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerGeneralizedReformatModuleLogicExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
-set(${KIT}_TARGET_LIBRARIES
-  vtkSlicer${MODULE_NAME}ModuleMRML
-  ${ITK_LIBRARIES}
-  )
+vtk_module_add_module(Slicer::GeneralizedReformatModuleLogic
+  EXPORT_MACRO_PREFIX VTK_SLICER_GENERALIZEDREFORMAT_MODULE_LOGIC
+  CLASSES ${classes}
+  HEADERS ${wrapper_header_file}
+  EXCLUDE_HEADER_TEST
+)
 
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleLogic(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
-  )
+vtk_module_link(Slicer::GeneralizedReformatModuleLogic PUBLIC vtkAddon)

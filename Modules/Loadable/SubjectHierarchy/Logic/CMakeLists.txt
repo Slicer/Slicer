@@ -1,30 +1,15 @@
-project(vtkSlicer${MODULE_NAME}ModuleLogic)
+project(vtkSlicerSubjectHierarchyModuleLogic)
 
-set(KIT ${PROJECT_NAME})
+set(classes vtkSlicerSubjectHierarchyModuleLogic)
 
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_LOGIC_EXPORT")
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerSubjectHierarchyModuleLogicExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
-set(${KIT}_INCLUDE_DIRECTORIES
-  ${MRMLCore_INCLUDE_DIRS}
-  )
-
-set(${KIT}_SRCS
-  vtkSlicer${MODULE_NAME}ModuleLogic.cxx
-  vtkSlicer${MODULE_NAME}ModuleLogic.h
-  )
-
-set (${KIT}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${Slicer_Base_INCLUDE_DIRS} CACHE INTERNAL "" FORCE)
-
-#-----------------------------------------------------------------------------
-set(${KIT}_TARGET_LIBRARIES
-  MRMLCore
-  )
-
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleLogic(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
-  )
+vtk_module_add_module(Slicer::SubjectHierarchyModuleLogic
+  EXPORT_MACRO_PREFIX VTK_SLICER_SUBJECTHIERARCHY_LOGIC
+  CLASSES ${classes}
+  HEADERS ${wrapper_header_file}
+  EXCLUDE_HEADER_TEST
+)

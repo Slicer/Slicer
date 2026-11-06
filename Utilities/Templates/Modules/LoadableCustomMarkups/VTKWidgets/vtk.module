@@ -1,0 +1,9 @@
+NAME
+  Slicer::TemplateKeyModuleVTKWidgets
+LIBRARY_NAME
+  vtkSlicerTemplateKeyModuleVTKWidgets
+DEPENDS
+  Slicer::TemplateKeyModuleMRML
+  Slicer::MarkupsModuleVTKWidgets
+DESCRIPTION
+  "vtkSlicerTemplateKeyModuleVTKWidgets"

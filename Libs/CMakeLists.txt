@@ -9,6 +9,8 @@ set(GENERATECLP_USE_MD5 ON)
 # Order of project directory matters. Project should be topologically ordered
 # --------------------------------------------------------------------------
 
+set(MRMLCore_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Core)
+
 set(dirs )
 
 list(APPEND dirs
@@ -19,22 +21,6 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES
   CACHE INTERNAL "SlicerExecutionModel extra executable target libraries" FORCE
   )
 
-if(Slicer_BUILD_vtkAddon)
-  list(APPEND dirs
-    vtkAddon
-    )
-endif()
-
-list(APPEND dirs
-  vtkTeem
-  vtkITK
-  vtkSegmentationCore
-  MRML/Core
-  MRML/CLI
-  RemoteIO
-  MRML/Logic
-  MRML/DisplayableManager
-  )
 if(Slicer_USE_IDImageIO)
   list(APPEND dirs
     MRML/IDImageIO
@@ -150,7 +136,7 @@ set(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs include
 # Anticipating the move of MRML related libraries to a standalone project,
 # let's group these libraries.
 # Note also that since MRMLIDImageIO is an ITK plugin it is NOT added to that list.
-set(_mrml_libraries MRMLCore MRMLLogic MRMLDisplayableManager MRMLCLI)
+set(_mrml_libraries Slicer::MRMLCore Slicer::MRMLLogic Slicer::MRMLDisplayableManager Slicer::MRMLCLI)
 set(MRML_LIBRARIES ${_mrml_libraries} CACHE INTERNAL "MRML libraries" FORCE)
 
 #-----------------------------------------------------------------------------

@@ -141,6 +141,8 @@ macro(SlicerMacroBuildModuleVTKLibrary)
     set_target_properties(${lib_name} PROPERTIES FOLDER ${MODULEVTKLIBRARY_FOLDER})
   endif()
 
+  slicer_module_autoinit(TARGETS ${lib_name} MODULES ${MODULEVTKLIBRARY_TARGET_LIBRARIES})
+
   # --------------------------------------------------------------------------
   # Install library
   # --------------------------------------------------------------------------

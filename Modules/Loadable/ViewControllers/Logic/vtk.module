@@ -1,0 +1,9 @@
+NAME
+  Slicer::ViewControllersModuleLogic
+LIBRARY_NAME
+  vtkSlicerViewControllersModuleLogic
+DEPENDS
+  Slicer::MRMLLogic
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerViewControllersModuleLogic"

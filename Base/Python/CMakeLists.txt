@@ -66,8 +66,9 @@ ctkMacroCompilePythonScript(
   TARGET_NAME SlicerBase
   SCRIPTS "${Slicer_PYTHON_SCRIPTS}"
   RESOURCES "${Slicer_PYTHON_RESOURCES}"
-  DESTINATION_DIR ${Slicer_BINARY_DIR}/bin/Python
-  INSTALL_DIR ${Slicer_INSTALL_BIN_DIR}
+  DESTINATION_DIR ${Slicer_BINARY_DIR}/${Slicer_SITE_PACKAGES_DIR}
+  INSTALL_DIR ${Slicer_INSTALL_SITE_PACKAGES_DIR}
+  NO_INSTALL_SUBDIR
   )
 
 # Generate a lazily-loading replacement for the eager "vtk" module distributed
@@ -78,7 +79,7 @@ ctkMacroCompilePythonScript(
 # application startup. The module is generated from vtk.py.in by
 # Utilities/Scripts/GenerateLazyVtkModule.py, which fills in the attribute index.
 set(_lazy_vtk_module_template ${CMAKE_CURRENT_SOURCE_DIR}/vtk.py.in)
-set(_lazy_vtk_module ${Slicer_BINARY_DIR}/bin/Python/vtk.py)
+set(_lazy_vtk_module "${Slicer_SITE_PACKAGES_DIR}/vtk.py")
 # The VTK Python package location is passed explicitly: during a fresh
 # superbuild the launcher settings of ${PYTHON_EXECUTABLE} may not
 # reference the VTK build tree yet when this rule runs.
@@ -103,6 +104,6 @@ add_custom_target(SlicerGenerateLazyVtkModule ALL
   DEPENDS ${_lazy_vtk_module}
   )
 install(FILES ${_lazy_vtk_module}
-  DESTINATION ${Slicer_INSTALL_BIN_DIR}/Python
+  DESTINATION "${Slicer_INSTALL_SITE_PACKAGES_DIR}"
   COMPONENT Runtime
   )

@@ -170,7 +170,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             # just in case a queued request comes through
             return
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
         segmentation = segmentationNode.GetSegmentation()
@@ -212,7 +212,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
             # when observeSegmentation is called from __del__ method.
             return
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         parameterSetNode = self.scriptedEffect.parameterSetNode()
         segmentationNode = None
@@ -402,7 +402,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
         if self.selectedSegmentIds is None:
             return True
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()
 
@@ -433,7 +433,7 @@ class AbstractScriptedSegmentEditorAutoCompleteEffect(AbstractScriptedSegmentEdi
 
     def preview(self):
         # Get source volume image data
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         # Get segmentation
         segmentationNode = self.scriptedEffect.parameterSetNode().GetSegmentationNode()

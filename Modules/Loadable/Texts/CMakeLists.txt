@@ -5,7 +5,6 @@ set(MODULE_NAME Texts)
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
-add_subdirectory(Logic)
 add_subdirectory(Widgets)
 add_subdirectory(SubjectHierarchyPlugins)
 
@@ -15,8 +14,6 @@ set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 # Additional includes - Current_{source,binary} and Slicer_{Libs,Base} already included
 # Is used by the Plugins and Testing directories
 set(MODULE_INCLUDE_DIRECTORIES
-  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
-  ${CMAKE_CURRENT_BINARY_DIR}/Logic
   ${CMAKE_CURRENT_SOURCE_DIR}/Widgets
   ${CMAKE_CURRENT_BINARY_DIR}/Widgets
   ${qSlicerSubjectHierarchyModuleWidgets_INCLUDE_DIRS}

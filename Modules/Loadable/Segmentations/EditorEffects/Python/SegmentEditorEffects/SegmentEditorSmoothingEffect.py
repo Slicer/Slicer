@@ -367,7 +367,7 @@ If segments overlap, segment higher in the segments table will have priority. <b
             logging.error("apply: Failed to apply smoothing")
 
     def smoothMultipleSegments(self, maskImage=None, maskExtent=None):
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         self.showStatusMessage(_("Joint smoothing ..."))
         # Generate merged labelmap of all visible segments

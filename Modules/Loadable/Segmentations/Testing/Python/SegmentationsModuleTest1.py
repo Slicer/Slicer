@@ -567,7 +567,7 @@ class SegmentationsModuleTest1(unittest.TestCase):
         volumeNode = SampleData.downloadSample("MRHead")
 
         # Convert MRHead to oriented image data
-        import vtkSlicerSegmentationsModuleLogicPython as vtkSlicerSegmentationsModuleLogic
+        import vtkSlicerSegmentationsModuleLogic
         orientedImageData = vtkSlicerSegmentationsModuleLogic.vtkSlicerSegmentationsModuleLogic.CreateOrientedImageDataFromVolumeNode(volumeNode)
         orientedImageData.UnRegister(None)
 

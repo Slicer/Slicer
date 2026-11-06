@@ -85,7 +85,7 @@ class ScalarVolumeSegmentStatisticsPlugin(SegmentStatisticsPluginBase):
         return stats
 
     def getStencilForVolume(self, segmentationNode, segmentID, grayscaleNode):
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         containsLabelmapRepresentation = segmentationNode.GetSegmentation().ContainsRepresentation(
             vtkSegmentationCore.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName())

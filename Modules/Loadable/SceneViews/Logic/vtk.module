@@ -1,0 +1,10 @@
+NAME
+  Slicer::SceneViewsModuleLogic
+LIBRARY_NAME
+  vtkSlicerSceneViewsModuleLogic
+DEPENDS
+  Slicer::MRMLLogic
+  Slicer::BaseLogic
+  Slicer::SequencesModuleLogic
+DESCRIPTION
+  "vtkSlicerSceneViewsModuleLogic"

@@ -257,7 +257,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
         qt.QApplication.restoreOverrideCursor()
 
     def processInteractionEvents(self, callerInteractor, eventId, viewWidget):
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         abortEvent = False
 
@@ -330,7 +330,7 @@ about each operation, hover the mouse over the option and wait for the tooltip t
             thresh.SetOutputScalarType(selectedSegmentLabelmap.GetScalarType())
             thresh.Update()
             # Create oriented image data from output
-            import vtkSegmentationCorePython as vtkSegmentationCore
+            import vtkSegmentationCore
 
             inputLabelImage = slicer.vtkOrientedImageData()
             inputLabelImage.ShallowCopy(thresh.GetOutput())

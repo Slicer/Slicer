@@ -187,7 +187,7 @@ segment list in effect options - below.
         if not self.scriptedEffect.confirmCurrentSegmentVisible():
             return
 
-        import vtkSegmentationCorePython as vtkSegmentationCore
+        import vtkSegmentationCore
 
         self.scriptedEffect.saveStateForUndo()
 

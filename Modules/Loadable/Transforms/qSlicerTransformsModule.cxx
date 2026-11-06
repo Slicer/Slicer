@@ -36,10 +36,6 @@
 #include "qSlicerSubjectHierarchyPluginHandler.h"
 #include "qSlicerSubjectHierarchyTransformsPlugin.h"
 
-// DisplayableManager initialization
-#include <vtkAutoInit.h>
-VTK_MODULE_INIT(vtkSlicerTransformsModuleMRMLDisplayableManager)
-
 //-----------------------------------------------------------------------------
 class qSlicerTransformsModulePrivate
 {
