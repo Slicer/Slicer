@@ -417,6 +417,7 @@ What each kind of node gives as a sampling region (the default part is in bold):
 
 - The field is the displacement of the transform to world, including the parent transforms, sampled at world positions. The parent transform of the transform node is not applied a second time.
 - There is no streamline mode, and the arrays are fixed.
+- **Scenes saved by earlier Slicer versions:** their transform visualization settings are stored in `vtkMRMLTransformDisplayNode`, which now only has the interaction handle settings. The node keeps those attributes as they were read (`GetLegacyVisualizationAttribute()`) and the `region` and `glyphPoints` references, and writes them back when the scene is saved, so that nothing is lost if the Vector Field Rendering module is not loaded. When a scene is imported or a scene view is restored, `vtkSlicerVectorFieldRenderingLogic::ConvertLegacyTransformDisplayNode()` adds a vector field display node with the same settings if the visualization was in use (shown, or a region or glyph points node set), then clears them (`ClearLegacyVisualization()`).
 - 3D views show nothing until a sampling region node is set; the selector shows "Select a node". Slice views need no node.
 - The sampling spacing is 10 mm by default, as the glyphs of a transform were spaced before every mode shared one spacing.
 - The color range is the range of the color map, not of the data.

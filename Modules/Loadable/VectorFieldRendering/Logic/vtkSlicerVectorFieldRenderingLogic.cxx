@@ -34,6 +34,7 @@
 #include <vtkMRMLModelNode.h>
 #include <vtkMRMLProceduralColorNode.h>
 #include <vtkMRMLScene.h>
+#include <vtkMRMLTransformDisplayNode.h>
 #include <vtkMRMLTransformNode.h>
 #include <vtkMRMLVolumeNode.h>
 
@@ -42,11 +43,15 @@
 #include <vtkColorTransferFunction.h>
 #include <vtkDataArray.h>
 #include <vtkImageData.h>
+#include <vtkIntArray.h>
 #include <vtkNew.h>
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPointSet.h>
 #include <vtkPolyData.h>
+
+// STD includes
+#include <sstream>
 
 namespace
 {
@@ -66,6 +71,19 @@ bool HasVectorArray(vtkDataSetAttributes* attributes)
     }
   }
   return false;
+}
+
+//----------------------------------------------------------------------------
+/// Number in a legacy visualization attribute. Returns false if the attribute was not read or is not a number.
+bool GetLegacyNumber(vtkMRMLTransformDisplayNode* transformDisplayNode, const char* attributeName, double& value)
+{
+  std::string text = transformDisplayNode->GetLegacyVisualizationAttribute(attributeName);
+  if (text.empty())
+  {
+    return false;
+  }
+  std::istringstream stream(text);
+  return static_cast<bool>(stream >> value);
 }
 } // namespace
 
@@ -97,6 +115,201 @@ void vtkSlicerVectorFieldRenderingLogic::RegisterNodes()
   {
     scene->RegisterNodeClass(vtkSmartPointer<vtkMRMLVectorFieldDisplayNode>::New());
   }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVectorFieldRenderingLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
+{
+  vtkNew<vtkIntArray> events;
+  events->InsertNextValue(vtkMRMLScene::EndImportEvent);
+  events->InsertNextValue(vtkMRMLScene::EndRestoreEvent);
+  this->SetAndObserveMRMLSceneEventsInternal(newScene, events);
+  this->ConvertLegacyTransformDisplayNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVectorFieldRenderingLogic::OnMRMLSceneEndImport()
+{
+  this->ConvertLegacyTransformDisplayNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVectorFieldRenderingLogic::OnMRMLSceneEndRestore()
+{
+  this->ConvertLegacyTransformDisplayNodes();
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVectorFieldRenderingLogic::ConvertLegacyTransformDisplayNodes()
+{
+  vtkMRMLScene* scene = this->GetMRMLScene();
+  if (!scene)
+  {
+    return;
+  }
+  std::vector<vtkMRMLNode*> transformDisplayNodes;
+  scene->GetNodesByClass("vtkMRMLTransformDisplayNode", transformDisplayNodes);
+  for (vtkMRMLNode* node : transformDisplayNodes)
+  {
+    vtkMRMLTransformDisplayNode* transformDisplayNode = vtkMRMLTransformDisplayNode::SafeDownCast(node);
+    if (transformDisplayNode && transformDisplayNode->HasLegacyVisualization())
+    {
+      vtkSlicerVectorFieldRenderingLogic::ConvertLegacyTransformDisplayNode(transformDisplayNode);
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+vtkMRMLVectorFieldDisplayNode* vtkSlicerVectorFieldRenderingLogic::ConvertLegacyTransformDisplayNode(vtkMRMLTransformDisplayNode* transformDisplayNode)
+{
+  if (!transformDisplayNode || !transformDisplayNode->HasLegacyVisualization())
+  {
+    return nullptr;
+  }
+  vtkMRMLScene* scene = transformDisplayNode->GetScene();
+  vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(transformDisplayNode->GetDisplayableNode());
+  vtkMRMLNode* regionNode = transformDisplayNode->GetNodeReference(vtkMRMLTransformDisplayNode::GetLegacyRegionNodeReferenceRole());
+  vtkMRMLNode* glyphPointsNode = transformDisplayNode->GetNodeReference(vtkMRMLTransformDisplayNode::GetLegacyGlyphPointsNodeReferenceRole());
+  // A visualization that was never shown nor placed anywhere had only default settings
+  bool inUse = (transformDisplayNode->GetVisibility() || regionNode || glyphPointsNode);
+  vtkMRMLVectorFieldDisplayNode* displayNode = nullptr;
+  if (scene && transformNode && inUse)
+  {
+    vtkNew<vtkMRMLVectorFieldDisplayNode> newDisplayNode;
+    std::string name = std::string(transformNode->GetName() ? transformNode->GetName() : "") + " vector field";
+    newDisplayNode->SetName(scene->GenerateUniqueName(name).c_str());
+    displayNode = vtkMRMLVectorFieldDisplayNode::SafeDownCast(scene->AddNode(newDisplayNode));
+  }
+  if (displayNode)
+  {
+    MRMLNodeModifyBlocker blocker(displayNode);
+    // The color map that the transform was colored by
+    displayNode->SetAndObserveColorNodeID(transformDisplayNode->GetColorNodeID());
+    vtkSlicerVectorFieldRenderingLogic::SetDefaultTransformDisplayProperties(displayNode);
+
+    std::string mode = transformDisplayNode->GetLegacyVisualizationAttribute("VisualizationMode");
+    int visualizationMode = vtkMRMLVectorFieldDisplayNode::VisualizationModeGlyph;
+    if (mode == "GRID")
+    {
+      visualizationMode = vtkMRMLVectorFieldDisplayNode::VisualizationModeGrid;
+    }
+    else if (mode == "CONTOUR")
+    {
+      visualizationMode = vtkMRMLVectorFieldDisplayNode::VisualizationModeContour;
+    }
+    displayNode->SetVisualizationMode(visualizationMode);
+    std::string glyphType = transformDisplayNode->GetLegacyVisualizationAttribute("GlyphType");
+    if (glyphType == "CONE")
+    {
+      displayNode->SetGlyphType(vtkMRMLVectorFieldDisplayNode::GlyphTypeCone);
+    }
+    else if (glyphType == "SPHERE")
+    {
+      displayNode->SetGlyphType(vtkMRMLVectorFieldDisplayNode::GlyphTypeSphere);
+    }
+    else
+    {
+      displayNode->SetGlyphType(vtkMRMLVectorFieldDisplayNode::GlyphTypeArrow);
+    }
+
+    // Each mode had its own spacing; every mode shares one now, and the one of the mode the scene was saved in is what
+    // it showed
+    const char* spacingAttributeName = "GlyphSpacingMm";
+    if (visualizationMode == vtkMRMLVectorFieldDisplayNode::VisualizationModeGrid)
+    {
+      spacingAttributeName = "GridResolutionMm";
+    }
+    else if (visualizationMode == vtkMRMLVectorFieldDisplayNode::VisualizationModeContour)
+    {
+      spacingAttributeName = "ContourResolutionMm";
+    }
+    double value = 0.0;
+    if (GetLegacyNumber(transformDisplayNode, spacingAttributeName, value))
+    {
+      displayNode->SetSamplingSpacing(value);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GlyphScalePercent", value))
+    {
+      displayNode->SetGlyphScaleFactor(value * 0.01);
+    }
+    // Glyphs were only drawn where the displacement was in the display range
+    double thresholdRange[2] = { displayNode->GetThresholdRange()[0], displayNode->GetThresholdRange()[1] };
+    GetLegacyNumber(transformDisplayNode, "GlyphDisplayRangeMinMm", thresholdRange[0]);
+    GetLegacyNumber(transformDisplayNode, "GlyphDisplayRangeMaxMm", thresholdRange[1]);
+    displayNode->SetThresholdRange(thresholdRange);
+    if (GetLegacyNumber(transformDisplayNode, "GlyphTipLengthPercent", value))
+    {
+      displayNode->SetGlyphTipLengthPercent(value);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GlyphDiameterMm", value))
+    {
+      displayNode->SetGlyphDiameter(value);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GlyphShaftDiameterPercent", value))
+    {
+      displayNode->SetGlyphShaftDiameterPercent(value);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GlyphResolution", value))
+    {
+      displayNode->SetGlyphResolution(static_cast<int>(value));
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GlyphResolution2D", value))
+    {
+      displayNode->SetGlyphResolution2D(static_cast<int>(value));
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GlyphTipLengthPercent2D", value))
+    {
+      displayNode->SetGlyphTipLengthPercent2D(value);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GridScalePercent", value))
+    {
+      displayNode->SetGridScaleFactor(value * 0.01);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GridSpacingMm", value))
+    {
+      displayNode->SetGridSpacing(value);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GridLineDiameterMm", value))
+    {
+      displayNode->SetGridLineDiameter(value);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "GridShowNonWarped", value))
+    {
+      displayNode->SetGridShowNonWarped(value != 0.0);
+    }
+    if (GetLegacyNumber(transformDisplayNode, "ContourOpacity", value))
+    {
+      displayNode->SetContourOpacity3D(value);
+    }
+    std::string contourLevels = transformDisplayNode->GetLegacyVisualizationAttribute("ContourLevelsMm");
+    if (!contourLevels.empty())
+    {
+      displayNode->SetContourLevelsAsString(contourLevels);
+    }
+
+    // Glyphs were drawn at the glyph points if there were some, everything else in the region
+    bool glyphMode = (visualizationMode == vtkMRMLVectorFieldDisplayNode::VisualizationModeGlyph);
+    displayNode->SetAndObserveSamplingRegionNode(glyphMode && glyphPointsNode ? glyphPointsNode : regionNode);
+
+    // Shown as the transform was, and with the transform by its eye icon
+    vtkSlicerVectorFieldRenderingLogic::SetVectorFieldDisplayNodeShown(displayNode, true);
+    displayNode->SetVisibility(transformDisplayNode->GetVisibility());
+    displayNode->SetVisibility2D(transformDisplayNode->GetVisibility2D());
+    displayNode->SetVisibility3D(transformDisplayNode->GetVisibility3D());
+    displayNode->SetSliceIntersectionThickness(transformDisplayNode->GetSliceIntersectionThickness());
+    for (const std::string& viewNodeID : transformDisplayNode->GetViewNodeIDs())
+    {
+      displayNode->AddViewNodeID(viewNodeID.c_str());
+    }
+  }
+  transformDisplayNode->ClearLegacyVisualization();
+  if (displayNode)
+  {
+    transformNode->AddAndObserveDisplayNodeID(displayNode->GetID());
+    // Adding a display node does not tell the displayable managers that the node has a new display node to draw
+    transformNode->Modified();
+  }
+  return displayNode;
 }
 
 //----------------------------------------------------------------------------
@@ -271,7 +484,7 @@ void vtkSlicerVectorFieldRenderingLogic::SetDefaultTransformDisplayProperties(vt
   displayNode->SetActiveScalarName(vtkVectorFieldSampler::GetMagnitudeArrayName());
   displayNode->SetScalarRangeFlag(vtkMRMLDisplayNode::UseColorNodeScalarRange);
   vtkMRMLScene* scene = displayNode->GetScene();
-  if (!scene)
+  if (!scene || displayNode->GetColorNode())
   {
     return;
   }

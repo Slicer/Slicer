@@ -32,6 +32,7 @@
 
 class vtkMRMLDisplayableNode;
 class vtkMRMLNode;
+class vtkMRMLTransformDisplayNode;
 class vtkMRMLVectorFieldDisplayNode;
 class vtkPolyData;
 
@@ -40,6 +41,9 @@ class vtkPolyData;
 ///
 /// A node can have any number of vector field display nodes, each drawn on its own (for example glyphs and streamlines
 /// of the same volume). They are added after the default display node of the node, which stays the first one.
+///
+/// Transform visualization settings of scenes saved by earlier Slicer versions (kept in vtkMRMLTransformDisplayNode) are
+/// converted to vector field display nodes when a scene is imported or a scene view is restored.
 class VTK_SLICER_VECTORFIELDRENDERING_MODULE_LOGIC_EXPORT vtkSlicerVectorFieldRenderingLogic : public vtkSlicerModuleLogic
 {
 public:
@@ -72,8 +76,18 @@ public:
   static bool GetVisualizationMesh(vtkMRMLVectorFieldDisplayNode* displayNode, vtkPolyData* mesh);
 
   /// Set the default display properties of a vector field display node of a transform: lengths in mm, glyphs on a
-  /// lattice, displacement magnitude colored by a "Displacement to color" color map that is added to the scene.
+  /// lattice, displacement magnitude colored by a "Displacement to color" color map, which is added to the scene if the
+  /// display node has no color node.
   static void SetDefaultTransformDisplayProperties(vtkMRMLVectorFieldDisplayNode* displayNode);
+
+  /// Convert the transform visualization settings of a scene saved by an earlier Slicer version. If the visualization
+  /// was in use (shown, or a region or glyph points node was set), a vector field display node is added to the transform
+  /// with the same settings. The settings are then removed from the transform display node in either case.
+  /// Returns the added display node, nullptr if none was added.
+  static vtkMRMLVectorFieldDisplayNode* ConvertLegacyTransformDisplayNode(vtkMRMLTransformDisplayNode* transformDisplayNode);
+
+  /// Convert the legacy settings of every transform display node of the scene (see ConvertLegacyTransformDisplayNode())
+  void ConvertLegacyTransformDisplayNodes();
 
 protected:
   vtkSlicerVectorFieldRenderingLogic();
@@ -82,6 +96,9 @@ protected:
   void operator=(const vtkSlicerVectorFieldRenderingLogic&) = delete;
 
   void RegisterNodes() override;
+  void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
+  void OnMRMLSceneEndImport() override;
+  void OnMRMLSceneEndRestore() override;
 };
 
 #endif

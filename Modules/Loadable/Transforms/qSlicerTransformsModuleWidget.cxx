@@ -39,6 +39,9 @@
 #include <cmath>
 
 // Slicer includes
+#include "qSlicerAbstractModule.h"
+#include "qSlicerApplication.h"
+#include "qSlicerModuleManager.h"
 #include "qSlicerTransformsModuleWidget.h"
 #include "ui_qSlicerTransformsModuleWidget.h"
 
@@ -464,6 +467,12 @@ void qSlicerTransformsModuleWidget::setup()
   this->connect(d->ModelBasedUseLinearApproximationCheckBox, SIGNAL(toggled(bool)), SLOT(onModelBasedFittingParameterChanged()));
   this->connect(d->ModelBasedBorderModeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(onModelBasedFittingParameterChanged()));
 
+  // The displacement field is shown by the Vector Field Rendering module, if it is loaded
+  qSlicerApplication* application = qSlicerApplication::application();
+  bool vectorFieldRenderingModuleLoaded = (application && application->moduleManager() && application->moduleManager()->module("VectorFieldRendering"));
+  d->ShowInVectorFieldRenderingModuleButton->setVisible(vectorFieldRenderingModuleLoaded);
+  this->connect(d->ShowInVectorFieldRenderingModuleButton, SIGNAL(clicked()), SLOT(showDisplacementFieldInVectorFieldRenderingModule()));
+
   this->onTransformableSectionClicked(d->TransformedCollapsibleButton->isChecked());
   this->onNodeSelected(nullptr);
   this->updateExportImportWidgets();
@@ -595,6 +604,7 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   d->RotationSliders->setMRMLTransformNode(transformNode);
   d->MatrixWidget->setMRMLTransformNode(transformNode);
   d->TransformDisplayNodeWidget->setMRMLTransformNode(transformNode);
+  d->ShowInVectorFieldRenderingModuleButton->setEnabled(transformNode != nullptr);
   d->TransformInfoWidget->setMRMLTransformNode(transformNode);
 
   QStringList nodeTypes;
@@ -1427,4 +1437,24 @@ bool qSlicerTransformsModuleWidget::setEditedNode(vtkMRMLNode* node, QString rol
   }
 
   return false;
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::showDisplacementFieldInVectorFieldRenderingModule()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  qSlicerApplication* application = qSlicerApplication::application();
+  qSlicerAbstractModule* vectorFieldRenderingModule =
+    (application && application->moduleManager() ? qobject_cast<qSlicerAbstractModule*>(application->moduleManager()->module("VectorFieldRendering")) : nullptr);
+  if (!vectorFieldRenderingModule || !d->MRMLTransformNode)
+  {
+    return;
+  }
+  // Created before it is shown, so that the transform can be selected in it
+  qSlicerAbstractModuleWidget* moduleWidget = dynamic_cast<qSlicerAbstractModuleWidget*>(vectorFieldRenderingModule->widgetRepresentation());
+  vectorFieldRenderingModule->action()->trigger();
+  if (moduleWidget)
+  {
+    moduleWidget->setEditedNode(d->MRMLTransformNode);
+  }
 }

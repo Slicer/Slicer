@@ -77,6 +77,64 @@ Right-click the eye icon of a model, vector volume or transform in the subject h
 - **Vector volume**: the field is always the voxel vectors, colored by magnitude by default with the Plasma color table. The vector components are read as RAS directions.
 - **Transform**: the field is the displacement of the transform, in mm. Streamline mode is not available. By default it is colored by the displacement magnitude with the "Displacement to color" color map: 1 mm (or below) gray, 2 mm green, 5 mm yellow, 10 mm (or above) red. Transforms that were displayed in scenes saved by earlier Slicer versions are shown the same way when the scene is loaded.
 
+### Transform visualization modes
+
+The displacement field of a transform, in the visualization modes that transforms support:
+
+1. Glyph mode
+
+Slice view:
+- Arrow: the arrow shows the displacement vector at the arrow starting point, projected to the slice plane
+- Cone: the cone shows the displacement vector at the cone centerpoint, projected to the slice plane
+- Sphere: the circle diameter shows the displacement vector magnitude at the circle centerpoint
+
+| Glyph - arrow (slice view)   | Glyph - cone (slice view)   | Glyph - sphere (slice view)      |
+|------------------------------|-----------------------------|----------------------------------|
+| ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_arrow_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_cone_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_sphere_2d.png)  |
+
+3D view:
+- Arrow: the arrow shows the displacement vector at the arrow starting point
+- Cone: the cone shows the displacement vector at the cone centerpoint
+- Sphere: the sphere diameter shows the displacement vector magnitude at the circle centerpoint
+
+| Glyph - arrow (3D view)   | Glyph - cone (3D view)   | Glyph - sphere (3D view)      |
+|------------------------------|-----------------------------|----------------------------------|
+| ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_arrow_3d_slice.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_cone_3d_roi.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_sphere_3d_volume.png)  |
+
+2. Grid mode
+
+- Slice view: Grid visualization (2D): shows a regular grid, deformed by the displacement vector projected to the slice
+- 3D view: shows a regular grid, deformed by the displacement vector
+
+| Grid (slice view)   | Grid - slice plane (3D view)   | Grid - volume (3D view)      |
+|------------------------------|-----------------------------|----------------------------------|
+| ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_grid_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_grid_3d_slice.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_grid_3d_volume.png)  |
+
+3. Contour mode
+
+- Slice view: iso-lines corresponding to selected displacement magnitude values
+- 3D view: iso-surfaces corresponding to selected displacement magnitude values
+
+| Contour (slice view)         | Contour (3D view)           |
+|------------------------------|-----------------------------|
+| ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_contour_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_contour_3d_volume.png) |
+
+### Transform coloring
+
+The displacement magnitude is colored by the color map in the **Coloring** part of the **Display** section. If you click on a small circle then above the color bar you can see the small color swatch. On its left side is the points index (an integer that tells which point is being edited and that can be used to jump to the previous/next point), and on its right side is the mm value corresponding to that color.
+
+The default colormap is:
+- 1mm (or below) = gray
+- 2mm = green
+- 5mm = yellow
+- 10mm (or above) = red
+
+You can drag-and-drop any of the small circles or modify the mm value in the editbox. You can also add more color values by clicking on the color bar. Then, you can assign a color and/or adjust the mm value. If you click on a circle and press the DEL key then the color value is deleted.
+
+If you need to know accurate displacement values at specific positions then switch to contour mode and in the **Contour levels** field (in the **Advanced** section) enter all the mm values that you are interested in. For example, if you enter only a single value “3” you will see a curve going through the points where the displacement is exactly 3 mm; on one side of the curve the displacements are smaller, on the other side the displacements are larger.
+
+To show both contours and grid or glyph representations, add another vector field display to the transform and choose a different visualization mode for each.
+
 ## Related modules
 
 - [Models](models.md), [Volumes](volumes.md), [Transforms](transforms.md): the nodes whose vector fields are shown.

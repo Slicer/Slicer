@@ -84,6 +84,8 @@ protected slots:
   void hardenSelectedNodes();
 
   void onDisplaySectionClicked(bool);
+  /// Switch to the Vector Field Rendering module, with the transform selected there
+  void showDisplacementFieldInVectorFieldRenderingModule();
   void onTransformableSectionClicked(bool);
 
   /// Show the inputs of the chosen operation and type, and enable Apply when they are set

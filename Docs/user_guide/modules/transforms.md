@@ -126,7 +126,7 @@ A quick way to import a linear transform from another software or from text file
 
 ### Visualize transform
 
-Transforms can be visualized in both 2D and 3D views, as glyphs representing the displacement vectors as arrows, cones, or spheres; regular grids that are deformed by the transform; or contours that represent lines or surfaces where the displacement magnitude has a specific value. See documentation of [Display section](transforms.md#display) for details. Linear transforms can also be interacted with using an interaction handle widget. See [Interaction section](transforms.md#interaction)
+The displacement field of a transform can be visualized in both 2D and 3D views, as glyphs representing the displacement vectors as arrows, cones, or spheres; regular grids that are deformed by the transform; or contours that represent lines or surfaces where the displacement magnitude has a specific value, in the [Vector Field Rendering module](vectorfieldrendering.md). The **Show displacement field in Vector Field Rendering module** button in the [Display section](transforms.md#display) opens it with the transform selected. Linear transforms can also be interacted with using an interaction handle widget. See [Interaction section](transforms.md#interaction)
 
 ### Interaction
 
@@ -198,7 +198,7 @@ It also displays displacement value at the current mouse pointer position (in sl
 
 ### Display
 
-This section allows visualization of how much and what direction of displacements specified by the transform.
+This section controls the interaction handles of the transform. **Show displacement field in Vector Field Rendering module** shows how much and in what direction the transform displaces points, in the [Vector Field Rendering module](vectorfieldrendering.md), with the transform selected there.
 
 #### Interaction
 
@@ -210,64 +210,6 @@ In the slice view's "More options" panel, the "Enable view plane translation any
 
 - Size: Size of the interaction handles, relative to the application window size (or as an absolute size in mm, if `absolute` is enabled).
 - Opacity: Overall opacity of the interaction handles, in addition to the fade effect that is already applied when a handle is viewed edge-on.
-
-#### Visualization modes
-
-![Transforms module section for controlling transform display options.](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_display_2024_03_26.png)
-
-1. Glyph mode
-
-Slice view:
-- Arrow: the arrow shows the displacement vector at the arrow starting point, projected to the slice plane
-- Cone: the cone shows the displacement vector at the cone centerpoint, projected to the slice plane
-- Sphere: the circle diameter shows the displacement vector magnitude at the circle centerpoint
-
-| Glyph - arrow (slice view)   | Glyph - cone (slice view)   | Glyph - sphere (slice view)      |
-|------------------------------|-----------------------------|----------------------------------|
-| ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_arrow_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_cone_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_sphere_2d.png)  |
-
-3D view:
-- Arrow: the arrow shows the displacement vector at the arrow starting point
-- Cone: the cone shows the displacement vector at the cone centerpoint
-- Sphere: the sphere diameter shows the displacement vector magnitude at the circle centerpoint
-
-| Glyph - arrow (3D view)   | Glyph - cone (3D view)   | Glyph - sphere (3D view)      |
-|------------------------------|-----------------------------|----------------------------------|
-| ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_arrow_3d_slice.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_cone_3d_roi.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_glyph_sphere_3d_volume.png)  |
-
-2. Grid mode
-
-- Slice view: Grid visualization (2D): shows a regular grid, deformed by the displacement vector projected to the slice
-- 3D view: shows a regular grid, deformed by the displacement vector
-
-| Grid (slice view)   | Grid - slice plane (3D view)   | Grid - volume (3D view)      |
-|------------------------------|-----------------------------|----------------------------------|
-| ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_grid_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_grid_3d_slice.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_grid_3d_volume.png)  |
-
-3. Contour mode
-
-- Slice view: iso-lines corresponding to selected displacement magnitude values
-- 3D view: iso-surfaces corresponding to selected displacement magnitude values
-
-| Contour (slice view)         | Contour (3D view)           |
-|------------------------------|-----------------------------|
-| ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_contour_2d.png)  | ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_transforms_contour_3d_volume.png) |
-
-#### Coloring
-
-Open Transforms module / Display section / Colors section. If you click on a small circle then above the color bar you can see the small color swatch. On its left side is the points index (an integer that tells which point is being edited and that can be used to jump to the previous/next point), and on its right side is the mm value corresponding to that color.
-
-The default colormap is:
-- 1mm (or below) = gray
-- 2mm = green
-- 5mm = yellow
-- 10mm (or above) = red
-
-You can drag-and-drop any of the small circles or modify the mm value in the editbox. You can also add more color values by clicking on the color bar. Then, you can assign a color and/or adjust the mm value. If you click on a circle and press the DEL key then the color value is deleted.
-
-If you need to know accurate displacement values at specific positions then switch to contour mode and in the “Levels” list enter all the mm values that you are interested in. For example, if you enter only a single value “3” in the Levels field you will see a curve going through the points where the displacement is exactly 3 mm; on one side of the curve the displacements are smaller, on the other side the displacements are larger.
-
-You can show both contours and grid or glyph representations by loading the same transform twice and choosing a different representation for each.
 
 ### Apply transform
 
