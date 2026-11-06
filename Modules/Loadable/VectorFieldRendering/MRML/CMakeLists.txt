@@ -5,6 +5,14 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRML_EXPORT")
 
 set(${KIT}_SRCS
+  vtkMRMLVectorFieldDisplayNode.cxx
+  vtkMRMLVectorFieldDisplayNode.h
+  vtkMRMLVectorFieldMask.cxx
+  vtkMRMLVectorFieldMask.h
+  vtkMRMLVectorFieldPipeline.cxx
+  vtkMRMLVectorFieldPipeline.h
+  vtkMRMLVectorFieldSamplePointSource.cxx
+  vtkMRMLVectorFieldSamplePointSource.h
   vtkVectorFieldGeometry.cxx
   vtkVectorFieldGeometry.h
   vtkVectorFieldGlyph.cxx
