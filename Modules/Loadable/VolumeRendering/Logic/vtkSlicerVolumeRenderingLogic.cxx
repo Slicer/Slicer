@@ -47,6 +47,7 @@
 
 // VTK includes
 #include <vtkColorTransferFunction.h>
+#include <vtkDataArray.h>
 #include <vtkImageData.h>
 #include <vtkLookupTable.h>
 #include <vtkNew.h>
@@ -434,7 +435,12 @@ void vtkSlicerVolumeRenderingLogic::UpdateTranferFunctionRangeFromImage(vtkMRMLV
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(double scalarRange[2], double threshold[2], vtkVolumeProperty* volumeProp, bool linearRamp, bool stayUpAtUpperLimit)
+void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(double scalarRange[2],
+                                                             double threshold[2],
+                                                             vtkVolumeProperty* volumeProp,
+                                                             bool linearRamp,
+                                                             bool stayUpAtUpperLimit,
+                                                             int component /*=0*/)
 {
 
   if (!volumeProp || !scalarRange || !threshold)
@@ -466,7 +472,7 @@ void vtkSlicerVolumeRenderingLogic::SetThresholdToVolumeProp(double scalarRange[
   }
   opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), endValue);
 
-  vtkPiecewiseFunction* volumePropOpacity = volumeProp->GetScalarOpacity();
+  vtkPiecewiseFunction* volumePropOpacity = volumeProp->GetScalarOpacity(component);
   if (this->IsDifferentFunction(opacity.GetPointer(), volumePropOpacity))
   {
     volumePropOpacity->DeepCopy(opacity.GetPointer());
@@ -479,7 +485,8 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
                                                                vtkScalarsToColors* colors,
                                                                vtkVolumeProperty* volumeProp,
                                                                vtkImageMapToWindowLevelAddon::WindowMappingMode mappingMode,
-                                                               bool invertColormap)
+                                                               bool invertColormap,
+                                                               int component /*=0*/)
 {
   if (!volumeProp || !scalarRange || !windowLevel)
   {
@@ -605,7 +612,7 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
     }
   }
 
-  vtkColorTransferFunction* volumePropColorTransfer = volumeProp->GetRGBTransferFunction();
+  vtkColorTransferFunction* volumePropColorTransfer = volumeProp->GetRGBTransferFunction(component);
   if (this->IsDifferentFunction(colorTransfer.GetPointer(), volumePropColorTransfer))
   {
     volumePropColorTransfer->DeepCopy(colorTransfer.GetPointer());
@@ -615,7 +622,7 @@ void vtkSlicerVolumeRenderingLogic::SetWindowLevelToVolumeProp(double scalarRang
 }
 
 //----------------------------------------------------------------------------
-void vtkSlicerVolumeRenderingLogic::SetGradientOpacityToVolumeProp(double scalarRange[2], vtkVolumeProperty* volumeProp)
+void vtkSlicerVolumeRenderingLogic::SetGradientOpacityToVolumeProp(double scalarRange[2], vtkVolumeProperty* volumeProp, int component /*=0*/)
 {
   if (!scalarRange || !volumeProp)
   {
@@ -629,11 +636,45 @@ void vtkSlicerVolumeRenderingLogic::SetGradientOpacityToVolumeProp(double scalar
   opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[0], previous), 1.0);
   opacity->AddPoint(vtkMRMLVolumePropertyNode::HigherAndUnique(scalarRange[1], previous), 1.0);
 
-  vtkPiecewiseFunction* volumePropGradientOpacity = volumeProp->GetGradientOpacity();
+  vtkPiecewiseFunction* volumePropGradientOpacity = volumeProp->GetGradientOpacity(component);
   if (this->IsDifferentFunction(opacity.GetPointer(), volumePropGradientOpacity))
   {
     volumePropGradientOpacity->DeepCopy(opacity.GetPointer());
   }
+}
+
+//----------------------------------------------------------------------------
+void vtkSlicerVolumeRenderingLogic::SetComponentTransferFunctionsFromVolume(vtkMRMLVolumeRenderingDisplayNode* displayNode)
+{
+  if (!displayNode || !displayNode->GetVolumePropertyNode() || !displayNode->GetVolumePropertyNode()->GetVolumeProperty())
+  {
+    vtkErrorMacro("SetComponentTransferFunctionsFromVolume: invalid display node or volume property node");
+    return;
+  }
+  vtkMRMLVolumeNode* volumeNode = displayNode->GetVolumeNode();
+  vtkImageData* imageData = volumeNode ? volumeNode->GetImageData() : nullptr;
+  vtkDataArray* scalars = imageData && imageData->GetPointData() ? imageData->GetPointData()->GetScalars() : nullptr;
+  if (!scalars)
+  {
+    return;
+  }
+  int numberOfComponents = std::min(scalars->GetNumberOfComponents(), VTK_MAX_VRCOMP);
+
+  vtkMRMLVolumePropertyNode* volumePropertyNode = displayNode->GetVolumePropertyNode();
+  vtkVolumeProperty* volumeProp = volumePropertyNode->GetVolumeProperty();
+  int vpNodeDisabledModify = volumePropertyNode->StartModify();
+  for (int component = 1; component < numberOfComponents; ++component)
+  {
+    double scalarRange[2] = { 0.0, 0.0 };
+    scalars->GetRange(scalarRange, component);
+    // Grayscale color and linear opacity ramp over the entire intensity range of the component
+    double windowLevel[2] = { scalarRange[1] - scalarRange[0], 0.5 * (scalarRange[0] + scalarRange[1]) };
+    double threshold[2] = { scalarRange[0], scalarRange[1] };
+    this->SetThresholdToVolumeProp(scalarRange, threshold, volumeProp, true, true, component);
+    this->SetWindowLevelToVolumeProp(scalarRange, windowLevel, nullptr, volumeProp, vtkImageMapToWindowLevelAddon::Linear, false, component);
+    this->SetGradientOpacityToVolumeProp(scalarRange, volumeProp, component);
+  }
+  volumePropertyNode->EndModify(vpNodeDisabledModify);
 }
 
 //----------------------------------------------------------------------------
@@ -895,6 +936,7 @@ vtkMRMLVolumeRenderingDisplayNode* vtkSlicerVolumeRenderingLogic::CreateDefaultV
   {
     this->UpdateDisplayNodeFromVolumeNode(displayNode, volumeNode, nullptr, nullptr, false);
     this->SetRecommendedVolumeRenderingProperties(displayNode);
+    this->SetComponentTransferFunctionsFromVolume(displayNode);
     volumePropertyNode = displayNode->GetVolumePropertyNode();
 
     if (volumePropertyNode)
