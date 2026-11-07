@@ -57,6 +57,7 @@ _MACHO_MAGIC = {
     b"\xcf\xfa\xed\xfe", b"\xce\xfa\xed\xfe",
     b"\xfe\xed\xfa\xcf", b"\xfe\xed\xfa\xce",
     b"\xca\xfe\xba\xbe", b"\xbe\xba\xfe\xca",
+    b"\xca\xfe\xba\xbf", b"\xbf\xba\xfe\xca",
 }
 
 _DYLIB_LOAD_COMMANDS = {
@@ -68,14 +69,18 @@ _NAME_RE = re.compile(r"^\s*name (.+) \(offset")
 _PATH_RE = re.compile(r"^\s*path (.+) \(offset")
 
 
+def _raise_walk_error(error):
+    raise RuntimeError("Failed to scan bundle directory %s: %s" % (error.filename, error)) from error
+
+
 def is_macho(path):
     try:
         if os.path.islink(path) or not os.path.isfile(path):
             return False
         with open(path, "rb") as handle:
             return handle.read(4) in _MACHO_MAGIC
-    except OSError:
-        return False
+    except OSError as error:
+        raise RuntimeError("Failed to read Mach-O header for %s: %s" % (path, error)) from error
 
 
 def scan(path):
@@ -85,8 +90,12 @@ def scan(path):
     one ``otool`` invocation per binary instead of the three (``-L``/``-D``/``-l``)
     the equivalent separate queries would need.
     """
-    out = subprocess.run(["otool", "-l", path],
-                         capture_output=True, text=True, check=False).stdout
+    result = subprocess.run(["otool", "-l", path],
+                            capture_output=True, text=True, check=False)
+    if result.returncode != 0 or re.search(r": is not an object file(?:\n|$)", result.stdout):
+        raise RuntimeError("otool inspection failed for %s (exit %d): %s"
+                           % (path, result.returncode, result.stderr.strip() or result.stdout.strip()))
+    out = result.stdout
     loads, rpaths, install_id = [], [], None
     command = None
     for line in out.splitlines():
@@ -110,7 +119,10 @@ def scan(path):
 
 
 def is_system(ref):
-    return ref.startswith("/usr/lib") or ref.startswith("/System/")
+    # The Data volume contains user-installed libraries, not just OS content.
+    if ref.startswith("/System/Volumes/Data/"):
+        return False
+    return ref.startswith("/usr/lib/") or ref.startswith("/System/")
 
 
 def is_ignored(path, ignored):
@@ -138,8 +150,12 @@ def is_executable_macho(path):
     """True for a Mach-O main executable (MH_EXECUTE) -- a binary that can be
     launched on its own and so must carry its own run-path for @rpath to resolve.
     """
-    out = subprocess.run(["file", "-b", path],
-                         capture_output=True, text=True, check=False).stdout
+    result = subprocess.run(["file", "-b", path],
+                            capture_output=True, text=True, check=False)
+    if result.returncode != 0:
+        raise RuntimeError("file inspection failed for %s (exit %d): %s"
+                           % (path, result.returncode, result.stderr.strip()))
+    out = result.stdout
     return "Mach-O" in out and "executable" in out
 
 
@@ -214,13 +230,21 @@ def close_deps(app, search_dirs, lib_subdir, ignored=()):
     lib_dir = os.path.join(contents, lib_subdir)
     python_lib_dir = os.path.join(contents, "lib", "Python", "lib")
     contents_real = os.path.realpath(contents)
+    if os.path.isabs(lib_subdir) or os.path.commonpath([os.path.realpath(lib_dir), contents_real]) != contents_real:
+        print("SlicerBundleCloseDeps: --lib-subdir must be relative and resolve within Contents: "
+              + lib_subdir, file=sys.stderr)
+        return False
 
     def inside_bundle(path):
-        return os.path.realpath(path).startswith(contents_real)
+        return os.path.commonpath([os.path.realpath(path), contents_real]) == contents_real
+
+    def require_inside_destination(path):
+        if os.path.commonpath([os.path.realpath(path), contents_real]) != contents_real:
+            raise RuntimeError("Embedding destination resolves outside Contents: " + path)
 
     def bundle_machos(root):
         found = []
-        for directory, _dirs, files in os.walk(root):
+        for directory, _dirs, files in os.walk(root, onerror=_raise_walk_error):
             for name in files:
                 path = os.path.join(directory, name)
                 if is_macho(path):
@@ -262,6 +286,9 @@ def close_deps(app, search_dirs, lib_subdir, ignored=()):
         if framework is not None:
             src_fw, inner = framework
             dest_fw = os.path.join(frameworks_dir, os.path.basename(src_fw))
+            require_inside_destination(dest_fw)
+            target = os.path.join(dest_fw, os.sep.join(inner.split(os.sep)[1:]))
+            require_inside_destination(target)
             if not os.path.exists(dest_fw):
                 shutil.copytree(src_fw, dest_fw, symlinks=True)
                 # A framework carries its own nested code (its versioned binary,
@@ -270,7 +297,6 @@ def close_deps(app, search_dirs, lib_subdir, ignored=()):
                     embedded.setdefault(os.path.basename(macho), macho)
                     if not is_ignored(macho, ignored) and macho not in seen:
                         worklist.append(macho)
-            target = os.path.join(dest_fw, os.sep.join(inner.split(os.sep)[1:]))
         else:
             base = os.path.basename(source)
             # The embedded location determines the @rpath install name set for
@@ -285,13 +311,16 @@ def close_deps(app, search_dirs, lib_subdir, ignored=()):
                 dest_dir = python_lib_dir
             else:
                 dest_dir = lib_dir
-            os.makedirs(dest_dir, exist_ok=True)
             target = os.path.join(dest_dir, base)
+            require_inside_destination(target)
+            os.makedirs(dest_dir, exist_ok=True)
             if not os.path.exists(target):
                 shutil.copy2(source, target)
                 os.chmod(target, 0o755)
                 if not is_ignored(target, ignored):
                     worklist.append(target)
+        # A copied framework can introduce symlinks that were not present before copying.
+        require_inside_destination(target)
         embedded.setdefault(os.path.basename(target), target)
         copied.append(os.path.basename(target))
         return target
@@ -350,8 +379,7 @@ def close_deps(app, search_dirs, lib_subdir, ignored=()):
             args += ["-change", old_ref, new_ref]
         if not args:
             return
-        subprocess.run(["install_name_tool"] + args + [path],
-                       capture_output=True, check=False)
+        subprocess.run(["install_name_tool"] + args + [path], check=True)
 
     targets = set(id_resets) | set(changes)
     with ThreadPoolExecutor(max_workers=os.cpu_count()) as executor:
@@ -371,7 +399,7 @@ def fix_executable_rpaths(app, ignored=()):
     """
     contents = os.path.join(app, "Contents")
     fixed = 0
-    for directory, _dirs, files in os.walk(app):
+    for directory, _dirs, files in os.walk(app, onerror=_raise_walk_error):
         for name in files:
             path = os.path.join(directory, name)
             if is_ignored(path, ignored):
@@ -385,8 +413,7 @@ def fix_executable_rpaths(app, ignored=()):
             wanted = "@loader_path" if relative == "." else "@loader_path/" + relative
             if wanted.rstrip("/") in [entry.rstrip("/") for entry in rpaths]:
                 continue
-            subprocess.run(["install_name_tool", "-add_rpath", wanted, path],
-                           capture_output=True, check=False)
+            subprocess.run(["install_name_tool", "-add_rpath", wanted, path], check=True)
             fixed += 1
     print("SlicerBundleCloseDeps: added a bundle-relative run-path to %d executables" % fixed)
     return fixed
@@ -395,27 +422,30 @@ def fix_executable_rpaths(app, ignored=()):
 def strip_external_rpaths(app, ignored=()):
     """Remove run-paths that point outside the bundle (build-tree or Homebrew
     directories left over from linking). After the closure every dependency
-    resolves through a @loader_path-relative run-path, so these absolute entries
+    resolves through a bundle-relative run-path, so escaping entries
     are dead weight -- and a lingering Qt directory could load a second copy of a
     framework. Removing them also means the bundle names no build-machine path.
     """
     contents_real = os.path.realpath(os.path.join(app, "Contents"))
+    exe_dir = os.path.join(app, "Contents", "MacOS")
 
     def strip(path):
         _loads, rpaths, _id = scan(path)
         removed = 0
         for entry in rpaths:
-            if entry.startswith("@"):
+            expanded = entry
+            if entry.startswith(("@loader_path/", "@executable_path/")):
+                expanded = _expand_rpath_entry(entry, os.path.dirname(path), exe_dir)
+            if expanded.startswith("@"):
                 continue
-            if os.path.realpath(entry).startswith(contents_real):
+            if os.path.commonpath([os.path.realpath(expanded), contents_real]) == contents_real:
                 continue
-            subprocess.run(["install_name_tool", "-delete_rpath", entry, path],
-                           capture_output=True, check=False)
+            subprocess.run(["install_name_tool", "-delete_rpath", entry, path], check=True)
             removed += 1
         return removed
 
     machos = []
-    for directory, _dirs, files in os.walk(app):
+    for directory, _dirs, files in os.walk(app, onerror=_raise_walk_error):
         for name in files:
             path = os.path.join(directory, name)
             if is_ignored(path, ignored):

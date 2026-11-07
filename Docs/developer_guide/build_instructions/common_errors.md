@@ -14,6 +14,22 @@ This error message occurs if Slicer is configured to use SSL but Qt is built wit
 
 Either set Slicer_USE_PYTHONQT_WITH_OPENSSL to OFF when configuring Slicer build in CMake, or build Qt with SSL support.
 
+## Apple Silicon development launcher passes the wrong architecture
+
+In affected Apple Silicon development builds, the Intel launcher running under Rosetta can pass the wrong architecture to child processes.
+Symptoms reported in [issue #9121](https://github.com/Slicer/Slicer/issues/9121) include `os.system("arch")` printing `i386` and a Python `ctypes` failure reporting `objc_msgSendSuper_stret: symbol not found`.
+
+As a workaround, generate an execution wrapper and use it to launch the native application:
+
+```sh
+"<Slicer_BUILD>/Slicer" --launcher-generate-exec-wrapper-script
+bash "<generated-wrapper-path>" "<Slicer_BUILD>/bin/Slicer.app/Contents/MacOS/Slicer"
+```
+
+Replace `<Slicer_BUILD>` with your inner Slicer build directory (for example, `/opt/s2/Slicer-build`) and `<generated-wrapper-path>` with the shell script path reported by the first command.
+The issue reports `arm64` from `arch` when using this wrapper.
+This workaround applies to affected development builds; it does not resolve the native launcher implementation issue tracked in #9121.
+
 # Other errors
 
 If you encounter any other error then you can ask help on the [Slicer forum](https://discourse.slicer.org). Post your question in `Developer` category, use the `build` tag.
