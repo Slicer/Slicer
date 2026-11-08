@@ -67,10 +67,12 @@ class DICOMGeAbusPluginClass(DICOMPlugin):
                     # Unsupported class
                     continue
 
+                # ManufacturerModelName (0008,1090) may be just the model name or may include a version number,
+                # for example: "Invenia", "Invenia ABUS 2.0"
                 manufacturerModelName = slicer.dicomDatabase.fileValue(filePath, self.tags["manufacturerModelName"])
-                if manufacturerModelName != "Invenia":
+                if "Invenia" not in manufacturerModelName:
                     if detailedLogging:
-                        logging.debug("ManufacturerModelName is not Invenia, the series will not be considered as an ABUS image")
+                        logging.debug("ManufacturerModelName does not contain Invenia, the series will not be considered as an ABUS image")
                     continue
 
             except Exception as e:
