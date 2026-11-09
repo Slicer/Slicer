@@ -40,6 +40,18 @@
 
 // STD includes
 
+namespace
+{
+int qVariantTypeId(const QVariant& value)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  return value.typeId();
+#else
+  return value.userType();
+#endif
+}
+} // namespace
+
 //------------------------------------------------------------------------------
 qMRMLSceneModelPrivate::qMRMLSceneModelPrivate(qMRMLSceneModel& object)
   : q_ptr(&object)
@@ -414,7 +426,7 @@ QStandardItem* qMRMLSceneModel::mrmlSceneItem() const
       continue;
     }
     QVariant uid = child->data(qMRMLSceneModel::UIDRole);
-    if (uid.type() == QVariant::String && //
+    if (qVariantTypeId(uid) == QMetaType::QString && //
         uid.toString() == "scene")
     {
       return child;

@@ -28,6 +28,18 @@
 #include "qMRMLNodeComboBoxMenuDelegate.h"
 #include "qMRMLNodeComboBoxDelegate.h"
 
+namespace
+{
+int qVariantTypeId(const QVariant& value)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  return value.typeId();
+#else
+  return value.userType();
+#endif
+}
+} // namespace
+
 // --------------------------------------------------------------------------
 qMRMLNodeComboBoxMenuDelegate::qMRMLNodeComboBoxMenuDelegate(QObject* parent, QComboBox* comboBox)
   : QAbstractItemDelegate(parent)
@@ -59,7 +71,7 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(const QStyleO
 
   QPalette resolvedpalette = option.palette.resolve(QApplication::palette("QMenu"));
   QVariant value = index.data(Qt::ForegroundRole);
-  if (value.canConvert(QMetaType::QBrush))
+  if (value.canConvert<QBrush>())
   {
     resolvedpalette.setBrush(QPalette::WindowText, qvariant_cast<QBrush>(value));
     resolvedpalette.setBrush(QPalette::ButtonText, qvariant_cast<QBrush>(value));
@@ -115,10 +127,10 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(const QStyleO
     menuOption.menuItemType = QStyleOptionMenuItem::Normal;
   }
   QVariant variant = index.model()->data(index, Qt::DecorationRole);
-  switch (variant.type())
+  switch (qVariantTypeId(variant))
   {
-    case QVariant::Icon: menuOption.icon = qvariant_cast<QIcon>(variant); break;
-    case QVariant::Color:
+    case QMetaType::QIcon: menuOption.icon = qvariant_cast<QIcon>(variant); break;
+    case QMetaType::QColor:
     {
       static QPixmap pixmap(option.decorationSize);
       pixmap.fill(qvariant_cast<QColor>(variant));
@@ -127,7 +139,7 @@ QStyleOptionMenuItem qMRMLNodeComboBoxMenuDelegate::getStyleOption(const QStyleO
     }
     default: menuOption.icon = qvariant_cast<QPixmap>(variant); break;
   }
-  if (index.data(Qt::BackgroundRole).canConvert(QMetaType::QBrush))
+  if (index.data(Qt::BackgroundRole).canConvert<QBrush>())
   {
     menuOption.palette.setBrush(QPalette::All, QPalette::Window, qvariant_cast<QBrush>(index.data(Qt::BackgroundRole)));
   }
