@@ -17,7 +17,9 @@
 
 // Qt includes
 #include <QFileInfo>
-#include <QScopedPointer>
+
+// STD includes
+#include <memory>
 
 // Slicer includes
 #include <vtkSlicerVolumesLogic.h>
@@ -136,14 +138,14 @@ qSlicerAbstractModuleRepresentation* qSlicerMultiVolumeExplorerModule::createWid
 {
   QString pythonPath = qSlicerUtils::pathWithoutIntDir(QFileInfo(this->path()).path(), Slicer_QTLOADABLEMODULES_LIB_DIR);
 
-  QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
+  std::unique_ptr<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
   QString classNameToLoad = "qSlicerMultiVolumeExplorerModuleWidget";
   bool ret = widget->setPythonSource(pythonPath + "/Python/" + classNameToLoad + ".py", classNameToLoad);
   if (!ret)
   {
     return 0;
   }
-  return widget.take();
+  return widget.release();
 }
 
 //-----------------------------------------------------------------------------
