@@ -28,6 +28,10 @@
 // vtkAddon includes
 #include <vtkAddonSetGet.h>
 
+// STD includes
+#include <map>
+#include <string>
+
 class vtkColorTransferFunction;
 class vtkPointSet;
 class vtkMatrix4x4;
@@ -35,31 +39,20 @@ class vtkMRMLProceduralColorNode;
 class vtkMRMLTransformNode;
 class vtkMRMLVolumeNode;
 
-/// \brief MRML node to represent display properties for transforms visualization in the slice and 3D viewers.
+/// \brief MRML node to represent display properties of transforms: the interaction handles in the slice and 3D views.
 ///
-/// vtkMRMLTransformDisplayNode nodes store display properties of transforms.
+/// The displacement field of a transform is shown by vector field display nodes (Vector Field Rendering module).
+///
+/// Scenes saved by earlier Slicer versions store the settings of the displacement field visualization in this node.
+/// They are kept as they were read (the attributes, and the "region" and "glyphPoints" node references) and written
+/// back when the scene is saved, until the Vector Field Rendering module converts them to a vector field display node and
+/// clears them (see HasLegacyVisualization()).
 class VTK_MRML_EXPORT vtkMRMLTransformDisplayNode : public vtkMRMLDisplayNode
 {
 public:
   static vtkMRMLTransformDisplayNode* New();
   vtkTypeMacro(vtkMRMLTransformDisplayNode, vtkMRMLDisplayNode);
   void PrintSelf(ostream& os, vtkIndent indent) override;
-
-  enum VisualizationModes
-  {
-    VIS_MODE_GLYPH,
-    VIS_MODE_GRID,
-    VIS_MODE_CONTOUR,
-    VIS_MODE_LAST // this should be the last mode
-  };
-
-  enum GlyphTypes
-  {
-    GLYPH_TYPE_ARROW,
-    GLYPH_TYPE_CONE,
-    GLYPH_TYPE_SPHERE,
-    GLYPH_TYPE_LAST // this should be the last glyph type
-  };
 
   //--------------------------------------------------------------------------
   /// MRMLNode methods
@@ -83,92 +76,21 @@ public:
   /// Get node XML tag name (like Volume, UnstructuredGrid)
   const char* GetNodeTagName() override { return "TransformDisplayNode"; }
 
-  ///
-  /// alternative method to propagate events generated in Display nodes
-  void ProcessMRMLEvents(vtkObject* /*caller*/, unsigned long /*event*/, void* /*callData*/) override;
-
   //--------------------------------------------------------------------------
-  /// Display options
+  /// Visualization settings of scenes saved by earlier Slicer versions
   //--------------------------------------------------------------------------
 
-  /// A node that defines the region of interest where the transform should be
-  /// displayed.
-  vtkMRMLNode* GetRegionNode();
-  void SetAndObserveRegionNode(vtkMRMLNode* node);
-
-  /// A node that defines glyph starting point positions.
-  /// If not set then glyphs positions are arranged evenly in the full region.
-  vtkMRMLNode* GetGlyphPointsNode();
-  void SetAndObserveGlyphPointsNode(vtkMRMLNode* node);
-
-  vtkSetMacro(VisualizationMode, int);
-  vtkGetMacro(VisualizationMode, int);
-  /// Convert visualization mode index to a string for serialization.
-  /// Returns an empty string if the index is unknown.
-  static const char* ConvertVisualizationModeToString(int modeIndex);
-  /// Convert visualization mode string to an index that can be set in VisualizationMode.
-  /// Returns -1 if the string is unknown.
-  static int ConvertVisualizationModeFromString(const char* modeString);
-
-  // Glyph Parameters
-  vtkSetMacro(GlyphSpacingMm, double);
-  vtkGetMacro(GlyphSpacingMm, double);
-  vtkSetMacro(GlyphScalePercent, double);
-  vtkGetMacro(GlyphScalePercent, double);
-  vtkSetMacro(GlyphDisplayRangeMaxMm, double);
-  vtkGetMacro(GlyphDisplayRangeMaxMm, double);
-  vtkSetMacro(GlyphDisplayRangeMinMm, double);
-  vtkGetMacro(GlyphDisplayRangeMinMm, double);
-  vtkSetMacro(GlyphType, int);
-  vtkGetMacro(GlyphType, int);
-  /// Convert glyph type index to a string for serialization.
-  /// Returns an empty string if the index is unknown.
-  static const char* ConvertGlyphTypeToString(int typeIndex);
-  /// Convert glyph type string to an index that can be set in GlyphType.
-  /// Returns -1 if the string is unknown.
-  static int ConvertGlyphTypeFromString(const char* typeString);
-  // 3d parameters
-  vtkSetMacro(GlyphTipLengthPercent, double);
-  vtkGetMacro(GlyphTipLengthPercent, double);
-  vtkSetMacro(GlyphDiameterMm, double);
-  vtkGetMacro(GlyphDiameterMm, double);
-  vtkSetMacro(GlyphShaftDiameterPercent, double);
-  vtkGetMacro(GlyphShaftDiameterPercent, double);
-  vtkSetMacro(GlyphResolution, int);
-  vtkGetMacro(GlyphResolution, int);
-  // 2d parameters
-  vtkSetMacro(GlyphResolution2D, int);
-  vtkGetMacro(GlyphResolution2D, int);
-  vtkSetMacro(GlyphTipLengthPercent2D, double);
-  vtkGetMacro(GlyphTipLengthPercent2D, double);
-
-  // Grid Parameters
-  vtkSetMacro(GridScalePercent, double);
-  vtkGetMacro(GridScalePercent, double);
-  vtkSetMacro(GridSpacingMm, double);
-  vtkGetMacro(GridSpacingMm, double);
-  vtkSetMacro(GridLineDiameterMm, double);
-  vtkGetMacro(GridLineDiameterMm, double);
-  vtkSetMacro(GridResolutionMm, double);
-  vtkGetMacro(GridResolutionMm, double);
-  vtkSetMacro(GridShowNonWarped, bool);
-  vtkGetMacro(GridShowNonWarped, bool);
-
-  // Contour Parameters
-  unsigned int GetNumberOfContourLevels();
-  void SetContourLevelsMm(double*, int size);
-  double* GetContourLevelsMm();
-  void GetContourLevelsMm(std::vector<double>& levels);
-  std::string GetContourLevelsMmAsString();
-  void SetContourLevelsMmFromString(const char* str);
-  static std::vector<double> ConvertContourLevelsFromString(const char* str);
-  static std::string ConvertContourLevelsToString(const std::vector<double>& levels);
-  static bool IsContourLevelEqual(const std::vector<double>& levels1, const std::vector<double>& levels2);
-
-  vtkSetMacro(ContourResolutionMm, double);
-  vtkGetMacro(ContourResolutionMm, double);
-  vtkSetMacro(ContourOpacity, double);
-  vtkGetMacro(ContourOpacity, double);
+  /// True if the node holds visualization settings that were read from a scene saved by an earlier Slicer version:
+  /// attributes or node references that have not been converted yet.
+  bool HasLegacyVisualization();
+  /// Value of a visualization attribute as it was read from the scene (for example "VisualizationMode", "GlyphSpacingMm").
+  /// Empty if the attribute was not read.
+  std::string GetLegacyVisualizationAttribute(const std::string& attributeName);
+  /// Node reference roles of the region node and of the glyph points node of the visualization.
+  static const char* GetLegacyRegionNodeReferenceRole();
+  static const char* GetLegacyGlyphPointsNodeReferenceRole();
+  /// Remove the visualization attributes and node references, once they have been converted.
+  void ClearLegacyVisualization();
 
   // Interaction Parameters
   vtkGetMacro(EditorVisibility, bool);
@@ -221,13 +143,6 @@ public:
     TransformUpdateEditorBoundsEvent = 2750
   };
 
-  /// Set the default color table
-  /// Create and a procedural color node with default colors and use it for visualization.
-  void SetDefaultColors();
-
-  vtkColorTransferFunction* GetColorMap();
-  void SetColorMap(vtkColorTransferFunction* newColorMap);
-
   /// Absolute size of the intreaction handle widget in mm.
   vtkSetMacro(InteractionSizeMm, double);
   vtkGetMacro(InteractionSizeMm, double);
@@ -274,42 +189,8 @@ public:
   //@}
 
 protected:
-  static std::vector<double> StringToDoubleVector(const char* sourceStr);
-  static std::string DoubleVectorToString(const double* values, int numberOfValues);
-
-  int VisualizationMode;
-
-  // Glyph Parameters
-  double GlyphSpacingMm;
-  double GlyphScalePercent;
-  double GlyphDisplayRangeMaxMm;
-  double GlyphDisplayRangeMinMm;
-  int GlyphType;
-  // 3d parameters
-  double GlyphTipLengthPercent;
-  double GlyphDiameterMm;
-  double GlyphShaftDiameterPercent;
-  int GlyphResolution;
-  // 2d parameters
-  int GlyphResolution2D;
-  double GlyphTipLengthPercent2D;
-
-  // Grid Parameters
-  double GridScalePercent;
-  double GridSpacingMm;
-  double GridLineDiameterMm;
-  /// Determines how densely the grid is sampled. Higher value results in more faithful representation of the
-  /// deformed lines, but needs more computation time.
-  double GridResolutionMm;
-  /// If true then the non-warped original grid will be also shown. Only used in the slice view, as in the
-  /// 3D view it would make the visualization very cluttered.
-  bool GridShowNonWarped;
-
-  // Contour Parameters
-  double ContourResolutionMm;
-  /// Opacity of the 3D contour. Between 0 and 1.
-  double ContourOpacity;
-  std::vector<double> ContourLevelsMm;
+  /// Visualization attributes read from a scene saved by an earlier Slicer version: name and value
+  std::map<std::string, std::string> LegacyVisualizationAttributes;
 
   // Interaction Parameters
   bool EditorVisibility;

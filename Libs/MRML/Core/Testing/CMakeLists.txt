@@ -90,7 +90,10 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLTextStorageNodeTest1.cxx
   vtkMRMLTransformableNodeReferenceSaveImportTest.cxx
   vtkMRMLTransformableNodeOnNodeReferenceAddTest.cxx
+  vtkMRMLTransformDisplayNodeLegacySceneTest1.cxx
   vtkMRMLTransformDisplayNodeTest1.cxx
+  vtkMRMLTransformNodeHardenTest1.cxx
+  vtkMRMLTransformNodeModelBasedTest1.cxx
   vtkMRMLTransformNodeTest1.cxx
   vtkMRMLTransformSequenceStorageNodeNiftiTest.cxx
   vtkMRMLTransformSequenceStorageNodeNrrdTest.cxx
@@ -217,7 +220,10 @@ simple_test( vtkMRMLTextStorageNodeTest1 ${TEMP})
 simple_test( vtkMRMLTransformableNodeReferenceSaveImportTest )
 simple_test( vtkMRMLTransformableNodeOnNodeReferenceAddTest )
 simple_test( vtkMRMLTransformableNodeTest1 )
+simple_test( vtkMRMLTransformDisplayNodeLegacySceneTest1 )
 simple_test( vtkMRMLTransformDisplayNodeTest1 )
+simple_test( vtkMRMLTransformNodeHardenTest1 )
+simple_test( vtkMRMLTransformNodeModelBasedTest1 ${TEMP})
 simple_test( vtkMRMLTransformNodeTest1 )
 simple_test( vtkMRMLTransformStorageNodeTest1 ${TEMP})
 simple_test( vtkMRMLTransformStorageNodeTest2 ${TEMP})

@@ -84,10 +84,21 @@ protected slots:
   void hardenSelectedNodes();
 
   void onDisplaySectionClicked(bool);
+  /// Switch to the Vector Field Rendering module, with the transform selected there
+  void showDisplacementFieldInVectorFieldRenderingModule();
   void onTransformableSectionClicked(bool);
 
-  void updateConvertButtonState();
-  void convert();
+  /// Show the inputs of the chosen operation and type, and enable Apply when they are set
+  void updateExportImportWidgets();
+  /// Export the transform to the output node, or import it from the input node
+  void applyExportImport();
+
+  /// Show the source model and displacement array of a model-based transform
+  void updateModelBasedTransformWidgets();
+  void onModelBasedSourceModelChanged(vtkMRMLNode* node);
+  void onModelBasedDisplacementArrayChanged(int index);
+  /// Set the fitting parameters and the displacement scale of a model-based transform
+  void onModelBasedFittingParameterChanged();
 
 protected:
   ///

@@ -56,36 +56,6 @@ public slots:
   /// It's useful to connect to vtkMRMLNode* signals
   void setMRMLTransformNode(vtkMRMLNode* node);
 
-  void setVisibility(bool);
-  void setVisibility2d(bool);
-  void setVisibility3d(bool);
-
-  void setGlyphVisualizationMode(bool);
-  void setGridVisualizationMode(bool);
-  void setContourVisualizationMode(bool);
-
-  void regionNodeChanged(vtkMRMLNode* node);
-  void glyphPointsNodeChanged(vtkMRMLNode* node);
-  void setGlyphSpacingMm(double spacing);
-  void setGlyphScalePercent(double scale);
-  void setGlyphDisplayRangeMm(double min, double max);
-  void setGlyphType(int glyphType);
-  void setGlyphTipLengthPercent(double length);
-  void setGlyphDiameterMm(double diameterMm);
-  void setGlyphShaftDiameterPercent(double diameterPercent);
-  void setGlyphResolution(double resolution);
-  void setSliceIntersectionThickness(int thickness);
-  void setGlyphResolution2D(double resolution);
-  void setGlyphTipLengthPercent2D(double lengthPercent);
-  void setGridScalePercent(double scale);
-  void setGridSpacingMm(double spacing);
-  void setGridLineDiameterMm(double diameterMm);
-  void setGridResolutionMm(double resolutionMm);
-  void setGridShowNonWarped(bool show);
-  void setContourLevelsMm(QString values_str);
-  void setContourResolutionMm(double resolutionMm);
-  void setContourOpacityPercent(double opacity);
-
   void setEditorVisibility(bool enabled);
   void setEditorVisibility3d(bool enabled);
   void setEditorVisibility2d(bool enabled);
@@ -108,12 +78,6 @@ public slots:
   void updateScalingComponentVisibility();
   void updateInteractionHandleScale();
   void updateInteractionHandleOpacity();
-
-  void setColorTableNode(vtkMRMLNode* colorTableNode);
-
-  void colorUpdateRange();
-  void onColorInteractionEvent();
-  void onColorModifiedEvent();
 
 protected slots:
   void updateWidgetFromDisplayNode();

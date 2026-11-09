@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>qSlicerVectorFieldRenderingModuleWidget</class>
+ <widget class="qSlicerWidget" name="qSlicerVectorFieldRenderingModuleWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Vector Field Rendering</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="ctkExpandableWidget" name="ResizableFrame">
+     <property name="toolTip">
+      <string>Drag the handle below the tree to make it larger or smaller</string>
+     </property>
+     <property name="orientations">
+      <set>Qt::Vertical</set>
+     </property>
+     <property name="sizeGripInside">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="resizableFrameLayout">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="ctkSearchBox" name="FilterSearchBox">
+        <property name="toolTip">
+         <string>Show only the nodes whose name contains this text</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="qMRMLSubjectHierarchyTreeView" name="SubjectHierarchyTreeView">
+        <property name="toolTip">
+         <string>Models, vector volumes and transforms. Select the node whose vector field is shown.</string>
+        </property>
+        <property name="indentation">
+         <number>12</number>
+        </property>
+        <property name="editMenuActionVisible">
+         <bool>false</bool>
+        </property>
+        <property name="multiSelection">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="VectorFieldDisplaysCollapsibleButton">
+     <property name="text">
+      <string>Vector field displays</string>
+     </property>
+     <layout class="QVBoxLayout" name="vectorFieldDisplaysLayout">
+      <item>
+       <widget class="QLabel" name="NoVectorFieldLabel">
+        <property name="text">
+         <string>The selected node has no vector field: a model needs a point or cell data array with 3 components, a volume needs at least 3 components per voxel.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="displayNodesLayout">
+        <item>
+         <widget class="QListWidget" name="DisplayNodesListWidget">
+          <property name="toolTip">
+           <string>Vector field displays of the selected node. Each is drawn on its own: for example glyphs and streamlines of the same field. Uncheck a display to hide it; it then stays hidden when the node is shown by its eye icon.</string>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>100</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="displayNodeButtonsLayout">
+          <item>
+           <widget class="QPushButton" name="AddDisplayNodeButton">
+            <property name="toolTip">
+             <string>Add a vector field display to the selected node</string>
+            </property>
+            <property name="text">
+             <string>Add</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="RemoveDisplayNodeButton">
+            <property name="toolTip">
+             <string>Remove the selected vector field display</string>
+            </property>
+            <property name="text">
+             <string>Remove</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="displayNodeButtonsSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="ctkCollapsibleButton" name="DisplayCollapsibleButton">
+     <property name="text">
+      <string>Display</string>
+     </property>
+     <layout class="QVBoxLayout" name="displayLayout">
+      <item>
+       <widget class="qMRMLVectorFieldDisplayWidget" name="VectorFieldDisplayWidget"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkCollapsibleButton</class>
+   <extends>QWidget</extends>
+   <header>ctkCollapsibleButton.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkExpandableWidget</class>
+   <extends>QFrame</extends>
+   <header>ctkExpandableWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSearchBox</class>
+   <extends>QLineEdit</extends>
+   <header>ctkSearchBox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLWidget</class>
+   <extends>QWidget</extends>
+   <header>qMRMLWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qSlicerWidget</class>
+   <extends>QWidget</extends>
+   <header>qSlicerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLSubjectHierarchyTreeView</class>
+   <extends>QTreeView</extends>
+   <header>qMRMLSubjectHierarchyTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLVectorFieldDisplayWidget</class>
+   <extends>qMRMLWidget</extends>
+   <header>qMRMLVectorFieldDisplayWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>qSlicerVectorFieldRenderingModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>SubjectHierarchyTreeView</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerVectorFieldRenderingModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>VectorFieldDisplayWidget</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>400</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

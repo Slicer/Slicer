@@ -111,7 +111,7 @@ public:
 
   /// Apply the associated transform to the transformable node. Return true
   /// on success, false otherwise.
-  bool HardenTransform();
+  virtual bool HardenTransform();
 
   /// Get the implicit function that represents the transformable node in world coordinates.
   /// This function is used for clipping and other operations that require the detection of inside/outside a transformable node.

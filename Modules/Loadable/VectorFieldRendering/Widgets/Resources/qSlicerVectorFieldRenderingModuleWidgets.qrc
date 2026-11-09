@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/">
+    <file>Icons/VectorFieldContour.png</file>
+    <file>Icons/VectorFieldGlyph.png</file>
+    <file>Icons/VectorFieldGrid.png</file>
+    <file>Icons/VectorFieldStreamline.png</file>
+  </qresource>
+</RCC>

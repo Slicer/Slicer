@@ -20,15 +20,24 @@ Version:   $Revision: 1.14 $
 #include "vtkMRMLLinearTransformNode.h"
 
 #include "vtkMRMLLinearTransformSequenceStorageNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLTransformStorageNode.h"
 #include "vtkMRMLTransformDisplayNode.h"
 #include "vtkOrientedBSplineTransform.h"
 #include "vtkOrientedGridTransform.h"
 
+// vtkAddon includes
+#include <vtkMeshDisplacementTransform.h>
+#include <vtkScatteredBSplineTransform.h>
+
 // VTK includes
 #include <vtkCommand.h>
 #include <vtkCollection.h>
+#include <vtkDataArray.h>
+#include <vtkIntArray.h>
+#include <vtkPointData.h>
+#include <vtkPointSet.h>
 #include <vtkCollectionIterator.h>
 #include <vtkGeneralTransform.h>
 #include <vtkImageData.h>
@@ -42,8 +51,32 @@ Version:   $Revision: 1.14 $
 #include <vtksys/SystemTools.hxx>
 
 // STD includes
+#include <algorithm>
+#include <cstring>
+#include <iomanip>
+#include <random>
 #include <sstream>
 #include <stack>
+#include <string>
+#include <vector>
+
+//----------------------------------------------------------------------------
+namespace
+{
+/// Node reference role of the model whose mesh points hold the displacements of a model-based transform,
+/// followed by the source key of the transform
+const char DisplacementModelReferenceRolePrefix[] = "displacementModel/";
+
+std::string GetDisplacementModelReferenceRole(const char* sourceKey)
+{
+  return std::string(DisplacementModelReferenceRolePrefix) + (sourceKey ? sourceKey : "");
+}
+
+bool IsDisplacementModelReferenceRole(const char* role)
+{
+  return role && !strncmp(role, DisplacementModelReferenceRolePrefix, strlen(DisplacementModelReferenceRolePrefix));
+}
+} // namespace
 
 //----------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTransformNode);
@@ -63,6 +96,12 @@ vtkMRMLTransformNode::vtkMRMLTransformNode()
   this->ContentModifiedEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
 
   this->DefaultSequenceStorageNodeClassName = "vtkMRMLTransformSequenceStorageNode";
+
+  // The displacement model of a model-based transform is observed however the reference is made,
+  // also when it is read from a scene: a mesh that changes changes the transform
+  vtkNew<vtkIntArray> displacementModelEvents;
+  displacementModelEvents->InsertNextValue(vtkMRMLModelNode::MeshModifiedEvent);
+  this->AddNodeReferenceRole(DisplacementModelReferenceRolePrefix, nullptr, displacementModelEvents);
 }
 
 //----------------------------------------------------------------------------
@@ -112,6 +151,295 @@ void vtkMRMLTransformNode::ReadXMLAttributes(const char** atts)
   }
 
   this->EndModify(disabledModify);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformNode::IsModelBasedTransform(vtkAbstractTransform* transform)
+{
+  return (vtkScatteredBSplineTransform::SafeDownCast(transform) != nullptr || vtkMeshDisplacementTransform::SafeDownCast(transform) != nullptr);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::GetModelBasedTransformComponents(vtkCollection* components)
+{
+  components->RemoveAllItems();
+  // Only one of them is stored, the other one is computed from it
+  vtkNew<vtkCollection> storedComponents;
+  vtkMRMLTransformNode::FlattenGeneralTransform(storedComponents, this->TransformToParent ? this->TransformToParent : this->TransformFromParent);
+  for (int index = 0; index < storedComponents->GetNumberOfItems(); ++index)
+  {
+    vtkAbstractTransform* component = vtkAbstractTransform::SafeDownCast(storedComponents->GetItemAsObject(index));
+    if (vtkMRMLTransformNode::IsModelBasedTransform(component))
+    {
+      components->AddItem(component);
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+vtkAbstractTransform* vtkMRMLTransformNode::FindModelBasedTransformComponent(vtkAbstractTransform* transform)
+{
+  if (!vtkMRMLTransformNode::IsModelBasedTransform(transform))
+  {
+    return nullptr;
+  }
+  vtkNew<vtkCollection> components;
+  this->GetModelBasedTransformComponents(components);
+  for (int index = 0; index < components->GetNumberOfItems(); ++index)
+  {
+    vtkAbstractTransform* component = vtkAbstractTransform::SafeDownCast(components->GetItemAsObject(index));
+    if (component == transform || component->GetInverse() == transform)
+    {
+      return component;
+    }
+  }
+  return nullptr;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::SetAndObserveModelBasedTransformToParent(vtkAbstractTransform* transform, vtkMRMLModelNode* displacementModelNode)
+{
+  this->SetAndObserveTransformToParent(transform);
+  this->SetAndObserveDisplacementModelNode(transform, displacementModelNode);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::SetAndObserveModelBasedTransformFromParent(vtkAbstractTransform* transform, vtkMRMLModelNode* displacementModelNode)
+{
+  this->SetAndObserveTransformFromParent(transform);
+  this->SetAndObserveDisplacementModelNode(transform, displacementModelNode);
+}
+
+//----------------------------------------------------------------------------
+namespace
+{
+/// Set the mesh of a model-based transform component. It is set in its inverse too: if the component is computed from
+/// its inverse (a component of an inverted composite transform), then the component copies the mesh from it when it is
+/// updated; otherwise the inverse copies it from the component, so setting it there changes nothing.
+void SetModelBasedTransformInput(vtkAbstractTransform* component, vtkPointSet* input)
+{
+  for (vtkAbstractTransform* transform : { component->GetInverse(), component })
+  {
+    if (vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(transform))
+    {
+      bsplineTransform->SetInputPointSet(input);
+    }
+    else if (vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(transform))
+    {
+      meshTransform->SetInputPointSet(input);
+    }
+  }
+}
+
+/// Set the source key of a model-based transform component, also in its inverse (see SetModelBasedTransformInput).
+void SetSourceKey(vtkAbstractTransform* component, const char* sourceKey)
+{
+  for (vtkAbstractTransform* transform : { component->GetInverse(), component })
+  {
+    if (vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(transform))
+    {
+      bsplineTransform->SetInputPointSetSourceKey(sourceKey);
+    }
+    else if (vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(transform))
+    {
+      meshTransform->SetInputPointSetSourceKey(sourceKey);
+    }
+  }
+}
+
+/// The source key of a model-based transform component. A component that is computed from its inverse gets the key
+/// from it when it is updated, so it is taken from the inverse if the component does not have it yet.
+const char* GetSourceKey(vtkAbstractTransform* component)
+{
+  for (vtkAbstractTransform* transform : { component, component->GetInverse() })
+  {
+    const char* sourceKey = nullptr;
+    if (vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(transform))
+    {
+      sourceKey = bsplineTransform->GetInputPointSetSourceKey();
+    }
+    else if (vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(transform))
+    {
+      sourceKey = meshTransform->GetInputPointSetSourceKey();
+    }
+    if (sourceKey && sourceKey[0] != '\0')
+    {
+      return sourceKey;
+    }
+  }
+  return nullptr;
+}
+
+/// A random key, so that keys that are created independently (for example in different scenes) are not the same.
+std::string GenerateSourceKey()
+{
+  std::random_device randomDevice;
+  std::ostringstream sourceKey;
+  sourceKey << std::hex << std::setfill('0');
+  for (int part = 0; part < 4; ++part)
+  {
+    sourceKey << std::setw(8) << static_cast<unsigned int>(randomDevice());
+  }
+  return sourceKey.str();
+}
+} // namespace
+
+//----------------------------------------------------------------------------
+vtkMRMLModelNode* vtkMRMLTransformNode::GetDisplacementModelNode(vtkAbstractTransform* transform)
+{
+  vtkAbstractTransform* component = this->FindModelBasedTransformComponent(transform);
+  const char* sourceKey = (component ? GetSourceKey(component) : nullptr);
+  if (!sourceKey)
+  {
+    return nullptr;
+  }
+  return vtkMRMLModelNode::SafeDownCast(this->GetNodeReference(GetDisplacementModelReferenceRole(sourceKey).c_str()));
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::SetAndObserveDisplacementModelNodeID(vtkAbstractTransform* transform, const char* modelNodeID)
+{
+  vtkAbstractTransform* component = this->FindModelBasedTransformComponent(transform);
+  if (!component)
+  {
+    if (modelNodeID)
+    {
+      vtkErrorMacro("SetAndObserveDisplacementModelNodeID failed: the transform is not a model-based transform of this node");
+    }
+    return;
+  }
+  const char* currentSourceKey = GetSourceKey(component);
+  const char* currentModelNodeID = (currentSourceKey ? this->GetNodeReferenceID(GetDisplacementModelReferenceRole(currentSourceKey).c_str()) : nullptr);
+  if (modelNodeID && currentModelNodeID && !strcmp(modelNodeID, currentModelNodeID))
+  {
+    // No change
+    return;
+  }
+  MRMLNodeModifyBlocker blocker(this);
+  // A new key for each model, so that a key always means the same model, also in copies of this node
+  std::string sourceKey = (modelNodeID ? GenerateSourceKey() : std::string());
+  SetSourceKey(component, modelNodeID ? sourceKey.c_str() : nullptr);
+  if (modelNodeID)
+  {
+    // The events to observe come from the role, which was registered with them
+    this->SetAndObserveNodeReferenceID(GetDisplacementModelReferenceRole(sourceKey.c_str()).c_str(), modelNodeID);
+  }
+  else
+  {
+    // Without a model the transform is the identity
+    SetModelBasedTransformInput(component, nullptr);
+  }
+  this->UpdateModelBasedTransformInput();
+  this->StorableModifiedTime.Modified();
+  this->TransformModified();
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::SetAndObserveDisplacementModelNode(vtkAbstractTransform* transform, vtkMRMLModelNode* modelNode)
+{
+  this->SetAndObserveDisplacementModelNodeID(transform, modelNode ? modelNode->GetID() : nullptr);
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::CopyDisplacementModelReferences(vtkMRMLTransformNode* sourceNode)
+{
+  if (!sourceNode || sourceNode == this)
+  {
+    return;
+  }
+  vtkNew<vtkCollection> components;
+  this->GetModelBasedTransformComponents(components);
+  for (int componentIndex = 0; componentIndex < components->GetNumberOfItems(); ++componentIndex)
+  {
+    const char* sourceKey = GetSourceKey(vtkAbstractTransform::SafeDownCast(components->GetItemAsObject(componentIndex)));
+    if (!sourceKey)
+    {
+      continue;
+    }
+    std::string role = GetDisplacementModelReferenceRole(sourceKey);
+    const char* modelNodeID = sourceNode->GetNodeReferenceID(role.c_str());
+    if (modelNodeID && !this->GetNodeReferenceID(role.c_str()))
+    {
+      // The events to observe come from the role, which was registered with them
+      this->SetAndObserveNodeReferenceID(role.c_str(), modelNodeID);
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::UpdateModelBasedTransformInput()
+{
+  vtkNew<vtkCollection> components;
+  this->GetModelBasedTransformComponents(components);
+  for (int componentIndex = 0; componentIndex < components->GetNumberOfItems(); ++componentIndex)
+  {
+    vtkAbstractTransform* component = vtkAbstractTransform::SafeDownCast(components->GetItemAsObject(componentIndex));
+    vtkMRMLModelNode* modelNode = this->GetDisplacementModelNode(component);
+    if (!modelNode)
+    {
+      continue;
+    }
+    vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(component);
+    vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(component);
+    const char* arrayName = (bsplineTransform ? bsplineTransform->GetDisplacementArrayName() : meshTransform->GetDisplacementArrayName());
+    // A mesh without the displacements is not used: the transform is then the identity, instead
+    // of reporting an error every time it is used
+    vtkPointSet* mesh = modelNode->GetMesh();
+    vtkDataArray* displacements = nullptr;
+    if (mesh && mesh->GetNumberOfPoints() > 0)
+    {
+      displacements = (arrayName && arrayName[0] != '\0' ? mesh->GetPointData()->GetArray(arrayName) : mesh->GetPointData()->GetVectors());
+    }
+    SetModelBasedTransformInput(component, displacements && displacements->GetNumberOfComponents() == 3 ? mesh : nullptr);
+    // Computed now, not on first use, which can be during an observer notification:
+    // vtkAbstractTransform::Update() is not reentrant (see SetAndObserveTransform)
+    component->Update();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::OnNodeReferenceAdded(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceAdded(reference);
+  if (reference && IsDisplacementModelReferenceRole(reference->GetReferenceRole()))
+  {
+    this->UpdateModelBasedTransformInput();
+    this->TransformModified();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::OnNodeReferenceModified(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceModified(reference);
+  if (reference && IsDisplacementModelReferenceRole(reference->GetReferenceRole()))
+  {
+    this->UpdateModelBasedTransformInput();
+    this->TransformModified();
+  }
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* reference)
+{
+  this->Superclass::OnNodeReferenceRemoved(reference);
+  if (!reference || !IsDisplacementModelReferenceRole(reference->GetReferenceRole()))
+  {
+    return;
+  }
+  // The mesh came from the model, so it goes with it
+  vtkNew<vtkCollection> components;
+  this->GetModelBasedTransformComponents(components);
+  for (int componentIndex = 0; componentIndex < components->GetNumberOfItems(); ++componentIndex)
+  {
+    vtkAbstractTransform* component = vtkAbstractTransform::SafeDownCast(components->GetItemAsObject(componentIndex));
+    const char* sourceKey = GetSourceKey(component);
+    if (sourceKey && GetDisplacementModelReferenceRole(sourceKey) == reference->GetReferenceRole())
+    {
+      SetModelBasedTransformInput(component, nullptr);
+      this->TransformModified();
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -337,6 +665,11 @@ void vtkMRMLTransformNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true
     vtkSetAndObserveMRMLObjectMacroNoWarning(this->TransformToParent, node->TransformToParent);
     vtkSetAndObserveMRMLObjectMacroNoWarning(this->TransformFromParent, node->TransformFromParent);
   }
+
+  // The model-based transforms are copied with their source keys. The node references (as usual for CopyContent) are
+  // not copied: the source key identifies the displacement model reference of this node (for example, a sequence proxy
+  // node or a node that a scene view is restored into keeps the references of all the transforms that it has had).
+  this->UpdateModelBasedTransformInput();
 
   // copy the center of transformation
   this->SetCenterOfTransformation(node->GetCenterOfTransformation());
@@ -681,47 +1014,53 @@ void vtkMRMLTransformNode::ApplyTransform(vtkAbstractTransform* transform)
     return;
   }
 
-  // We need the current transform to be a vtkGeneralTransform, which can store all the transform components.
-  // We arbitrarily pick the ToParent transform to store the new composited transform.
-
-  // If the current transform is already a suitable general transform then we will simply concatenate
-  // the hardened transforms to it.
-  vtkSmartPointer<vtkGeneralTransform> transformToParentGeneral = vtkGeneralTransform::SafeDownCast(oldTransformToParent);
-
-  if (transformToParentGeneral.GetPointer() != nullptr)
-  {
-    // The old transform is already a general transform. We can reuse it, but only if it is not computed from its inverse.
-    // If the transform is computed from its inverse then calling Update() on it would overwrite its content from the
-    // non-inverted transform (removing all the transform components that we add here).
-    transformToParentGeneral->Update();
-    if (transformToParentGeneral->GetInverseFlag())
-    {
-      // Computed from inverse, not usable
-      transformToParentGeneral = nullptr;
-    }
-  }
-
-  if (transformToParentGeneral.GetPointer() == nullptr)
-  {
-    // The old transform is not a general transform that we can use as the new transform.
-    // Create a new general transform.
-    transformToParentGeneral = vtkSmartPointer<vtkGeneralTransform>::New();
-    if (oldTransformToParent != nullptr)
-    {
-      transformToParentGeneral->Concatenate(oldTransformToParent);
-    }
-  }
-
-  // Add components
+  // Store the composited transform in a new general transform, as the ToParent transform.
+  // Components are not added to the current transform object, even if it is a general transform: the object may be
+  // used elsewhere (for example by the code that set it), which would see its content change, and its multiplication
+  // mode switched, affecting what is concatenated to it later. A transform that is computed from its inverse would also
+  // overwrite the added components when it is updated.
+  // Flattened transform lists are in the order the components are applied to a point: the current transform first,
+  // then the applied transform.
+  vtkNew<vtkGeneralTransform> transformToParentGeneral;
   transformToParentGeneral->PostMultiply();
-  for (int transformComponentIndex = transformCopyList->GetNumberOfItems() - 1; transformComponentIndex >= 0; transformComponentIndex--)
+  vtkNew<vtkCollection> oldTransformList;
+  FlattenGeneralTransform(oldTransformList, oldTransformToParent);
+  for (vtkCollection* transformList : { oldTransformList.GetPointer(), transformCopyList.GetPointer() })
   {
-    vtkAbstractTransform* transformComponent = vtkAbstractTransform::SafeDownCast(transformCopyList->GetItemAsObject(transformComponentIndex));
-    transformToParentGeneral->Concatenate(transformComponent);
+    for (int transformComponentIndex = 0; transformComponentIndex < transformList->GetNumberOfItems(); transformComponentIndex++)
+    {
+      transformToParentGeneral->Concatenate(vtkAbstractTransform::SafeDownCast(transformList->GetItemAsObject(transformComponentIndex)));
+    }
   }
 
   // Save the new transform
   SetAndObserveTransformToParent(transformToParentGeneral);
+}
+
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformNode::HardenTransform()
+{
+  // The parent transform nodes, whose model-based transforms are applied with their source keys
+  std::vector<vtkSmartPointer<vtkMRMLTransformNode>> parentTransformNodes;
+  for (vtkMRMLTransformNode* parentTransformNode = this->GetParentTransformNode(); parentTransformNode; parentTransformNode = parentTransformNode->GetParentTransformNode())
+  {
+    if (std::find(parentTransformNodes.begin(), parentTransformNodes.end(), parentTransformNode) != parentTransformNodes.end())
+    {
+      // Loop in the transform tree
+      break;
+    }
+    parentTransformNodes.emplace_back(parentTransformNode);
+  }
+  MRMLNodeModifyBlocker blocker(this);
+  if (!this->Superclass::HardenTransform())
+  {
+    return false;
+  }
+  for (vtkMRMLTransformNode* parentTransformNode : parentTransformNodes)
+  {
+    this->CopyDisplacementModelReferences(parentTransformNode);
+  }
+  return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -802,6 +1141,8 @@ int vtkMRMLTransformNode::Split()
     {
       transformComponentNode->SetAndObserveTransformToParent(transformComponent);
     }
+    // A model-based transform keeps its displacement model
+    transformComponentNode->CopyDisplacementModelReferences(this);
     transformComponentNode->SetAndObserveTransformNodeID(parentTransformNode ? parentTransformNode->GetID() : nullptr);
     parentTransformNode = transformComponentNode.GetPointer();
   }
@@ -1190,6 +1531,10 @@ void vtkMRMLTransformNode::SetAndObserveTransform(vtkAbstractTransform** origina
   // Since vtkAbstractTransform::Update() is not reentrant, this should be avoided, because it can lead to crash
   // (trying to lock an internal mutex throws an exception on Windows, and the recursive calls end up crashing
   // the application on Linux and macOS).
+  // The input of a model-based transform is the mesh of the displacement model. It is set
+  // before the update, because setting it afterwards would leave the transform to be
+  // computed the next time it is used.
+  this->UpdateModelBasedTransformInput();
   if (*originalTransformPtr)
   {
     (*originalTransformPtr)->Update();
@@ -1217,6 +1562,33 @@ void vtkMRMLTransformNode::SetAndObserveTransformFromParent(vtkAbstractTransform
 void vtkMRMLTransformNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
 {
   Superclass::ProcessMRMLEvents(caller, event, callData);
+
+  // The displacement model mesh changed. An in-place change makes the transform newer without an event, and a new input's
+  // event does not reach this node while it processes this one, so everything transformed by this node is notified here.
+  vtkMRMLModelNode* displacementModelNode = vtkMRMLModelNode::SafeDownCast(caller);
+  if (displacementModelNode && event == vtkMRMLModelNode::MeshModifiedEvent)
+  {
+    bool isDisplacementModel = false;
+    std::vector<std::string> roles;
+    this->GetNodeReferenceRoles(roles);
+    for (const std::string& role : roles)
+    {
+      isDisplacementModel = isDisplacementModel || (IsDisplacementModelReferenceRole(role.c_str()) && this->GetNodeReference(role.c_str()) == displacementModelNode);
+    }
+    if (isDisplacementModel)
+    {
+      this->UpdateModelBasedTransformInput();
+      this->TransformModified();
+    }
+    return;
+  }
+  // A parameter of the model-based transform changed, for example its displacement array, so the
+  // mesh may be usable now, or not any more
+  if (event == vtkCommand::ModifiedEvent && caller != nullptr && (caller == this->TransformToParent || caller == this->TransformFromParent)
+      && vtkMRMLTransformNode::IsModelBasedTransform(vtkAbstractTransform::SafeDownCast(caller)))
+  {
+    this->UpdateModelBasedTransformInput();
+  }
 
   if (event == vtkCommand::ModifiedEvent && caller != nullptr)
   {
