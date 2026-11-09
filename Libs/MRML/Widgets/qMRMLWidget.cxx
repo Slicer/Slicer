@@ -124,6 +124,7 @@ void qMRMLWidget::preInitializeApplication()
 
   QSurfaceFormat::setDefaultFormat(format);
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
   // Enable automatic scaling based on the pixel density of the monitor
   QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
@@ -135,6 +136,8 @@ void qMRMLWidget::preInitializeApplication()
   // that best matches the DevicePixelRatio of the display, resulting in crisp rendering of the icon.
   // See https://doc.qt.io/qt-5/qicon.html#pixmap for more details.
   QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
+  // High-DPI scaling and pixmaps are always enabled on Qt6, these attributes have no effect there.
 
   // Enables resource sharing between the OpenGL contexts used by classes like QOpenGLWidget and QQuickWidget
   QApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
