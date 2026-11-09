@@ -23,7 +23,15 @@
 #include <QFileDialog>
 #include <QApplication>
 #include <QClipboard>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QFormLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QSpinBox>
 #include <QMessageBox>
+#include <QRadioButton>
 #include <QStringBuilder>
 #include <QTableWidgetItem>
 
@@ -40,7 +48,18 @@
 // MRMLWidgets includes
 #include <qMRMLUtils.h>
 
+// vtkAddon includes
+#include <vtkMeshDisplacementTransform.h>
+#include <vtkScatteredBSplineTransform.h>
+
+// CTK includes
+#include <ctkCoordinatesWidget.h>
+#include <ctkDoubleSpinBox.h>
+#include <ctkSliderWidget.h>
+
 // MRML includes
+#include "vtkMRMLDisplayableNode.h"
+#include "vtkMRMLModelNode.h"
 #include "vtkMRMLScalarVolumeNode.h"
 #include "vtkMRMLScene.h"
 #include "vtkMRMLSubjectHierarchyNode.h"
@@ -50,8 +69,13 @@
 
 // VTK includes
 #include <vtkAddonMathUtilities.h>
+#include <vtkBSplineTransform.h>
+#include <vtkCommand.h>
+#include <vtkDataArray.h>
 #include <vtkGeneralTransform.h>
 #include <vtkNew.h>
+#include <vtkPointData.h>
+#include <vtkPointSet.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
@@ -73,7 +97,149 @@ public:
   vtkMRMLTransformNode* MRMLTransformNode;
   QAction* CopyAction;
   QAction* PasteAction;
+
+  /// Export/import form rows in order. Qt 5 keeps spacing for hidden rows, so unused rows are taken out of the
+  /// form and put back in place when shown again.
+  QList<QPair<QWidget*, QWidget*>> ExportImportRows;
+  void compactExportImportRows();
+
+  /// How a model-based transform computes the displacement field: a smooth fit or exact. Added in
+  /// code, below the displacement array.
+  QLabel* ModelBasedMethodLabel{ nullptr };
+  QComboBox* ModelBasedMethodComboBox{ nullptr };
+  /// How far from the mesh the displacement reaches. Added in
+  /// code, below the method.
+  QLabel* ModelBasedBorderFalloffDistanceLabel{ nullptr };
+  ctkDoubleSpinBox* ModelBasedBorderFalloffDistanceSpinBox{ nullptr };
+  QCheckBox* ModelBasedAutomaticBorderFalloffDistanceCheckBox{ nullptr };
 };
+
+//-----------------------------------------------------------------------------
+namespace
+{
+/// How the displacement field of a model-based transform is computed, as data of the method combo box
+enum
+{
+  MethodSmoothFit = 0, ///< vtkScatteredBSplineTransform
+  MethodExact = 1      ///< vtkMeshDisplacementTransform
+};
+
+/// Grow the range of a slider that starts at 0 so that it can show a value: to a round maximum
+/// that leaves room to make it a few times larger. A range that already holds the value is kept.
+void SetSliderRangeToFit(ctkSliderWidget* slider, double value)
+{
+  if (value <= slider->maximum())
+  {
+    return;
+  }
+  double maximum = std::pow(10.0, std::ceil(std::log10(3.0 * value)));
+  bool wasBlocked = slider->blockSignals(true);
+  slider->setRange(0.0, maximum);
+  slider->setSingleStep(maximum / 1000.0);
+  slider->blockSignals(wasBlocked);
+}
+
+/// Shown as the displacement array of a vector volume, whose voxels hold the displacements
+QString VoxelsArrayText()
+{
+  return qSlicerTransformsModuleWidget::tr("voxels");
+}
+
+/// Whether a widget is meant to be shown. Collapsed CTK sections hide children but store the intended state in the
+/// "visibilityToParent" property; without that property, only an explicit hide counts.
+bool IsShownToParent(QWidget* widget)
+{
+  QVariant visibilityToParent = widget->property("visibilityToParent");
+  return (visibilityToParent.isValid() ? visibilityToParent.toBool() : !(widget->isHidden() && widget->testAttribute(Qt::WA_WState_ExplicitShowHide)));
+}
+
+/// The 3-component point data arrays of the mesh of a model, the active vectors first: the
+/// arrays that can hold displacements
+QStringList GetDisplacementArrayNames(vtkMRMLModelNode* modelNode)
+{
+  QStringList arrayNames;
+  vtkPointSet* mesh = (modelNode ? modelNode->GetMesh() : nullptr);
+  if (!mesh)
+  {
+    return arrayNames;
+  }
+  vtkPointData* pointData = mesh->GetPointData();
+  vtkDataArray* activeVectors = pointData->GetVectors();
+  for (int arrayIndex = 0; arrayIndex < pointData->GetNumberOfArrays(); ++arrayIndex)
+  {
+    vtkDataArray* array = pointData->GetArray(arrayIndex);
+    if (array && array->GetName() && array->GetNumberOfComponents() == 3)
+    {
+      if (array == activeVectors)
+      {
+        arrayNames.prepend(QString::fromUtf8(array->GetName()));
+      }
+      else
+      {
+        arrayNames.append(QString::fromUtf8(array->GetName()));
+      }
+    }
+  }
+  return arrayNames;
+}
+
+/// Fill a combo box with names, keeping the selected one if it is still there
+void SetComboBoxItems(QComboBox* comboBox, const QStringList& names, const QString& selectedName)
+{
+  QStringList currentNames;
+  for (int itemIndex = 0; itemIndex < comboBox->count(); ++itemIndex)
+  {
+    currentNames << comboBox->itemText(itemIndex);
+  }
+  bool wasBlocked = comboBox->blockSignals(true);
+  if (currentNames != names)
+  {
+    comboBox->clear();
+    comboBox->addItems(names);
+  }
+  int selectedIndex = comboBox->findText(selectedName);
+  comboBox->setCurrentIndex(selectedIndex >= 0 ? selectedIndex : (names.isEmpty() ? -1 : 0));
+  comboBox->blockSignals(wasBlocked);
+}
+} // namespace
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidgetPrivate::compactExportImportRows()
+{
+  int rowIndex = 0; // where the next shown row goes
+  for (const QPair<QWidget*, QWidget*>& row : this->ExportImportRows)
+  {
+    QWidget* label = row.first;
+    QWidget* field = row.second;
+    bool shown = (IsShownToParent(field) || (label && IsShownToParent(label)));
+    int currentRow = -1;
+    QFormLayout::ItemRole role;
+    this->exportImportLayout->getWidgetPosition(field, &currentRow, &role);
+    bool inLayout = (currentRow >= 0);
+    if (shown && !inLayout)
+    {
+      if (label)
+      {
+        this->exportImportLayout->insertRow(rowIndex, label, field);
+      }
+      else
+      {
+        this->exportImportLayout->insertRow(rowIndex, field);
+      }
+    }
+    else if (!shown && inLayout)
+    {
+      // The widgets stay, hidden, as children of the section
+      QFormLayout::TakeRowResult taken = this->exportImportLayout->takeRow(field);
+      delete taken.labelItem;
+      delete taken.fieldItem;
+    }
+    if (shown)
+    {
+      ++rowIndex;
+    }
+  }
+}
 
 //-----------------------------------------------------------------------------
 qSlicerTransformsModuleWidgetPrivate::qSlicerTransformsModuleWidgetPrivate(qSlicerTransformsModuleWidget& object)
@@ -206,16 +372,101 @@ void qSlicerTransformsModuleWidget::setup()
   QIcon leftIcon = QApplication::style()->standardIcon(QStyle::SP_ArrowLeft);
   d->UntransformToolButton->setIcon(leftIcon);
 
-  // Connect convert button
-  this->connect(d->ConvertPushButton, SIGNAL(clicked()), SLOT(convert()));
+  // Export/import
+  for (int row = 0; row < d->exportImportLayout->rowCount(); ++row)
+  {
+    QLayoutItem* labelItem = d->exportImportLayout->itemAt(row, QFormLayout::LabelRole);
+    QLayoutItem* fieldItem = d->exportImportLayout->itemAt(row, QFormLayout::FieldRole);
+    if (!fieldItem)
+    {
+      fieldItem = d->exportImportLayout->itemAt(row, QFormLayout::SpanningRole);
+    }
+    if (fieldItem && fieldItem->widget())
+    {
+      d->ExportImportRows.append(qMakePair(labelItem ? labelItem->widget() : nullptr, fieldItem->widget()));
+    }
+  }
+  this->connect(d->ExportImportPushButton, SIGNAL(clicked()), SLOT(applyExportImport()));
+  for (QRadioButton* radioButton : { d->ExportRadioButton,
+                                     d->ImportRadioButton,
+                                     d->ExportGridTransformRadioButton,
+                                     d->ExportMagnitudeVolumeRadioButton,
+                                     d->ExportVectorVolumeRadioButton,
+                                     d->ImportVectorVolumeRadioButton,
+                                     d->ImportModelRadioButton })
+  {
+    this->connect(radioButton, SIGNAL(toggled(bool)), SLOT(updateExportImportWidgets()));
+  }
+  this->connect(d->ExportReferenceVolumeNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(updateExportImportWidgets()));
+  this->connect(d->ExportOutputNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(updateExportImportWidgets()));
+  this->connect(d->ImportInputNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(updateExportImportWidgets()));
 
-  // Connect node convert input/output node selectors
-  this->connect(d->ConvertReferenceVolumeNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(updateConvertButtonState()));
-  this->connect(d->ConvertOutputDisplacementFieldNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(updateConvertButtonState()));
+  // Source of a model-based transform
+  this->connect(d->ModelBasedSourceModelNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), SLOT(onModelBasedSourceModelChanged(vtkMRMLNode*)));
+  this->connect(d->ModelBasedDisplacementArrayComboBox, SIGNAL(currentIndexChanged(int)), SLOT(onModelBasedDisplacementArrayChanged(int)));
+  // How the displacement field is computed from the displacements at the points
+  d->ModelBasedMethodLabel = new QLabel(tr("Method:"), d->ModelBasedTransformSourceWidget);
+  d->ModelBasedMethodLabel->setObjectName("ModelBasedMethodLabel");
+  d->ModelBasedMethodComboBox = new QComboBox(d->ModelBasedTransformSourceWidget);
+  d->ModelBasedMethodComboBox->setObjectName("ModelBasedMethodComboBox");
+  d->ModelBasedMethodComboBox->setToolTip(tr("Smooth fit: a smooth B-spline transform is fitted to the displacements, defined everywhere, also beyond the mesh (see Fitting). "
+                                             "Exact: the displacements are used as they are: the points of the mesh are moved by their own vectors, exactly as the "
+                                             "model is warped by them, and other positions by the vector interpolated in the cell of the mesh that contains them. "
+                                             "Positions outside the cells are not moved. Each position near the mesh needs a search in the mesh, so it is much slower "
+                                             "to evaluate than the smooth fit: use the smooth fit to resample images, and Exact where the displacements must be "
+                                             "followed exactly, such as for warping the mesh itself."));
+  d->ModelBasedMethodComboBox->addItem(tr("Smooth fit"), MethodSmoothFit);
+  d->ModelBasedMethodComboBox->addItem(tr("Exact"), MethodExact);
+  d->modelBasedTransformSourceLayout->insertRow(2, d->ModelBasedMethodLabel, d->ModelBasedMethodComboBox);
+  this->connect(d->ModelBasedMethodComboBox, SIGNAL(currentIndexChanged(int)), SLOT(onModelBasedFittingParameterChanged()));
+  // How far outside the cells of a mesh the displacement reaches
+  d->ModelBasedBorderFalloffDistanceLabel = new QLabel(tr("Border falloff distance:"), d->ModelBasedTransformSourceWidget);
+  d->ModelBasedBorderFalloffDistanceLabel->setObjectName("ModelBasedBorderFalloffDistanceLabel");
+  d->ModelBasedBorderFalloffDistanceSpinBox = new ctkDoubleSpinBox(d->ModelBasedTransformSourceWidget);
+  d->ModelBasedBorderFalloffDistanceSpinBox->setObjectName("ModelBasedBorderFalloffDistanceSpinBox");
+  d->ModelBasedBorderFalloffDistanceSpinBox->setRange(0.0, 1e9);
+  d->ModelBasedBorderFalloffDistanceSpinBox->setDecimals(1);
+  d->ModelBasedBorderFalloffDistanceSpinBox->setSuffix(tr(" mm"));
+  QString borderFalloffToolTip = tr("Distance from the mesh at which the displacement has faded to zero; it should be larger than about "
+                                    "1.5 times the largest displacement. Smooth fit: the fit is made zero there, so the transform follows the "
+                                    "shape of the mesh; 0 fits over the whole extrapolation region instead. Exact: a position outside the cells moves "
+                                    "by the displacement of the closest point of the mesh, fading to zero; 0 does not move positions outside the "
+                                    "cells, so the displacement jumps to zero at the border of the mesh, which can make the inverse transform (used "
+                                    "when images are resampled) fail there.");
+  d->ModelBasedBorderFalloffDistanceLabel->setToolTip(borderFalloffToolTip);
+  d->ModelBasedBorderFalloffDistanceSpinBox->setToolTip(borderFalloffToolTip);
+  // Computed from the displacements by default; the spin box then shows the distance in use
+  d->ModelBasedAutomaticBorderFalloffDistanceCheckBox = new QCheckBox(tr("Automatic"), d->ModelBasedTransformSourceWidget);
+  d->ModelBasedAutomaticBorderFalloffDistanceCheckBox->setObjectName("ModelBasedAutomaticBorderFalloffDistanceCheckBox");
+  d->ModelBasedAutomaticBorderFalloffDistanceCheckBox->setToolTip(tr("Twice the largest displacement (times the displacement scale), which keeps the transform "
+                                                                     "invertible and follows the model when it changes."));
+  d->ModelBasedAutomaticBorderFalloffDistanceCheckBox->setChecked(true);
+  QWidget* borderFalloffWidget = new QWidget(d->ModelBasedTransformSourceWidget);
+  QHBoxLayout* borderFalloffLayout = new QHBoxLayout(borderFalloffWidget);
+  borderFalloffLayout->setContentsMargins(0, 0, 0, 0);
+  borderFalloffLayout->addWidget(d->ModelBasedBorderFalloffDistanceSpinBox, 1);
+  borderFalloffLayout->addWidget(d->ModelBasedAutomaticBorderFalloffDistanceCheckBox);
+  d->modelBasedTransformSourceLayout->insertRow(3, d->ModelBasedBorderFalloffDistanceLabel, borderFalloffWidget);
+  this->connect(d->ModelBasedBorderFalloffDistanceSpinBox, SIGNAL(valueChanged(double)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedAutomaticBorderFalloffDistanceCheckBox, SIGNAL(toggled(bool)), SLOT(onModelBasedFittingParameterChanged()));
+
+  // How it is fitted
+  d->ModelBasedBorderModeComboBox->addItem(tr("Keep value at border"), VTK_BSPLINE_EDGE);
+  d->ModelBasedBorderModeComboBox->addItem(tr("Zero outside"), VTK_BSPLINE_ZERO);
+  d->ModelBasedBorderModeComboBox->addItem(tr("Fade to zero at border"), VTK_BSPLINE_ZERO_AT_BORDER);
+  this->connect(d->ModelBasedDisplacementScaleSliderWidget, SIGNAL(valueChanged(double)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedDisplacementScaleReverseButton, SIGNAL(toggled(bool)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedExtrapolationDistanceSpinBox, SIGNAL(valueChanged(double)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedControlPointSpacingWidget, SIGNAL(coordinatesChanged(double*)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedMinimumControlPointSpacingSpinBox, SIGNAL(valueChanged(double)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedMaximumNumberOfLevelsSpinBox, SIGNAL(valueChanged(int)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedToleranceSpinBox, SIGNAL(valueChanged(double)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedUseLinearApproximationCheckBox, SIGNAL(toggled(bool)), SLOT(onModelBasedFittingParameterChanged()));
+  this->connect(d->ModelBasedBorderModeComboBox, SIGNAL(currentIndexChanged(int)), SLOT(onModelBasedFittingParameterChanged()));
 
   this->onTransformableSectionClicked(d->TransformedCollapsibleButton->isChecked());
   this->onNodeSelected(nullptr);
-  this->updateConvertButtonState();
+  this->updateExportImportWidgets();
 }
 
 //-----------------------------------------------------------------------------
@@ -294,6 +545,9 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   vtkMRMLTransformNode* transformNode = vtkMRMLTransformNode::SafeDownCast(node);
 
   this->qvtkReconnect(d->MRMLTransformNode, transformNode, vtkMRMLTransformableNode::TransformModifiedEvent, this, SLOT(onMRMLTransformNodeModified(vtkObject*)));
+  // The source of a model-based transform: the model, the array, and the arrays of a new mesh
+  this->qvtkReconnect(d->MRMLTransformNode, transformNode, vtkCommand::ModifiedEvent, this, SLOT(updateModelBasedTransformWidgets()));
+  this->qvtkReconnect(d->MRMLTransformNode, transformNode, vtkMRMLTransformableNode::TransformModifiedEvent, this, SLOT(updateModelBasedTransformWidgets()));
 
   if (d->MRMLTransformNode == nullptr && transformNode != nullptr)
   {
@@ -315,7 +569,9 @@ void qSlicerTransformsModuleWidget::onNodeSelected(vtkMRMLNode* node)
   d->HardenToolButton->setEnabled(isTransform);
   d->TransformableTreeView->setEnabled(isTransform);
   d->TransformedTreeView->setEnabled(isTransform);
-  d->ConvertCollapsibleButton->setEnabled(isTransform);
+  // Export/import stays available without a transform: importing then creates one
+  this->updateExportImportWidgets();
+  this->updateModelBasedTransformWidgets();
 
   d->TranslateFirstToolButton->setEnabled(isLinearTransform);
   d->IdentityPushButton->setEnabled(isLinearTransform);
@@ -690,62 +946,460 @@ void qSlicerTransformsModuleWidget::onTransformableSectionClicked(bool clicked)
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::convert()
+void qSlicerTransformsModuleWidget::updateExportImportWidgets()
 {
   Q_D(qSlicerTransformsModuleWidget);
-  if (d->MRMLTransformNode == nullptr)
+  bool exportOperation = d->ExportRadioButton->isChecked();
+
+  bool importModel = d->ImportModelRadioButton->isChecked();
+
+  for (QWidget* exportWidget : { static_cast<QWidget*>(d->ExportOutputTypeLabel),
+                                 static_cast<QWidget*>(d->ExportOutputTypeWidget),
+                                 static_cast<QWidget*>(d->ExportReferenceVolumeLabel),
+                                 static_cast<QWidget*>(d->ExportReferenceVolumeNodeComboBox),
+                                 static_cast<QWidget*>(d->ExportOutputNodeLabel),
+                                 static_cast<QWidget*>(d->ExportOutputNodeComboBox) })
   {
-    qWarning("qSlicerTransformsModuleWidget::convert failed: MRMLTransformNode is invalid");
-    return;
+    exportWidget->setVisible(exportOperation);
   }
-  if (d->ConvertReferenceVolumeNodeComboBox->currentNode() == nullptr)
+  for (QWidget* importWidget : { static_cast<QWidget*>(d->ImportInputTypeLabel),
+                                 static_cast<QWidget*>(d->ImportInputTypeWidget),
+                                 static_cast<QWidget*>(d->ImportInputNodeLabel),
+                                 static_cast<QWidget*>(d->ImportInputNodeComboBox) })
   {
-    qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
-    return;
+    importWidget->setVisible(!exportOperation);
   }
-  if (d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() == nullptr)
+  // A vector volume holds a displacement in each voxel, so there is no array to choose, but the
+  // row stays so that the form does not change shape when the input type changes
+  d->ImportDisplacementArrayLabel->setVisible(!exportOperation);
+  d->ImportDisplacementArrayComboBox->setVisible(!exportOperation);
+  d->ImportDisplacementArrayLabel->setEnabled(importModel);
+  d->ImportDisplacementArrayComboBox->setEnabled(importModel);
+
+  // The output node is of the type that is exported. Setting the types clears the selection,
+  // so they are only set when they change.
+  QString outputNodeType = QString("vtkMRMLTransformNode");
+  QString outputBaseName = tr("Displacement Field");
+  if (d->ExportMagnitudeVolumeRadioButton->isChecked())
   {
-    qWarning("qSlicerTransformsModuleWidget::convert failed: reference volume node is invalid");
-    return;
+    outputNodeType = QString("vtkMRMLScalarVolumeNode");
+    outputBaseName = tr("Displacement Magnitude");
   }
-  vtkMRMLScalarVolumeNode* scalarOutputVolumeNode = vtkMRMLScalarVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
-  vtkMRMLVectorVolumeNode* vectorOutputVolumeNode = vtkMRMLVectorVolumeNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
-  vtkMRMLTransformNode* outputTransformNode = vtkMRMLTransformNode::SafeDownCast(d->ConvertOutputDisplacementFieldNodeComboBox->currentNode());
-  vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ConvertReferenceVolumeNodeComboBox->currentNode());
-  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
-  vtkMRMLNode* resultNode = nullptr;
-  if (vectorOutputVolumeNode)
+  else if (d->ExportVectorVolumeRadioButton->isChecked())
   {
-    // this must be checked before scalarOutputVolumeNode, as vtkMRMLVectorVolumeNode is a vtkMRMLScalarVolumeNode as well
-    resultNode = d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, false /*magnitudeOnly*/, vectorOutputVolumeNode);
+    outputNodeType = QString("vtkMRMLVectorVolumeNode");
   }
-  else if (scalarOutputVolumeNode)
+  if (d->ExportOutputNodeComboBox->nodeTypes() != QStringList(outputNodeType))
   {
-    resultNode = d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, true /*magnitudeOnly*/, scalarOutputVolumeNode);
+    d->ExportOutputNodeComboBox->setNodeTypes(QStringList(outputNodeType));
   }
-  else if (outputTransformNode)
+  d->ExportOutputNodeComboBox->setBaseName(outputBaseName);
+  QString inputNodeType = (importModel ? QString("vtkMRMLModelNode") : QString("vtkMRMLVectorVolumeNode"));
+  if (d->ImportInputNodeComboBox->nodeTypes() != QStringList(inputNodeType))
   {
-    resultNode = d->logic()->ConvertToGridTransform(d->MRMLTransformNode, referenceVolumeNode, outputTransformNode);
+    d->ImportInputNodeComboBox->setNodeTypes(QStringList(inputNodeType));
+  }
+
+  // The arrays that can hold displacements
+  if (importModel)
+  {
+    vtkMRMLModelNode* inputModelNode = vtkMRMLModelNode::SafeDownCast(d->ImportInputNodeComboBox->currentNode());
+    QString selectedArrayName = d->ImportDisplacementArrayComboBox->currentText();
+    if (selectedArrayName == VoxelsArrayText())
+    {
+      selectedArrayName.clear();
+    }
+    SetComboBoxItems(d->ImportDisplacementArrayComboBox, GetDisplacementArrayNames(inputModelNode), selectedArrayName);
   }
   else
   {
-    qWarning("qSlicerTransformsModuleWidget::convert failed: invalid output node type");
+    SetComboBoxItems(d->ImportDisplacementArrayComboBox, QStringList(VoxelsArrayText()), VoxelsArrayText());
   }
-  QApplication::restoreOverrideCursor();
-  if (resultNode == nullptr)
+
+  bool canApply = false;
+  if (exportOperation)
   {
-    QMessageBox::warning(this, tr("Conversion failed"), tr("Failed to convert transform. See application log for details."));
+    // There is nothing to export without a transform. The output node is created if none is
+    // selected.
+    canApply = (d->MRMLTransformNode != nullptr && d->ExportReferenceVolumeNodeComboBox->currentNode() != nullptr);
+  }
+  else
+  {
+    // The transform is created if none is selected
+    canApply = (d->ImportInputNodeComboBox->currentNode() != nullptr && (!importModel || d->ImportDisplacementArrayComboBox->count() > 0));
+  }
+  d->ExportImportPushButton->setEnabled(canApply);
+  d->ExportImportPushButton->setToolTip(!exportOperation && !d->MRMLTransformNode ? tr("Import into a new transform") : QString());
+
+  // Rows that are hidden now leave no gap
+  d->compactExportImportRows();
+}
+
+//-----------------------------------------------------------------------------
+namespace
+{
+/// The model-based transform of the node, which is edited in the module: the stored transform, to parent or from parent
+/// (if the transform to parent is computed from it). nullptr if the transform is not a model-based transform.
+vtkAbstractTransform* GetModelBasedTransform(vtkMRMLTransformNode* transformNode, bool* fromParent = nullptr)
+{
+  if (!transformNode)
+  {
+    return nullptr;
+  }
+  for (const char* className : { "vtkScatteredBSplineTransform", "vtkMeshDisplacementTransform" })
+  {
+    // Only the stored transform is modifiable, the other one is computed from it
+    if (vtkAbstractTransform* transform = transformNode->GetTransformToParentAs(className, false, true))
+    {
+      if (fromParent)
+      {
+        *fromParent = false;
+      }
+      return transform;
+    }
+    if (vtkAbstractTransform* transform = transformNode->GetTransformFromParentAs(className, false, true))
+    {
+      if (fromParent)
+      {
+        *fromParent = true;
+      }
+      return transform;
+    }
+  }
+  return nullptr;
+}
+} // namespace
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::updateModelBasedTransformWidgets()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  bool fromParent = false;
+  vtkAbstractTransform* modelBasedTransform = GetModelBasedTransform(d->MRMLTransformNode, &fromParent);
+  d->ModelBasedTransformSourceWidget->setVisible(modelBasedTransform != nullptr);
+  if (!modelBasedTransform)
+  {
+    return;
+  }
+  vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(modelBasedTransform);
+  vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(modelBasedTransform);
+  vtkMRMLModelNode* modelNode = d->MRMLTransformNode->GetDisplacementModelNode(modelBasedTransform);
+  bool wasBlocked = d->ModelBasedSourceModelNodeComboBox->blockSignals(true);
+  d->ModelBasedSourceModelNodeComboBox->setCurrentNode(modelNode);
+  d->ModelBasedSourceModelNodeComboBox->blockSignals(wasBlocked);
+  // No name means the active vectors, which come first
+  QStringList arrayNames = GetDisplacementArrayNames(modelNode);
+  const char* arrayName = (bsplineTransform ? bsplineTransform->GetDisplacementArrayName() : meshTransform->GetDisplacementArrayName());
+  QString selectedArrayName = (arrayName && arrayName[0] ? QString::fromUtf8(arrayName) : (arrayNames.isEmpty() ? QString() : arrayNames.first()));
+  SetComboBoxItems(d->ModelBasedDisplacementArrayComboBox, arrayNames, selectedArrayName);
+  d->ModelBasedDisplacementArrayComboBox->setEnabled(modelNode != nullptr);
+
+  // How it is fitted
+  QList<QWidget*> fittingWidgets = { d->ModelBasedMethodComboBox,
+                                     d->ModelBasedBorderFalloffDistanceSpinBox,
+                                     d->ModelBasedAutomaticBorderFalloffDistanceCheckBox,
+                                     d->ModelBasedDisplacementScaleSliderWidget,
+                                     d->ModelBasedDisplacementScaleReverseButton,
+                                     d->ModelBasedExtrapolationDistanceSpinBox,
+                                     d->ModelBasedControlPointSpacingWidget,
+                                     d->ModelBasedMinimumControlPointSpacingSpinBox,
+                                     d->ModelBasedMaximumNumberOfLevelsSpinBox,
+                                     d->ModelBasedToleranceSpinBox,
+                                     d->ModelBasedUseLinearApproximationCheckBox,
+                                     d->ModelBasedBorderModeComboBox };
+  QList<bool> wereBlocked;
+  for (QWidget* fittingWidget : fittingWidgets)
+  {
+    wereBlocked << fittingWidget->blockSignals(true);
+  }
+  d->ModelBasedMethodComboBox->setCurrentIndex(d->ModelBasedMethodComboBox->findData(bsplineTransform ? MethodSmoothFit : MethodExact));
+  // The fitting parameters only apply to a fit
+  d->ModelBasedFittingGroupBox->setEnabled(bsplineTransform != nullptr);
+  bool automaticBorderFalloffDistance = (bsplineTransform ? bsplineTransform->GetAutomaticBorderFalloffDistance() //
+                                                          : meshTransform->GetAutomaticBorderFalloffDistance());
+  d->ModelBasedAutomaticBorderFalloffDistanceCheckBox->setChecked(automaticBorderFalloffDistance);
+  // Automatic: the spin box shows the distance in use and cannot be edited
+  d->ModelBasedBorderFalloffDistanceSpinBox->setEnabled(!automaticBorderFalloffDistance);
+  modelBasedTransform->Update();
+  double effectiveBorderFalloffDistance = (bsplineTransform ? bsplineTransform->GetEffectiveBorderFalloffDistance() //
+                                                            : meshTransform->GetEffectiveBorderFalloffDistance());
+  double borderFalloffDistance = (bsplineTransform ? bsplineTransform->GetBorderFalloffDistance() : meshTransform->GetBorderFalloffDistance());
+  d->ModelBasedBorderFalloffDistanceSpinBox->setValue(automaticBorderFalloffDistance ? effectiveBorderFalloffDistance : borderFalloffDistance);
+  // The slider shows how much the displacements are scaled, the reverse button which way
+  double displacementScale = (bsplineTransform ? bsplineTransform->GetDisplacementScale() : meshTransform->GetDisplacementScale());
+  SetSliderRangeToFit(d->ModelBasedDisplacementScaleSliderWidget, std::abs(displacementScale));
+  d->ModelBasedDisplacementScaleSliderWidget->setValue(std::abs(displacementScale));
+  d->ModelBasedDisplacementScaleReverseButton->setChecked(displacementScale < 0.0);
+  if (bsplineTransform)
+  {
+    d->ModelBasedExtrapolationDistanceSpinBox->setValue(bsplineTransform->GetGridBoundsMargin());
+    d->ModelBasedControlPointSpacingWidget->setCoordinates(bsplineTransform->GetControlPointSpacing());
+    d->ModelBasedMinimumControlPointSpacingSpinBox->setValue(bsplineTransform->GetMinimumControlPointSpacing());
+    d->ModelBasedMaximumNumberOfLevelsSpinBox->setValue(bsplineTransform->GetMaximumNumberOfLevels());
+    d->ModelBasedToleranceSpinBox->setValue(bsplineTransform->GetTolerance());
+    d->ModelBasedUseLinearApproximationCheckBox->setChecked(bsplineTransform->GetUseLinearApproximation());
+    d->ModelBasedBorderModeComboBox->setCurrentIndex(d->ModelBasedBorderModeComboBox->findData(bsplineTransform->GetBorderMode()));
+  }
+  for (int widgetIndex = 0; widgetIndex < fittingWidgets.size(); ++widgetIndex)
+  {
+    fittingWidgets[widgetIndex]->blockSignals(wereBlocked[widgetIndex]);
+  }
+
+  // How closely it follows the displacements
+  vtkPointSet* input = (bsplineTransform ? bsplineTransform->GetInputPointSet() : meshTransform->GetInputPointSet());
+  QString fitResult;
+  if (!input)
+  {
+    fitResult = tr("Nothing to fit: select a model and an array of displacement vectors");
+  }
+  else if (!bsplineTransform)
+  {
+    fitResult = tr("not fitted: exact at the points, interpolated in the cells of the mesh");
+  }
+  else
+  {
+    bsplineTransform->Update();
+    fitResult = tr("largest error %1 mm, %2 levels").arg(bsplineTransform->GetResidual(), 0, 'g', 3).arg(bsplineTransform->GetNumberOfLevels());
+  }
+  // The displacements are those of the inverse, for example after the transform was inverted
+  if (fromParent)
+  {
+    fitResult += QString("\n") + tr("Computed from inverse: these displacements move positions from the parent to this transform");
+  }
+  d->ModelBasedFitResultValueLabel->setText(fitResult);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::onModelBasedFittingParameterChanged()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  bool fromParent = false;
+  vtkAbstractTransform* modelBasedTransform = GetModelBasedTransform(d->MRMLTransformNode, &fromParent);
+  if (!modelBasedTransform)
+  {
+    return;
+  }
+  vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(modelBasedTransform);
+  vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(modelBasedTransform);
+  double displacementScale = d->ModelBasedDisplacementScaleSliderWidget->value();
+  if (d->ModelBasedDisplacementScaleReverseButton->isChecked())
+  {
+    displacementScale = -displacementScale;
+  }
+  // Read before anything is set: each change updates the widgets from the transform at once
+  double borderFalloffDistance = d->ModelBasedBorderFalloffDistanceSpinBox->value();
+  bool automaticBorderFalloffDistance = d->ModelBasedAutomaticBorderFalloffDistanceCheckBox->isChecked();
+
+  // Another method is another transform, with the same displacements
+  bool fitWanted = (d->ModelBasedMethodComboBox->currentData().toInt() == MethodSmoothFit);
+  if (fitWanted != (bsplineTransform != nullptr))
+  {
+    std::string arrayName;
+    const char* currentArrayName = (bsplineTransform ? bsplineTransform->GetDisplacementArrayName() : meshTransform->GetDisplacementArrayName());
+    if (currentArrayName)
+    {
+      arrayName = currentArrayName;
+    }
+    vtkMRMLModelNode* modelNode = d->MRMLTransformNode->GetDisplacementModelNode(modelBasedTransform);
+    vtkSmartPointer<vtkAbstractTransform> newTransform;
+    if (fitWanted)
+    {
+      vtkNew<vtkScatteredBSplineTransform> newBSplineTransform;
+      vtkSlicerTransformLogic::SetScatteredBSplineTransformDefaults(newBSplineTransform, modelNode ? modelNode->GetMesh() : nullptr, arrayName.c_str());
+      newBSplineTransform->SetDisplacementScale(displacementScale);
+      newBSplineTransform->SetBorderFalloffDistance(borderFalloffDistance);
+      newBSplineTransform->SetAutomaticBorderFalloffDistance(automaticBorderFalloffDistance);
+      newTransform = newBSplineTransform.GetPointer();
+    }
+    else
+    {
+      vtkNew<vtkMeshDisplacementTransform> newMeshTransform;
+      newMeshTransform->SetDisplacementArrayName(arrayName.empty() ? nullptr : arrayName.c_str());
+      newMeshTransform->SetDisplacementScale(displacementScale);
+      newMeshTransform->SetBorderFalloffDistance(borderFalloffDistance);
+      newMeshTransform->SetAutomaticBorderFalloffDistance(automaticBorderFalloffDistance);
+      newTransform = newMeshTransform.GetPointer();
+    }
+    // In the same direction as the transform that it replaces, with the same model
+    if (fromParent)
+    {
+      d->MRMLTransformNode->SetAndObserveModelBasedTransformFromParent(newTransform, modelNode);
+    }
+    else
+    {
+      d->MRMLTransformNode->SetAndObserveModelBasedTransformToParent(newTransform, modelNode);
+    }
+    return;
+  }
+
+  if (meshTransform)
+  {
+    meshTransform->SetDisplacementScale(displacementScale);
+    // Turned from automatic to explicit, the distance in use is kept, as the spin box shows it
+    meshTransform->SetBorderFalloffDistance(borderFalloffDistance);
+    meshTransform->SetAutomaticBorderFalloffDistance(automaticBorderFalloffDistance);
+    return;
+  }
+  // Read before anything is set: each change updates the widgets from the transform at once
+  double gridBoundsMargin = d->ModelBasedExtrapolationDistanceSpinBox->value();
+  const double* coordinates = d->ModelBasedControlPointSpacingWidget->coordinates();
+  double controlPointSpacing[3] = { coordinates[0], coordinates[1], coordinates[2] };
+  double minimumControlPointSpacing = d->ModelBasedMinimumControlPointSpacingSpinBox->value();
+  int maximumNumberOfLevels = d->ModelBasedMaximumNumberOfLevelsSpinBox->value();
+  double tolerance = d->ModelBasedToleranceSpinBox->value();
+  bool useLinearApproximation = d->ModelBasedUseLinearApproximationCheckBox->isChecked();
+  QVariant borderMode = d->ModelBasedBorderModeComboBox->currentData();
+  bsplineTransform->SetDisplacementScale(displacementScale);
+  bsplineTransform->SetBorderFalloffDistance(borderFalloffDistance);
+  bsplineTransform->SetAutomaticBorderFalloffDistance(automaticBorderFalloffDistance);
+  bsplineTransform->SetGridBoundsMargin(gridBoundsMargin);
+  bsplineTransform->SetControlPointSpacing(controlPointSpacing);
+  bsplineTransform->SetMinimumControlPointSpacing(minimumControlPointSpacing);
+  bsplineTransform->SetMaximumNumberOfLevels(maximumNumberOfLevels);
+  bsplineTransform->SetTolerance(tolerance);
+  bsplineTransform->SetUseLinearApproximation(useLinearApproximation);
+  if (borderMode.isValid())
+  {
+    bsplineTransform->SetBorderMode(borderMode.toInt());
   }
 }
 
 //-----------------------------------------------------------------------------
-void qSlicerTransformsModuleWidget::updateConvertButtonState()
+void qSlicerTransformsModuleWidget::onModelBasedSourceModelChanged(vtkMRMLNode* node)
 {
   Q_D(qSlicerTransformsModuleWidget);
-  bool enableConvert = (d->MRMLTransformNode != nullptr                                    //
-                        && d->ConvertReferenceVolumeNodeComboBox->currentNode() != nullptr //
-                        && d->ConvertOutputDisplacementFieldNodeComboBox->currentNode() != nullptr);
-  d->ConvertPushButton->setEnabled(enableConvert);
+  vtkAbstractTransform* modelBasedTransform = GetModelBasedTransform(d->MRMLTransformNode);
+  if (!modelBasedTransform)
+  {
+    return;
+  }
+  vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(modelBasedTransform);
+  vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(modelBasedTransform);
+  vtkMRMLModelNode* modelNode = vtkMRMLModelNode::SafeDownCast(node);
+  MRMLNodeModifyBlocker blocker(d->MRMLTransformNode);
+  // A model that does not have the array that was chosen is fitted to the first one it has
+  QStringList arrayNames = GetDisplacementArrayNames(modelNode);
+  const char* arrayName = (bsplineTransform ? bsplineTransform->GetDisplacementArrayName() : meshTransform->GetDisplacementArrayName());
+  if (arrayName && arrayName[0] && !arrayNames.contains(QString::fromUtf8(arrayName)) && !arrayNames.isEmpty())
+  {
+    QByteArray firstArrayName = arrayNames.first().toUtf8();
+    if (bsplineTransform)
+    {
+      bsplineTransform->SetDisplacementArrayName(firstArrayName.constData());
+    }
+    else
+    {
+      meshTransform->SetDisplacementArrayName(firstArrayName.constData());
+    }
+  }
+  d->MRMLTransformNode->SetAndObserveDisplacementModelNode(modelBasedTransform, modelNode);
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::onModelBasedDisplacementArrayChanged(int index)
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  vtkAbstractTransform* modelBasedTransform = GetModelBasedTransform(d->MRMLTransformNode);
+  if (!modelBasedTransform || index < 0)
+  {
+    return;
+  }
+  QByteArray arrayName = d->ModelBasedDisplacementArrayComboBox->itemText(index).toUtf8();
+  if (vtkScatteredBSplineTransform* bsplineTransform = vtkScatteredBSplineTransform::SafeDownCast(modelBasedTransform))
+  {
+    bsplineTransform->SetDisplacementArrayName(arrayName.constData());
+  }
+  else if (vtkMeshDisplacementTransform* meshTransform = vtkMeshDisplacementTransform::SafeDownCast(modelBasedTransform))
+  {
+    meshTransform->SetDisplacementArrayName(arrayName.constData());
+  }
+}
+
+//-----------------------------------------------------------------------------
+void qSlicerTransformsModuleWidget::applyExportImport()
+{
+  Q_D(qSlicerTransformsModuleWidget);
+  bool exportOperation = d->ExportRadioButton->isChecked();
+  if (d->MRMLTransformNode == nullptr && exportOperation)
+  {
+    qWarning("qSlicerTransformsModuleWidget::applyExportImport failed: MRMLTransformNode is invalid");
+    return;
+  }
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
+  if (exportOperation)
+  {
+    vtkMRMLVolumeNode* referenceVolumeNode = vtkMRMLVolumeNode::SafeDownCast(d->ExportReferenceVolumeNodeComboBox->currentNode());
+    vtkMRMLNode* outputNode = d->ExportOutputNodeComboBox->currentNode();
+    vtkMRMLNode* resultNode = nullptr;
+    if (referenceVolumeNode == nullptr)
+    {
+      qWarning("qSlicerTransformsModuleWidget::applyExportImport failed: reference volume node is invalid");
+    }
+    else if (d->ExportVectorVolumeRadioButton->isChecked())
+    {
+      resultNode =
+        d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, false /*magnitudeOnly*/, vtkMRMLVectorVolumeNode::SafeDownCast(outputNode));
+    }
+    else if (d->ExportMagnitudeVolumeRadioButton->isChecked())
+    {
+      resultNode =
+        d->logic()->CreateDisplacementVolumeFromTransform(d->MRMLTransformNode, referenceVolumeNode, true /*magnitudeOnly*/, vtkMRMLScalarVolumeNode::SafeDownCast(outputNode));
+    }
+    else
+    {
+      resultNode = d->logic()->ConvertToGridTransform(d->MRMLTransformNode, referenceVolumeNode, vtkMRMLTransformNode::SafeDownCast(outputNode));
+    }
+    QApplication::restoreOverrideCursor();
+    if (resultNode == nullptr)
+    {
+      QMessageBox::warning(this, tr("Export failed"), tr("Failed to export transform. See application log for details."));
+      return;
+    }
+    // A node that was created is shown as the output, so that applying again updates it
+    d->ExportOutputNodeComboBox->setCurrentNode(resultNode);
+    return;
+  }
+
+  // Without a transform, the import goes into a new one
+  vtkMRMLNode* inputNode = d->ImportInputNodeComboBox->currentNode();
+  vtkSmartPointer<vtkMRMLTransformNode> transformNode = d->MRMLTransformNode;
+  bool createdTransformNode = false;
+  if (!transformNode && inputNode && this->mrmlScene())
+  {
+    std::string name = std::string(inputNode->GetName() ? inputNode->GetName() : "") + " transform";
+    transformNode = vtkMRMLTransformNode::SafeDownCast(this->mrmlScene()->AddNewNodeByClass("vtkMRMLTransformNode", this->mrmlScene()->GenerateUniqueName(name)));
+    createdTransformNode = (transformNode != nullptr);
+  }
+  bool success = false;
+  if (transformNode)
+  {
+    if (d->ImportModelRadioButton->isChecked())
+    {
+      QByteArray arrayName = d->ImportDisplacementArrayComboBox->currentText().toUtf8();
+      success = d->logic()->ImportTransformFromModel(transformNode, vtkMRMLModelNode::SafeDownCast(inputNode), arrayName.isEmpty() ? nullptr : arrayName.constData());
+    }
+    else
+    {
+      success = d->logic()->ImportTransformFromDisplacementVolume(transformNode, vtkMRMLVectorVolumeNode::SafeDownCast(inputNode));
+    }
+  }
+  if (createdTransformNode)
+  {
+    if (success)
+    {
+      // The new transform is shown, ready to be edited or applied
+      this->setEditedNode(transformNode);
+    }
+    else
+    {
+      this->mrmlScene()->RemoveNode(transformNode);
+    }
+  }
+  QApplication::restoreOverrideCursor();
+  if (!success)
+  {
+    QMessageBox::warning(this, tr("Import failed"), tr("Failed to import transform. See application log for details."));
+  }
 }
 
 //-----------------------------------------------------------
