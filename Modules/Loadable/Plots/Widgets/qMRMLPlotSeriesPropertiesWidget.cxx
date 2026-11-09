@@ -67,9 +67,9 @@ void qMRMLPlotSeriesPropertiesWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->connect(this->labelsComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onLabelsChanged(int)));
   this->connect(this->yAxisComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onYAxisChanged(int)));
   this->connect(this->plotTypeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onPlotTypeChanged(int)));
-  this->connect(this->markersStyleComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(onMarkersStyleChanged(const QString&)));
+  this->connect(this->markersStyleComboBox, SIGNAL(currentTextChanged(const QString&)), this, SLOT(onMarkersStyleChanged(const QString&)));
   this->connect(this->markersSizeDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(onMarkersSizeChanged(double)));
-  this->connect(this->lineStyleComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(onLineStyleChanged(const QString&)));
+  this->connect(this->lineStyleComboBox, SIGNAL(currentTextChanged(const QString&)), this, SLOT(onLineStyleChanged(const QString&)));
   this->connect(this->lineWidthDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(onLineWidthChanged(double)));
   this->connect(this->plotSeriesColorPickerButton, SIGNAL(colorChanged(const QColor&)), this, SLOT(onPlotSeriesColorChanged(const QColor&)));
 }

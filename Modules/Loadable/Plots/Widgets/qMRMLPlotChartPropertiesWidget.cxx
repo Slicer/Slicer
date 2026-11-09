@@ -65,7 +65,7 @@ void qMRMLPlotChartPropertiesWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->Ui_qMRMLPlotChartPropertiesWidget::setupUi(widget);
 
   // PlotChart Properties
-  this->connect(this->fontTypeComboBox, SIGNAL(currentIndexChanged(const QString&)), q, SLOT(setFontType(const QString&)));
+  this->connect(this->fontTypeComboBox, SIGNAL(currentTextChanged(const QString&)), q, SLOT(setFontType(const QString&)));
   this->connect(this->titleFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setTitleFontSize(double)));
   this->connect(this->legendFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setLegendFontSize(double)));
   this->connect(this->axisTitleFontSizeDoubleSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setAxisTitleFontSize(double)));

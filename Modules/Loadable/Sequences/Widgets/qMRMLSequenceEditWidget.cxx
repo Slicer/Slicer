@@ -107,7 +107,7 @@ void qMRMLSequenceEditWidgetPrivate::init()
 
   QObject::connect(this->LineEdit_IndexName, SIGNAL(textEdited(const QString&)), q, SLOT(onIndexNameEdited()));
   QObject::connect(this->LineEdit_IndexUnit, SIGNAL(textEdited(const QString&)), q, SLOT(onIndexUnitEdited()));
-  QObject::connect(this->ComboBox_IndexType, SIGNAL(currentIndexChanged(const QString&)), q, SLOT(onIndexTypeEdited(QString)));
+  QObject::connect(this->ComboBox_IndexType, SIGNAL(currentTextChanged(const QString&)), q, SLOT(onIndexTypeEdited(QString)));
   QObject::connect(this->TableWidget_DataNodes, SIGNAL(cellChanged(int, int)), q, SLOT(onDataNodeEdited(int, int)));
   QObject::connect(this->PushButton_AddCandidateNode, SIGNAL(clicked()), q, SLOT(onAddDataNodeButtonClicked()));
   QObject::connect(this->PushButton_RemoveDataNode, SIGNAL(clicked()), q, SLOT(onRemoveDataNodeButtonClicked()));
