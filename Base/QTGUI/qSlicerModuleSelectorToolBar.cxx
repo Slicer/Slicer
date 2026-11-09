@@ -116,7 +116,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   QAction* ViewFindModuleAction = new QAction(searchIcon, qSlicerModuleSelectorToolBar::tr("Module Finder"), mainWindow);
   ViewFindModuleAction->setObjectName("ViewFindModuleAction");
   ViewFindModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Find module"));
-  ViewFindModuleAction->setShortcut(QKeySequence(Qt::ControlModifier + Qt::Key_F));
+  ViewFindModuleAction->setShortcut(QKeySequence(Qt::ControlModifier | Qt::Key_F));
   QObject::connect(ViewFindModuleAction, SIGNAL(triggered()), q, SLOT(showModuleFinder()));
   for (QMenu* const toolBarMenu : mainWindow->findChildren<QMenu*>())
   {
@@ -176,7 +176,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   previousModuleAction->setText(qSlicerModuleSelectorToolBar::tr("Previous"));
   previousModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Switch to previously used module"));
   previousModuleAction->setObjectName("PreviousModuleAction");
-  previousModuleAction->setShortcuts({ QKeySequence(Qt::ControlModifier + Qt::Key_Left), QKeySequence::Back });
+  previousModuleAction->setShortcuts({ QKeySequence(Qt::ControlModifier | Qt::Key_Left), QKeySequence::Back });
   previousModuleAction->setShortcutContext(Qt::ApplicationShortcut);
   this->PreviousButton->setDefaultAction(previousModuleAction);
   QObject::connect(previousModuleAction, &QAction::triggered, q, &qSlicerModuleSelectorToolBar::selectPreviousModule);
@@ -196,7 +196,7 @@ void qSlicerModuleSelectorToolBarPrivate::init()
   nextModuleAction->setText(qSlicerModuleSelectorToolBar::tr("Next"));
   nextModuleAction->setToolTip(qSlicerModuleSelectorToolBar::tr("Switch to next used module"));
   nextModuleAction->setObjectName("NextModuleIcon");
-  nextModuleAction->setShortcuts({ QKeySequence(Qt::ControlModifier + Qt::Key_Right), QKeySequence::Forward });
+  nextModuleAction->setShortcuts({ QKeySequence(Qt::ControlModifier | Qt::Key_Right), QKeySequence::Forward });
   nextModuleAction->setShortcutContext(Qt::ApplicationShortcut);
   this->NextButton->setDefaultAction(nextModuleAction);
   QObject::connect(nextModuleAction, &QAction::triggered, q, &qSlicerModuleSelectorToolBar::selectNextModule);
