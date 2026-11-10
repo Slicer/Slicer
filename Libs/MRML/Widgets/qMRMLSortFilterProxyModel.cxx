@@ -135,8 +135,14 @@ void qMRMLSortFilterProxyModel::addAttribute(const QString& nodeType, const QStr
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->Attributes[nodeType] = qMRMLSortFilterProxyModelPrivate::AttributeType(attributeName, attributeValue);
+  this->endFilterChange();
+#else
   d->Attributes[nodeType] = qMRMLSortFilterProxyModelPrivate::AttributeType(attributeName, attributeValue);
   this->invalidateFilter();
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -148,8 +154,14 @@ void qMRMLSortFilterProxyModel::removeAttribute(const QString& nodeType, const Q
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->Attributes.remove(nodeType);
+  this->endFilterChange();
+#else
   d->Attributes.remove(nodeType);
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -346,8 +358,14 @@ void qMRMLSortFilterProxyModel::setHideChildNodeTypes(const QStringList& _nodeTy
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->HideChildNodeTypes = _nodeTypes;
+  this->endFilterChange();
+#else
   d->HideChildNodeTypes = _nodeTypes;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -358,8 +376,14 @@ void qMRMLSortFilterProxyModel::setNodeTypes(const QStringList& _nodeTypes)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->NodeTypes = _nodeTypes;
+  this->endFilterChange();
+#else
   d->NodeTypes = _nodeTypes;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -370,8 +394,14 @@ void qMRMLSortFilterProxyModel::setShowChildNodeTypes(bool _show)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowChildNodeTypes = _show;
+  this->endFilterChange();
+#else
   d->ShowChildNodeTypes = _show;
   invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -389,8 +419,14 @@ void qMRMLSortFilterProxyModel::setShowHidden(bool enable)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowHidden = enable;
+  this->endFilterChange();
+#else
   d->ShowHidden = enable;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -408,8 +444,14 @@ void qMRMLSortFilterProxyModel::setShowHiddenForTypes(const QStringList& types)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowHiddenForTypes = types;
+  this->endFilterChange();
+#else
   d->ShowHiddenForTypes = types;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -427,8 +469,14 @@ void qMRMLSortFilterProxyModel::setHiddenNodeIDs(const QStringList& nodeIDs)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->HiddenNodeIDs = nodeIDs;
+  this->endFilterChange();
+#else
   d->HiddenNodeIDs = nodeIDs;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -446,8 +494,14 @@ void qMRMLSortFilterProxyModel::setVisibleNodeIDs(const QStringList& nodeIDs)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->VisibleNodeIDs = nodeIDs;
+  this->endFilterChange();
+#else
   d->VisibleNodeIDs = nodeIDs;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -465,8 +519,14 @@ void qMRMLSortFilterProxyModel::setHideNodesUnaffiliatedWithNodeID(const QString
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->HideNodesUnaffiliatedWithNodeID = nodeID;
+  this->endFilterChange();
+#else
   d->HideNodesUnaffiliatedWithNodeID = nodeID;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -484,8 +544,14 @@ void qMRMLSortFilterProxyModel::setFilterType(FilterType filterType)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->Filter = filterType;
+  this->endFilterChange();
+#else
   d->Filter = filterType;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------

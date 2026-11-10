@@ -21,6 +21,9 @@
 // Qt includes
 #include <QFileInfo>
 
+// STD includes
+#include <memory>
+
 // PythonQt includes
 #include <PythonQt.h>
 
@@ -241,13 +244,13 @@ void qSlicerScriptedLoadableModule::setup()
 void qSlicerScriptedLoadableModule::registerFileDialog()
 {
   Q_D(qSlicerScriptedLoadableModule);
-  QScopedPointer<qSlicerScriptedFileDialog> fileDialog(new qSlicerScriptedFileDialog(this));
+  std::unique_ptr<qSlicerScriptedFileDialog> fileDialog(new qSlicerScriptedFileDialog(this));
   bool ret = fileDialog->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
   {
     return;
   }
-  qSlicerApplication::application()->ioManager()->registerDialog(fileDialog.take());
+  qSlicerApplication::application()->ioManager()->registerDialog(fileDialog.release());
 }
 
 //-----------------------------------------------------------------------------
@@ -315,14 +318,14 @@ qSlicerAbstractModuleRepresentation* qSlicerScriptedLoadableModule::createWidget
     return nullptr;
   }
 
-  QScopedPointer<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
+  std::unique_ptr<qSlicerScriptedLoadableModuleWidget> widget(new qSlicerScriptedLoadableModuleWidget);
   bool ret = widget->setPythonSource(d->PythonSourceFilePath);
   if (!ret)
   {
     return nullptr;
   }
 
-  return widget.take();
+  return widget.release();
 }
 
 //-----------------------------------------------------------------------------

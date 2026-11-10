@@ -36,6 +36,18 @@
 // MRML Widgets includes
 #include "qMRMLItemDelegate.h"
 
+namespace
+{
+int qVariantTypeId(const QVariant& value)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  return value.typeId();
+#else
+  return value.userType();
+#endif
+}
+} // namespace
+
 //------------------------------------------------------------------------------
 qMRMLItemDelegate::qMRMLItemDelegate(QObject* parent)
   : QStyledItemDelegate(parent)
@@ -58,13 +70,13 @@ bool qMRMLItemDelegate::isColor(const QModelIndex& index) const
   QVariant editData = index.data(Qt::EditRole);
   QVariant decorationData = index.data(Qt::DecorationRole);
   if (editData.isNull() && //
-      decorationData.type() == QVariant::Color)
+      qVariantTypeId(decorationData) == QMetaType::QColor)
   {
     return true;
   }
-  else if (editData.isNull() &&                         //
-           decorationData.type() == QVariant::Pixmap && //
-           index.data(qMRMLItemDelegate::ColorRole).type() == QVariant::Color)
+  else if (editData.isNull() &&                                    //
+           qVariantTypeId(decorationData) == QMetaType::QPixmap && //
+           qVariantTypeId(index.data(qMRMLItemDelegate::ColorRole)) == QMetaType::QColor)
   {
     return true;
   }
@@ -76,11 +88,11 @@ int qMRMLItemDelegate::colorRole(const QModelIndex& index) const
 {
   QVariant decorationData = index.data(Qt::DecorationRole);
   QVariant colorData = index.data(qMRMLItemDelegate::ColorRole);
-  if (decorationData.type() == QVariant::Color)
+  if (qVariantTypeId(decorationData) == QMetaType::QColor)
   {
     return Qt::DecorationRole;
   }
-  else if (colorData.type() == QVariant::Color)
+  else if (qVariantTypeId(colorData) == QMetaType::QColor)
   {
     return qMRMLItemDelegate::ColorRole;
   }
@@ -91,7 +103,7 @@ int qMRMLItemDelegate::colorRole(const QModelIndex& index) const
 bool qMRMLItemDelegate::is0To1Value(const QModelIndex& index) const
 {
   QVariant editData = index.data(Qt::EditRole);
-  if (editData.type() != QVariant::String)
+  if (qVariantTypeId(editData) != QMetaType::QString)
   {
     return false;
   }

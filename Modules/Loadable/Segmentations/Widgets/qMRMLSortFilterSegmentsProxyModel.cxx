@@ -97,8 +97,14 @@ void qMRMLSortFilterSegmentsProxyModel::setFilterEnabled(bool filterEnabled)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->FilterEnabled = filterEnabled;
+  this->endFilterChange();
+#else
   d->FilterEnabled = filterEnabled;
   this->invalidateFilter();
+#endif
   emit filterModified();
 }
 
@@ -110,8 +116,14 @@ void qMRMLSortFilterSegmentsProxyModel::setNameFilter(QString filter)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->NameFilter = filter;
+  this->endFilterChange();
+#else
   d->NameFilter = filter;
   this->invalidateFilter();
+#endif
   emit filterModified();
 }
 
@@ -123,8 +135,14 @@ void qMRMLSortFilterSegmentsProxyModel::setTextFilter(QString filter)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->TextFilter = filter;
+  this->endFilterChange();
+#else
   d->TextFilter = filter;
   this->invalidateFilter();
+#endif
   emit filterModified();
 }
 
@@ -152,8 +170,14 @@ void qMRMLSortFilterSegmentsProxyModel::setShowStatus(int status, bool shown)
     return;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowStatus[status] = shown;
+  this->endFilterChange();
+#else
   d->ShowStatus[status] = shown;
   this->invalidateFilter();
+#endif
   emit filterModified();
 }
 
@@ -338,8 +362,14 @@ Qt::ItemFlags qMRMLSortFilterSegmentsProxyModel::flags(const QModelIndex& index)
 void qMRMLSortFilterSegmentsProxyModel::setHideSegments(const QStringList& segmentIDs)
 {
   Q_D(qMRMLSortFilterSegmentsProxyModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->HideSegments = segmentIDs;
+  this->endFilterChange();
+#else
   d->HideSegments = segmentIDs;
   this->invalidateFilter();
+#endif
   emit filterModified();
 }
 

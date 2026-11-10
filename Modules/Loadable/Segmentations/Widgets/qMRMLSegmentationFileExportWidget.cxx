@@ -83,7 +83,7 @@ void qMRMLSegmentationFileExportWidgetPrivate::init()
   q->setEnabled(false);
   QObject::connect(this->ExportToFilesButton, SIGNAL(clicked()), q, SLOT(exportToFiles()));
   QObject::connect(this->ShowDestinationFolderButton, SIGNAL(clicked()), q, SLOT(showDestinationFolder()));
-  QObject::connect(this->FileFormatComboBox, SIGNAL(currentIndexChanged(const QString&)), q, SLOT(setFileFormat(const QString&)));
+  QObject::connect(this->FileFormatComboBox, SIGNAL(currentTextChanged(const QString&)), q, SLOT(setFileFormat(const QString&)));
   QObject::connect(this->ColorTableNodeSelector, SIGNAL(currentNodeIDChanged(const QString&)), q, SLOT(setColorNodeID(const QString&)));
   QObject::connect(this->UseColorTableValuesCheckBox, SIGNAL(toggled(bool)), q, SLOT(setUseLabelsFromColorNode(bool)));
 }
