@@ -144,7 +144,7 @@ set_source_files_properties(
 # Additional Target libraries
 set(KIT_target_libraries
   ${QT_LIBRARIES}
-  SlicerBaseLogic
+  Slicer::BaseLogic
   MRMLDisplayableManager
   ${CTKAppLauncherLib_LIBRARIES}
   CTKCore

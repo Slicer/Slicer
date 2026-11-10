@@ -20,6 +20,7 @@ _sourcePatterns = [
     "*.dox",
     "*.sha256",
     "requirements.txt",
+    "vtk.module",
 ]
 
 _templateCategories = [

@@ -60,15 +60,6 @@ set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 0)
 include(${ITK_USE_FILE})
 
 # --------------------------------------------------------------------------
-# Include dirs
-# --------------------------------------------------------------------------
-set(include_dirs
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  )
-include_directories(${include_dirs})
-
-# --------------------------------------------------------------------------
 # Configure headers
 # --------------------------------------------------------------------------
 set(configure_header_file itkFactoryRegistrationConfigure.h)
@@ -113,6 +104,14 @@ target_link_libraries(${lib_name} ${libs})
 if(Slicer_LIBRARY_PROPERTIES)
   set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
 endif()
+
+# --------------------------------------------------------------------------
+# Include dirs
+# --------------------------------------------------------------------------
+target_include_directories(ITKFactoryRegistration PUBLIC
+  "${CMAKE_CURRENT_SOURCE_DIR}"
+  "${CMAKE_CURRENT_BINARY_DIR}"
+)
 
 # --------------------------------------------------------------------------
 # Folder

@@ -1,4 +1,4 @@
-set(KIT ${PROJECT_NAME})
+set(KIT MRMLCore)
 
 set(EXTRA_INCLUDE "vtkMRMLDebugLeaksMacro.h\"\n\#include <iostream>\n\#include \"vtkTestingOutputWindow.h")
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();\nTESTING_OUTPUT_ASSERT_WARNINGS_ERRORS(0);" )
@@ -121,9 +121,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   )
 
 ctk_add_executable_utf8(${KIT}CxxTests ${Tests} vtkMRMLSceneEventRecorder.cxx)
-target_link_libraries(${KIT}CxxTests ${KIT})
-
-set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+target_link_libraries(${KIT}CxxTests PRIVATE Slicer::MRMLCore VTK::TestingCore)
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER MRMLCore)
 
 #-----------------------------------------------------------------------------
 set(DATAPATH "${CMAKE_CURRENT_SOURCE_DIR}/TestData")

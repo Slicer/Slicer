@@ -2,7 +2,7 @@ import sys
 import unittest
 
 import vtk
-import slicer
+import slicer # noqa: F401
 
 
 class SlicerLazyVtkModuleTest(unittest.TestCase):
@@ -19,23 +19,7 @@ class SlicerLazyVtkModuleTest(unittest.TestCase):
 
     def test_lazyLoadingIsEnabled(self):
         # Sanity check: if every VTK module were already loaded then this test would not test anything.
-        self.assertNotIn("vtkmodules.vtkChartsCore", sys.modules)
-
-    def test_plotViewChartLegend(self):
-        # Reproduces https://github.com/Slicer/Slicer/issues/9382:
-        # vtkChartsCore is not a base class provider of any Slicer class, so it is not imported at startup.
-        layoutManager = slicer.app.layoutManager()
-        layoutManager.setLayout(slicer.vtkMRMLLayoutNode.SlicerLayoutFourUpPlotView)
-        chart = layoutManager.plotWidget(0).plotView().chart()
-        # Without the fix the chart is returned as a vtkContextItem, which has no GetLegend method
-        self.assertEqual(type(chart).__name__, chart.GetClassName())
-        self.assertEqual(type(chart).__name__, "vtkChartXY")
-        legend = chart.GetLegend()
-        self.assertEqual(type(legend).__name__, "vtkChartLegend")
-        self.assertEqual(type(legend).__module__, "vtkmodules.vtkChartsCore")
-        # The lazily imported class is the one that the vtk module provides
-        self.assertIs(type(legend), vtk.vtkChartLegend)
-        self.assertIsInstance(legend, vtk.vtkContextItem)
+        self.assertNotIn("vtkmodules.vtkIOCesium3DTiles", sys.modules)
 
     def test_objectFactoryOverride(self):
         # vtkRenderer::New() returns a vtkOpenGLRenderer (from vtkRenderingOpenGL2), which

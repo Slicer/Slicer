@@ -1,0 +1,10 @@
+NAME
+  Slicer::DICOMLibModuleLogic
+LIBRARY_NAME
+  vtkSlicerDICOMLibModuleLogic
+DEPENDS
+  Slicer::MRMLCore
+  VTK::CommonCore
+  VTK::CommonDataModel
+DESCRIPTION
+  "vtkSlicerDICOMLibModuleLogic"

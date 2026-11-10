@@ -1,0 +1,9 @@
+NAME
+  Slicer::TablesModuleLogic
+LIBRARY_NAME
+  vtkSlicerTablesModuleLogic
+DEPENDS
+  Slicer::MRMLLogic
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerTablesModuleLogic"

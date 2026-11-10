@@ -15,6 +15,7 @@ SEMMacroBuildCLI(
   NAME CLIModule4Test
   FOLDER "Core-Base"
   LOGO_HEADER ${Slicer_SOURCE_DIR}/Resources/ITKLogo.h
+  TARGET_LIBRARIES ITKFactoryRegistration
   NO_INSTALL
   )
 

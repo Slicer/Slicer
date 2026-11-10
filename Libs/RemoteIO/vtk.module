@@ -1,0 +1,8 @@
+NAME
+  Slicer::RemoteIO
+LIBRARY_NAME
+  RemoteIO
+DEPENDS
+  Slicer::MRMLCore
+DESCRIPTION
+  "vtkRemoteIO"

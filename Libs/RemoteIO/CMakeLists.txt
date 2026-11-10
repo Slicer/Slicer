@@ -1,161 +1,53 @@
-project(RemoteIO)
-
-#-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.28.0...3.28.0 FATAL_ERROR)
-#-----------------------------------------------------------------------------
-
-# --------------------------------------------------------------------------
-# Options
-# --------------------------------------------------------------------------
-
-# Disable MSVC 8 warnings
-if(WIN32)
-  option(DISABLE_MSVC8_DEPRECATED_WARNINGS
-    "Disable Visual Studio 8 deprecated warnings" ON)
-  mark_as_advanced(FORCE DISABLE_MSVC8_DEPRECATED_WARNINGS)
-  if(DISABLE_MSVC8_DEPRECATED_WARNINGS)
-    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
-  endif()
-endif()
-
-if(NOT DEFINED BUILD_SHARED_LIBS)
-  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif()
-
 # --------------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------------
 
-#
-# VTK
-#
-#find_package(VTK REQUIRED)
-#include(${VTK_USE_FILE})
+vtk_module_find_package(
+  PACKAGE ZLIB
+  PRIVATE_IF_SHARED
+)
 
-#
-# CURL
-#
-find_package(CURL REQUIRED)
+vtk_module_find_package(
+  PACKAGE CURL
+  PRIVATE_IF_SHARED
+  CONFIG_MODE
+)
 
-#
-# OpenSSL
-#
 if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
-  find_package(OpenSSL REQUIRED)
-endif()
-
-# --------------------------------------------------------------------------
-# Include dirs
-# --------------------------------------------------------------------------
-set(include_dirs
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRMLCore_INCLUDE_DIRS}
-  ${CURL_INCLUDE_DIRS}
+  vtk_module_find_package(
+    PACKAGE OpenSSL
+    PRIVATE_IF_SHARED
   )
-include_directories(${include_dirs})
-
-# --------------------------------------------------------------------------
-# Install headers
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-endif()
-if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  install(
-    FILES ${headers} ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
-    DESTINATION include/${PROJECT_NAME} COMPONENT Development)
 endif()
 
+vtk_module_find_package(PACKAGE vtkAddon)
+
 # --------------------------------------------------------------------------
-# Sources
+# Configure headers
 # --------------------------------------------------------------------------
-set(RemoteIO_SRCS
-  vtkHTTPHandler.cxx
-  )
+
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkRemoteIOExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
 # --------------------------------------------------------------------------
 # Build library
 # --------------------------------------------------------------------------
-set(lib_name ${PROJECT_NAME})
-set(srcs ${RemoteIO_SRCS})
 
-add_library(${lib_name} ${srcs})
+set(classes vtkHTTPHandler)
 
-# Define CURL_STATICLIB when linking against static curl on Windows
-if(WIN32)
-  target_compile_definitions(${lib_name} PRIVATE CURL_STATICLIB)
-endif()
-
-set(libs
-  ${CURL_LIBRARIES}
-  MRMLCore
-  )
-if(WIN32)
-  list(APPEND libs
-    # For curl
-    iphlpapi  # for if_nametoindex
-    ws2_32  # for Windows sockets
-    )
-endif()
-if(Slicer_USE_PYTHONQT_WITH_OPENSSL)
-  list(APPEND libs
-    ${OPENSSL_LIBRARIES}
-    )
-endif()
-target_link_libraries(${lib_name} ${libs})
-
-# Apply user-defined properties to the library target.
-if(Slicer_LIBRARY_PROPERTIES)
-  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-endif()
-
-# --------------------------------------------------------------------------
-# Generate export header
-# --------------------------------------------------------------------------
-include(GenerateExportHeader)
-generate_export_header(${lib_name}
-  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/vtkRemoteIOExport.h
-  EXPORT_MACRO_NAME VTK_RemoteIO_EXPORT
+vtk_module_add_module(Slicer::RemoteIO
+  EXPORT_MACRO_PREFIX VTK_RemoteIO
+  CLASSES ${classes}
+  HEADERS ${wrapper_header_file}
+  EXCLUDE_HEADER_TEST
 )
 
-# --------------------------------------------------------------------------
-# Folder
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_FOLDER)
-  set(${PROJECT_NAME}_FOLDER ${PROJECT_NAME})
-endif()
-if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
-  set_target_properties(${lib_name} PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-endif()
+vtk_module_link(Slicer::RemoteIO PUBLIC vtkAddon PRIVATE CURL::libcurl_static ZLIB::ZLIB)
 
-# --------------------------------------------------------------------------
-# Export target
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
-  set(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
+if(WIN32)
+  # Define CURL_STATICLIB when linking against static curl on Windows
+  vtk_module_definitions(Slicer::RemoteIO PRIVATE CURL_STATICLIB)
+  vtk_module_link(Slicer::RemoteIO PRIVATE iphlpapi ws2_32)
 endif()
-export(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
-
-# --------------------------------------------------------------------------
-# Install library
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
-  set(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
-endif()
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
-  set(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
-endif()
-
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
-  )
-
-# --------------------------------------------------------------------------
-# Set INCLUDE_DIRS variable
-# --------------------------------------------------------------------------
-set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-  CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

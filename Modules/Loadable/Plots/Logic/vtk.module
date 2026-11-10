@@ -1,0 +1,9 @@
+NAME
+  Slicer::PlotsModuleLogic
+LIBRARY_NAME
+  vtkSlicerPlotsModuleLogic
+DEPENDS
+  Slicer::MRMLLogic
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerPlotsModuleLogic"

@@ -1,0 +1,8 @@
+NAME
+  Slicer::GeneralizedReformatModuleMRML
+LIBRARY_NAME
+  vtkSlicerGeneralizedReformatModuleMRML
+DEPENDS
+  Slicer::MRMLLogic
+DESCRIPTION
+  "vtkSlicerGeneralizedReformatModuleMRML"

@@ -5,5 +5,7 @@ LIBRARY_NAME
 DEPENDS
   Slicer::BaseLogic
   Slicer::MRMLCore
+OPTIONAL_DEPENDS
+  VTK::WrappingPythonCore
 DESCRIPTION
   "vtkSlicerLayerDMModuleMRML"

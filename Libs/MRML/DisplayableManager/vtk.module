@@ -1,0 +1,16 @@
+NAME
+  Slicer::MRMLDisplayableManager
+LIBRARY_NAME
+  MRMLDisplayableManager
+IMPLEMENTABLE
+IMPLEMENTS
+  Slicer::MRMLDisplayableManager
+DEPENDS
+  Slicer::MRMLLogic
+  VTK::RenderingAnnotation
+  VTK::RenderingContextOpenGL2
+  VTK::RenderingLabel
+OPTIONAL_DEPENDS
+  VTK::WrappingPythonCore
+DESCRIPTION
+  "vtkMRMLDisplayableManager"
