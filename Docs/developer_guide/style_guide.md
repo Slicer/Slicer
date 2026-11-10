@@ -294,6 +294,7 @@ vtkDebugMacro("This variable has the value: "<< value);
 - Use the body to explain what and why vs. how. If there was important/useful/essential conversation or information, copy or include a reference
 - Prefix the commit message title with "BUG:", "COMP:", "DOC:", "ENH:", "STYLE:". Note the ':' (colon) character.
 - When possible, one keyword to scope the change in the subject (i.e. "STYLE: README: ...", "BUG: vtkMRMLSliceLogic: ...")
+- Reserve `Co-authored-by:` trailers for human contributors. Do not list large language models (LLMs) or AI coding assistants as co-authors.
 
 ### Commit message prefix
 

@@ -84,6 +84,10 @@ commits, the message body should follow the following guidelines:
   issue, use the [GitHub issue closing
   keywords](https://docs.github.com/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue).
 
+Do not list large language models (LLMs) or AI coding assistants as co-authors in
+commit messages. Reserve `Co-authored-by:` trailers for human contributors, and
+disable automatic AI co-author trailers in your tools before committing.
+
 Keep in mind that the significant time is invested in reviewing commits and
 *pull requests*, so following these guidelines will greatly help the people
 doing reviews.
