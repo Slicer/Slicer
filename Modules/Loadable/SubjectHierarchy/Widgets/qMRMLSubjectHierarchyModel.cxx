@@ -22,6 +22,7 @@
 
 // Qt includes
 #include <QDebug>
+#include <QHash>
 #include <QMimeData>
 #include <QApplication>
 #include <QMessageBox>
@@ -31,6 +32,9 @@
 
 // CTK includes
 #include <ctkUtils.h>
+
+// MRMLWidgets includes
+#include <qMRMLItemModelUtils.h>
 
 // qMRML includes
 #include "qMRMLSubjectHierarchyModel_p.h"
@@ -69,6 +73,11 @@ qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjec
   , DescriptionColumn(-1)
   , NoneEnabled(false)
   , NoneDisplay(qMRMLSubjectHierarchyModel::tr("None"))
+  , RebuildPending(false)
+  , InsertingItemAddedInBatch(false)
+  , RebuildSubjectHierarchyMTime(0)
+  , BatchProcessing(false)
+  , SuppressExpandRequests(false)
   , SubjectHierarchyNode(nullptr)
   , MRMLScene(nullptr)
   , TerminologiesModuleLogic(nullptr)
@@ -115,6 +124,32 @@ void qMRMLSubjectHierarchyModelPrivate::init()
   this->CallBack->SetCallback(qMRMLSubjectHierarchyModel::onEvent);
 
   QObject::connect(q, SIGNAL(itemChanged(QStandardItem*)), q, SLOT(onItemChanged(QStandardItem*)));
+
+  // Keep the item ID -> item cache up-to-date. These connections are made before any other
+  // connection to the model, therefore the cache is already up-to-date when other objects
+  // are notified about row insertion.
+  QObject::connect(q,
+                   &QAbstractItemModel::rowsInserted,
+                   q,
+                   [this, q](const QModelIndex& parent, int first, int last)
+                   {
+                     QStandardItem* parentItem = (parent.isValid() ? q->itemFromIndex(parent) : q->invisibleRootItem());
+                     for (int row = first; row <= last; ++row)
+                     {
+                       this->addToRowCacheRecursively(parentItem->child(row, 0));
+                     }
+                   });
+  QObject::connect(q,
+                   &QAbstractItemModel::rowsAboutToBeRemoved,
+                   q,
+                   [this, q](const QModelIndex& parent, int first, int last)
+                   {
+                     QStandardItem* parentItem = (parent.isValid() ? q->itemFromIndex(parent) : q->invisibleRootItem());
+                     for (int row = first; row <= last; ++row)
+                     {
+                       this->removeFromRowCacheRecursively(parentItem->child(row, 0));
+                     }
+                   });
 
   q->setNameColumn(0);
   q->setDescriptionColumn(1);
@@ -190,6 +225,166 @@ QStandardItem* qMRMLSubjectHierarchyModelPrivate::insertSubjectHierarchyItem(vtk
     return nullptr;
   }
   return item;
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyModelPrivate::isBatchProcessing() const
+{
+  if (this->BatchProcessing)
+  {
+    return true;
+  }
+  return this->MRMLScene && (this->MRMLScene->IsBatchProcessing() || this->MRMLScene->IsImporting());
+}
+
+//------------------------------------------------------------------------------
+QList<QStandardItem*> qMRMLSubjectHierarchyModelPrivate::createItemRow(vtkIdType itemID)
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  QList<QStandardItem*> items;
+  const int columnCount = q->columnCount();
+  for (int col = 0; col < columnCount; ++col)
+  {
+    QStandardItem* newItem = new QStandardItem();
+    q->updateItemFromSubjectHierarchyItem(newItem, itemID, col);
+    items.append(newItem);
+  }
+  return items;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::addToRowCacheRecursively(QStandardItem* item)
+{
+  if (!item)
+  {
+    return;
+  }
+  QVariant itemID = item->data(qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
+  if (itemID.isValid())
+  {
+    this->RowCache[itemID.toLongLong()] = item;
+  }
+  const int rowCount = item->rowCount();
+  for (int row = 0; row < rowCount; ++row)
+  {
+    this->addToRowCacheRecursively(item->child(row, 0));
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::removeFromRowCacheRecursively(QStandardItem* item)
+{
+  if (!item)
+  {
+    return;
+  }
+  QVariant itemID = item->data(qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
+  if (itemID.isValid())
+  {
+    QHash<vtkIdType, QStandardItem*>::iterator rowCacheIt = this->RowCache.find(itemID.toLongLong());
+    if (rowCacheIt != this->RowCache.end() && rowCacheIt.value() == item)
+    {
+      this->RowCache.erase(rowCacheIt);
+    }
+  }
+  const int rowCount = item->rowCount();
+  for (int row = 0; row < rowCount; ++row)
+  {
+    this->removeFromRowCacheRecursively(item->child(row, 0));
+  }
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyModelPrivate::insertItemAddedInBatch(vtkIdType itemID)
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  if (this->InsertingItemAddedInBatch || !this->SubjectHierarchyNode || !q->subjectHierarchySceneItem()
+      || this->ItemsAddedInBatch.find(itemID) == this->ItemsAddedInBatch.end())
+  {
+    return false;
+  }
+  this->InsertingItemAddedInBatch = true;
+  // Ancestors that were added in the batch are inserted as well
+  QStandardItem* item = q->insertSubjectHierarchyItem(itemID);
+  this->InsertingItemAddedInBatch = false;
+  return item != nullptr;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::requestExpandedState(vtkIdType itemID, bool newRow)
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  if (this->SuppressExpandRequests || !this->SubjectHierarchyNode)
+  {
+    return;
+  }
+  if (this->SubjectHierarchyNode->GetItemExpanded(itemID))
+  {
+    emit q->requestExpandItem(itemID);
+  }
+  else if (!newRow)
+  {
+    emit q->requestCollapseItem(itemID);
+  }
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::onItemEventWithoutItemID()
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  if (!this->SubjectHierarchyNode || (this->MRMLScene && this->MRMLScene->IsClosing()))
+  {
+    return;
+  }
+  if (this->isBatchProcessing())
+  {
+    this->RebuildPending = true;
+    return;
+  }
+  // Compressed events are invoked one after the other (one for each event type), the model is rebuilt only once
+  // (unless the subject hierarchy is changed in the meantime)
+  if (this->SubjectHierarchyNode->GetMTime() == this->RebuildSubjectHierarchyMTime)
+  {
+    return;
+  }
+  q->rebuildFromSubjectHierarchy();
+}
+
+//------------------------------------------------------------------------------
+bool qMRMLSubjectHierarchyModelPrivate::isOutOfSync() const
+{
+  if (!this->SubjectHierarchyNode)
+  {
+    return false;
+  }
+  // The RowCache contains exactly the items that are in the model (including the scene item)
+  if (!this->RowCache.contains(this->SubjectHierarchyNode->GetSceneItemID()))
+  {
+    return true;
+  }
+  return this->RowCache.size() != this->SubjectHierarchyNode->GetNumberOfItems() + 1;
+}
+
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModelPrivate::validateAfterBatchProcessing()
+{
+  Q_Q(qMRMLSubjectHierarchyModel);
+  if (!this->MRMLScene || this->MRMLScene->IsClosing())
+  {
+    return;
+  }
+  if (!this->SubjectHierarchyNode || this->SubjectHierarchyNode->GetScene() != this->MRMLScene)
+  {
+    // The observed subject hierarchy node has been removed from the scene (or there was none),
+    // observe the one in the scene (this rebuilds the model)
+    q->setSubjectHierarchyNode(vtkMRMLSubjectHierarchyNode::ResolveSubjectHierarchy(this->MRMLScene));
+    return;
+  }
+  if (!this->RebuildPending && this->isOutOfSync())
+  {
+    qWarning() << Q_FUNC_INFO << ": subject hierarchy model is out of sync, rebuild it";
+    this->RebuildPending = true;
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -335,6 +530,7 @@ void qMRMLSubjectHierarchyModel::setMRMLScene(vtkMRMLScene* scene)
   }
 
   d->MRMLScene = scene;
+  d->BatchProcessing = (scene ? scene->IsBatchProcessing() : false);
   this->setSubjectHierarchyNode(scene ? vtkMRMLSubjectHierarchyNode::GetSubjectHierarchyNode(scene) : nullptr);
 
   if (scene)
@@ -384,6 +580,9 @@ void qMRMLSubjectHierarchyModel::setSubjectHierarchyNode(vtkMRMLSubjectHierarchy
     // those with neutral priorities. Useful to have the plugin handler deal with new items before allowing
     // them to be handled by the model.
     // Same idea for +10, in which case the callback is called first.
+    // Modified event is observed to detect changes made without item events (e.g. when the subject hierarchy node
+    // is copied), so that the model can be rebuilt when the batch processing ends.
+    shNode->AddObserver(vtkCommand::ModifiedEvent, d->CallBack, -10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent, d->CallBack, -10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent, d->CallBack, +10.0);
     shNode->AddObserver(vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent, d->CallBack, -10.0);
@@ -483,40 +682,30 @@ QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType 
     return itemIndex;
   }
 
-  // Try to find the nodeIndex in the cache first
-  QMap<vtkIdType, QPersistentModelIndex>::iterator rowCacheIt = d->RowCache.find(itemID);
-  if (rowCacheIt == d->RowCache.end())
+  // The cache contains the item of all the subject hierarchy items that are in the model (it is kept up-to-date
+  // from the row insertion/removal signals of the model), therefore if the item is not in the cache then it is
+  // not in the model.
+  QStandardItem* item = d->RowCache.value(itemID, nullptr);
+  if (!item)
   {
-    // Not found in cache, therefore it cannot be in the model
-    return itemIndex;
-  }
-  if (rowCacheIt.value().isValid())
-  {
-    // An entry found in the cache. If the item at the cached index matches the requested item ID then we use it.
-    QStandardItem* item = this->itemFromIndex(rowCacheIt.value());
-    if (item && item->data(qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole).toLongLong() == itemID)
+    // Items added during batch processing are only inserted in the model when the batch processing ends,
+    // but they may be needed earlier (e.g., an observer of node added events selects the new node in a view),
+    // therefore such items are inserted on demand.
+    if (!const_cast<qMRMLSubjectHierarchyModelPrivate*>(d)->insertItemAddedInBatch(itemID))
     {
-      // ID matched
-      itemIndex = rowCacheIt.value();
+      return itemIndex;
+    }
+    item = d->RowCache.value(itemID, nullptr);
+    if (!item)
+    {
+      return itemIndex;
     }
   }
-
-  // The cache was not up-to-date. Do a slow linear search.
-  if (!itemIndex.isValid())
+  itemIndex = item->index();
+  if (!itemIndex.isValid() || column == 0)
   {
-    // QAbstractItemModel::match doesn't browse through columns, we need to do it manually
-    QModelIndexList itemIndexes = this->match(this->subjectHierarchySceneIndex(), SubjectHierarchyItemIDRole, itemID, 1, Qt::MatchExactly | Qt::MatchRecursive);
-    if (itemIndexes.size() == 0)
-    {
-      d->RowCache.remove(itemID);
-      return QModelIndex();
-    }
-    itemIndex = itemIndexes[0];
-    d->RowCache[itemID] = itemIndex;
-  }
-  if (column == 0)
-  {
-    // QAbstractItemModel::match only search through the first column
+    // The item is either in the first column or not in the model
+    // (e.g., it has been taken out temporarily while reparenting)
     return itemIndex;
   }
   // Add the QModelIndexes from the other columns
@@ -533,20 +722,16 @@ QModelIndex qMRMLSubjectHierarchyModel::indexFromSubjectHierarchyItem(vtkIdType 
 //------------------------------------------------------------------------------
 QModelIndexList qMRMLSubjectHierarchyModel::indexes(vtkIdType itemID) const
 {
-  QModelIndex scene = this->subjectHierarchySceneIndex();
-  if (scene == QModelIndex())
+  QModelIndex itemIndex = this->indexFromSubjectHierarchyItem(itemID);
+  if (!itemIndex.isValid())
   {
     return QModelIndexList();
   }
-  // QAbstractItemModel::match doesn't browse through columns, we need to do it manually
-  QModelIndexList shItemIndexes = this->match(scene, qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole, QVariant(qlonglong(itemID)), 1, Qt::MatchExactly | Qt::MatchRecursive);
-  if (shItemIndexes.size() != 1)
-  {
-    return QModelIndexList(); // If 0 it's empty, if >1 it's invalid (one item for each UID)
-  }
   // Add the QModelIndexes from the other columns
-  const int row = shItemIndexes[0].row();
-  QModelIndex shItemParentIndex = shItemIndexes[0].parent();
+  QModelIndexList shItemIndexes;
+  shItemIndexes << itemIndex;
+  const int row = itemIndex.row();
+  QModelIndex shItemParentIndex = itemIndex.parent();
   const int sceneColumnCount = this->columnCount(shItemParentIndex);
   for (int col = 1; col < sceneColumnCount; ++col)
   {
@@ -779,7 +964,11 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
 {
   Q_D(qMRMLSubjectHierarchyModel);
 
+  d->RebuildPending = false;
+  d->PendingItemUpdates.clear();
+  d->ItemsAddedInBatch.clear();
   d->RowCache.clear();
+  d->RebuildSubjectHierarchyMTime = (d->SubjectHierarchyNode ? d->SubjectHierarchyNode->GetMTime() : 0);
 
   // Enabled so it can be interacted with
   this->invisibleRootItem()->setFlags(Qt::ItemIsEnabled);
@@ -811,15 +1000,15 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
     }
     sceneItem->setColumnCount(this->columnCount());
 
-    d->RowCache[sceneItemID] = QModelIndex(); // Insert invalid item in cache to indicate that item is in the model but its index is unknown
+    // The scene item is added to the RowCache when the row is inserted
     this->insertRow(0, sceneItems);
-    d->RowCache[sceneItemID] = sceneItem->index();
   }
   else
   {
-    // Update the scene item index in case subject hierarchy node has changed
-    this->subjectHierarchySceneItem()->setData(QVariant::fromValue(d->SubjectHierarchyNode->GetSceneItemID()), qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
-    d->RowCache[d->SubjectHierarchyNode->GetSceneItemID()] = this->subjectHierarchySceneItem()->index();
+    // Update the scene item ID in case subject hierarchy node has changed
+    QStandardItem* sceneItem = this->subjectHierarchySceneItem();
+    sceneItem->setData(QVariant::fromValue(d->SubjectHierarchyNode->GetSceneItemID()), qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
+    d->RowCache[d->SubjectHierarchyNode->GetSceneItemID()] = sceneItem;
   }
 
   if (!this->subjectHierarchySceneItem())
@@ -854,24 +1043,54 @@ void qMRMLSubjectHierarchyModel::rebuildFromSubjectHierarchy()
     this->subjectHierarchySceneItem()->insertRow(0, items);
   }
 
-  // Populate subject hierarchy with the items
+  // Populate subject hierarchy with the items.
+  // All the model items are created detached from the model, children are appended to their (detached) parent item,
+  // and only the top-level rows are inserted in the model, in a single step. Inserting the items one by one
+  // would make the proxy models and views process each insertion separately (which takes a very long
+  // time for large scenes, especially with the many expand/collapse requests interleaved).
+  const vtkIdType sceneItemID = d->SubjectHierarchyNode->GetSceneItemID();
   std::vector<vtkIdType> allItemIDs;
-  d->SubjectHierarchyNode->GetItemChildren(d->SubjectHierarchyNode->GetSceneItemID(), allItemIDs, true);
-  for (std::vector<vtkIdType>::iterator itemIt = allItemIDs.begin(); itemIt != allItemIDs.end(); ++itemIt)
+  // Items are returned in depth-first order (parents before their children, siblings in the order they are in
+  // the subject hierarchy), therefore appending each item to its parent results in the correct order.
+  d->SubjectHierarchyNode->GetItemChildren(sceneItemID, allItemIDs, true);
+  QHash<vtkIdType, QStandardItem*> createdItems; // column 0 item of each created row
+  QList<QList<QStandardItem*>> topLevelRows;     // rows of the direct children of the scene item
   {
-    vtkIdType itemID = (*itemIt);
-    int index = this->subjectHierarchyItemIndex(itemID);
-    d->insertSubjectHierarchyItem(itemID, index);
+    // Expand/collapse requests are emitted after the items are inserted in the model (see below)
+    d->SuppressExpandRequests = true;
+    for (const vtkIdType itemID : allItemIDs)
+    {
+      if (createdItems.contains(itemID))
+      {
+        continue;
+      }
+      QList<QStandardItem*> row = d->createItemRow(itemID);
+      createdItems[itemID] = row[0];
+      vtkIdType parentItemID = d->SubjectHierarchyNode->GetItemParent(itemID);
+      QStandardItem* parentItem = (parentItemID == sceneItemID ? nullptr : createdItems.value(parentItemID, nullptr));
+      if (parentItem)
+      {
+        // Parent item is not in the model yet, therefore no signals are emitted
+        parentItem->appendRow(row);
+      }
+      else
+      {
+        topLevelRows << row;
+      }
+    }
+    d->SuppressExpandRequests = false;
   }
 
-  // Update expanded states (during inserting the update calls did not find valid indices, so
-  // expand and collapse statuses were not set in the tree view)
-  for (std::vector<vtkIdType>::iterator itemIt = allItemIDs.begin(); itemIt != allItemIDs.end(); ++itemIt)
+  // Insert the top-level rows (with all their children) in the model in one step.
+  // The items are added to the RowCache from the rowsInserted signal.
+  QStandardItem* sceneItem = this->subjectHierarchySceneItem();
+  qMRMLItemModelUtils::insertRows(sceneItem, sceneItem->rowCount(), topLevelRows);
+
+  // Update expanded states in the views (expand requests could not be processed while creating the items,
+  // as the items were not in the model yet)
+  for (const vtkIdType itemID : allItemIDs)
   {
-    vtkIdType itemID = (*itemIt);
-    // Expanded states are handled with the name column
-    QStandardItem* item = this->itemFromSubjectHierarchyItem(itemID, this->nameColumn());
-    this->updateItemDataFromSubjectHierarchyItem(item, itemID, this->nameColumn());
+    d->requestExpandedState(itemID, true);
   }
 
   emit subjectHierarchyUpdated();
@@ -919,18 +1138,15 @@ QStandardItem* qMRMLSubjectHierarchyModel::insertSubjectHierarchyItem(vtkIdType 
     return nullptr;
   }
 
-  QList<QStandardItem*> items;
-  for (int col = 0; col < this->columnCount(); ++col)
-  {
-    QStandardItem* newItem = new QStandardItem();
-    this->updateItemFromSubjectHierarchyItem(newItem, itemID, col);
-    items.append(newItem);
-  }
+  // Expand/collapse requests cannot be processed by the views before the item is inserted,
+  // the request is emitted after insertion (see below)
+  const bool wereExpandRequestsSuppressed = d->SuppressExpandRequests;
+  d->SuppressExpandRequests = true;
+  QList<QStandardItem*> items = d->createItemRow(itemID);
+  d->SuppressExpandRequests = wereExpandRequestsSuppressed;
 
-  // Insert an invalid item in the cache to indicate that the subject hierarchy item is in the
-  // model but we don't know its index yet. This is needed because a custom widget may be notified
-  // about row insertion before insertRow() returns (and the RowCache entry is added).
-  d->RowCache[itemID] = QModelIndex();
+  // The item is added to the RowCache from the rowsInserted signal, before any other object
+  // (e.g., a custom widget) is notified about the row insertion
   if (row >= 0)
   {
     parent->insertRow(row, items);
@@ -939,7 +1155,9 @@ QStandardItem* qMRMLSubjectHierarchyModel::insertSubjectHierarchyItem(vtkIdType 
   {
     parent->appendRow(items);
   }
-  d->RowCache[itemID] = items[0]->index();
+
+  // Update expanded state in the views
+  d->requestExpandedState(itemID, true);
 
   return items[0];
 }
@@ -1031,6 +1249,19 @@ void qMRMLSubjectHierarchyModel::updateItemFromSubjectHierarchyItem(QStandardIte
         // Reparent items
         QList<QStandardItem*> children = parentItem->takeRow(item->row());
         newParentItem->insertRow(newIndex, children);
+        // Views lose the expanded state of the moved items (the model indexes are invalidated when the row
+        // is taken out of the model, so the moved rows are collapsed), therefore the expanded state is requested
+        // again for the whole branch
+        if (!d->SuppressExpandRequests)
+        {
+          d->requestExpandedState(shItemID, true);
+          std::vector<vtkIdType> childItemIDs;
+          d->SubjectHierarchyNode->GetItemChildren(shItemID, childItemIDs, true);
+          for (const vtkIdType childItemID : childItemIDs)
+          {
+            d->requestExpandedState(childItemID, true);
+          }
+        }
       }
     }
   }
@@ -1123,14 +1354,19 @@ void qMRMLSubjectHierarchyModel::updateItemDataFromSubjectHierarchyItem(QStandar
       item->setIcon(d->UnknownIcon);
     }
 
-    // Set expanded state (in the name column so that it is only processed once for each item)
-    if (d->SubjectHierarchyNode->GetItemExpanded(shItemID))
+    // Set expanded state (in the name column so that it is only processed once for each item).
+    // The state is only requested if it has changed since the last request, because each request makes the views
+    // update their layout. The requested state is stored without notifying the views (it is internal data).
+    const bool expanded = d->SubjectHierarchyNode->GetItemExpanded(shItemID);
+    const QVariant requestedExpanded = item->data(ExpandedStateRequestedRole);
+    if (!requestedExpanded.isValid() || requestedExpanded.toBool() != expanded)
     {
-      emit requestExpandItem(shItemID);
-    }
-    else
-    {
-      emit requestCollapseItem(shItemID);
+      const bool wasBlocked = this->blockSignals(true);
+      item->setData(expanded, ExpandedStateRequestedRole);
+      this->blockSignals(wasBlocked);
+      // If the row is being created (expand requests are suppressed) then the state is requested after
+      // the row is inserted in the model
+      d->requestExpandedState(shItemID, false);
     }
   }
   // Description column
@@ -1513,8 +1749,14 @@ void qMRMLSubjectHierarchyModel::updateSubjectHierarchyItemFromItemData(vtkIdTyp
 void qMRMLSubjectHierarchyModel::updateModelItems(vtkIdType itemID)
 {
   Q_D(qMRMLSubjectHierarchyModel);
-  if (d->MRMLScene->IsClosing() || d->MRMLScene->IsBatchProcessing())
+  if (d->MRMLScene->IsClosing())
   {
+    return;
+  }
+  if (d->isBatchProcessing())
+  {
+    // The item is updated when the batch processing ends
+    d->PendingItemUpdates.insert(itemID);
     return;
   }
 
@@ -1584,6 +1826,28 @@ void qMRMLSubjectHierarchyModel::onEvent(vtkObject* caller, unsigned long event,
 
   switch (event)
   {
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemModifiedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemTransformModifiedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemReparentedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemDisplayModifiedEvent:
+    case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemChildrenReorderedEvent:
+      if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+      {
+        // Item events are compressed (and invoked without item ID) if they are invoked while the subject hierarchy
+        // node is being modified (between StartModify and EndModify)
+        sceneModel->d_func()->onItemEventWithoutItemID();
+        return;
+      }
+      break;
+    default: break;
+  }
+
+  switch (event)
+  {
+    case vtkCommand::ModifiedEvent: sceneModel->onSubjectHierarchyNodeModified(); break;
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAddedEvent: sceneModel->onSubjectHierarchyItemAdded(itemID); break;
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemAboutToBeRemovedEvent: sceneModel->onSubjectHierarchyItemAboutToBeRemoved(itemID); break;
     case vtkMRMLSubjectHierarchyNode::SubjectHierarchyItemRemovedEvent: sceneModel->onSubjectHierarchyItemRemoved(itemID); break;
@@ -1601,8 +1865,34 @@ void qMRMLSubjectHierarchyModel::onEvent(vtkObject* caller, unsigned long event,
 }
 
 //------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyModel::onSubjectHierarchyNodeModified()
+{
+  Q_D(qMRMLSubjectHierarchyModel);
+  // The subject hierarchy node invokes ModifiedEvent after each item event, so changes that are reported
+  // by item events must not trigger a rebuild (that would make almost every batch processing end with a rebuild
+  // instead of updating only the modified items).
+  // The only change that is not reported by item events is replacing the content of the node when a scene view
+  // is restored (see vtkMRMLSubjectHierarchyNode::Copy). Restoring is always done in batch processing state,
+  // so the model is rebuilt when the batch processing ends.
+  if (d->MRMLScene && d->MRMLScene->IsRestoring() && !d->MRMLScene->IsClosing() && d->isBatchProcessing())
+  {
+    d->RebuildPending = true;
+  }
+}
+
+//------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemAdded(vtkIdType itemID)
 {
+  Q_D(qMRMLSubjectHierarchyModel);
+  if (d->isBatchProcessing())
+  {
+    // Many items may be added while the scene is batch processing (e.g. when a scene is imported).
+    // Instead of inserting the items one by one, the whole model is rebuilt when the batch processing ends.
+    // The item is inserted earlier if it is looked up (see indexFromSubjectHierarchyItem).
+    d->RebuildPending = true;
+    d->ItemsAddedInBatch.insert(itemID);
+    return;
+  }
   this->insertSubjectHierarchyItem(itemID);
 }
 
@@ -1610,15 +1900,22 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemAdded(vtkIdType itemID)
 void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID)
 {
   Q_D(qMRMLSubjectHierarchyModel);
-  if (d->MRMLScene->IsClosing() || d->MRMLScene->IsBatchProcessing())
+  if (d->MRMLScene->IsClosing() || d->isBatchProcessing())
   {
+    d->RebuildPending = true;
+    d->ItemsAddedInBatch.erase(itemID);
+    // The item is not removed from the model until it is rebuilt, but it must not be found anymore
+    d->RowCache.remove(itemID);
     return;
   }
 
-  QModelIndexList itemIndexes = this->match(this->subjectHierarchySceneIndex(), SubjectHierarchyItemIDRole, itemID, 1, Qt::MatchExactly | Qt::MatchRecursive);
-  if (itemIndexes.count() > 0)
+  // The item is looked up in the cache directly (and not using indexFromSubjectHierarchyItem)
+  // to prevent inserting the item that is about to be removed
+  d->ItemsAddedInBatch.erase(itemID);
+  QStandardItem* item = d->RowCache.value(itemID, nullptr);
+  QModelIndex itemIndex = (item ? item->index() : QModelIndex());
+  if (itemIndex.isValid())
   {
-    QStandardItem* item = this->itemFromIndex(itemIndexes[0].sibling(itemIndexes[0].row(), 0));
     // The children may be lost if not reparented, we ensure they got reparented.
     while (item->rowCount())
     {
@@ -1633,7 +1930,7 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemAboutToBeRemoved(vtkIdTyp
         d->Orphans.removeAll(orphans);
       }
     }
-    this->removeRow(itemIndexes[0].row(), itemIndexes[0].parent());
+    this->removeRow(itemIndex.row(), itemIndex.parent());
   }
 }
 
@@ -1642,8 +1939,9 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
 {
   Q_D(qMRMLSubjectHierarchyModel);
   Q_UNUSED(removedItemID);
-  if (d->MRMLScene->IsClosing() || d->MRMLScene->IsBatchProcessing())
+  if (d->MRMLScene->IsClosing() || d->isBatchProcessing())
   {
+    d->RebuildPending = true;
     return;
   }
   // The removed item may have had children, if they haven't been updated, they are likely to be lost
@@ -1678,6 +1976,14 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemRemoved(vtkIdType removed
 void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemModified(vtkIdType itemID)
 {
   Q_D(qMRMLSubjectHierarchyModel);
+
+  if (d->isBatchProcessing())
+  {
+    // The model items are updated when the batch processing ends. The item is not looked up here,
+    // because that would insert items that were added during the batch processing one by one.
+    this->updateModelItems(itemID);
+    return;
+  }
 
   // Snapshot both the item's own visibility and its parent-hidden state before
   // the update so we can detect either kind of change afterwards.
@@ -1748,8 +2054,9 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemChildrenReordered(vtkIdTy
   // reorder child items of itemID to match order of child items in the SH node
 
   Q_D(qMRMLSubjectHierarchyModel);
-  if (d->MRMLScene->IsClosing() || d->MRMLScene->IsBatchProcessing())
+  if (d->MRMLScene->IsClosing() || d->isBatchProcessing())
   {
+    d->RebuildPending = true;
     return;
   }
 
@@ -1840,7 +2147,7 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemChildrenReordered(vtkIdTy
   }
 
   // Sort the child rows. This emits a single layout change, which proxy models and views can process
-  // efficiently, and it keeps persistent model indexes (such as the RowCache) valid.
+  // efficiently, and it keeps persistent model indexes (such as the selection in views) valid.
   // Only the direct children have sorting keys set, and the sort is stable, therefore
   // the order of grandchildren does not change (even though sortChildren is recursive).
   newParentItem->sortChildren(0);
@@ -1860,7 +2167,14 @@ void qMRMLSubjectHierarchyModel::onSubjectHierarchyItemChildrenReordered(vtkIdTy
 void qMRMLSubjectHierarchyModel::onMRMLSceneImported(vtkMRMLScene* scene)
 {
   Q_UNUSED(scene);
-  this->rebuildFromSubjectHierarchy();
+  Q_D(qMRMLSubjectHierarchyModel);
+  // The model is rebuilt here (and not only when the batch processing ends, which always follows the end of
+  // the import) so that other observers of the scene import can already use the updated model.
+  d->validateAfterBatchProcessing();
+  if (d->RebuildPending)
+  {
+    this->rebuildFromSubjectHierarchy();
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -1880,6 +2194,8 @@ void qMRMLSubjectHierarchyModel::onMRMLSceneClosed(vtkMRMLScene* scene)
 void qMRMLSubjectHierarchyModel::onMRMLSceneStartBatchProcess(vtkMRMLScene* scene)
 {
   Q_UNUSED(scene);
+  Q_D(qMRMLSubjectHierarchyModel);
+  d->BatchProcessing = true;
   emit subjectHierarchyAboutToBeUpdated();
 }
 
@@ -1887,7 +2203,24 @@ void qMRMLSubjectHierarchyModel::onMRMLSceneStartBatchProcess(vtkMRMLScene* scen
 void qMRMLSubjectHierarchyModel::onMRMLSceneEndBatchProcess(vtkMRMLScene* scene)
 {
   Q_UNUSED(scene);
-  this->rebuildFromSubjectHierarchy();
+  Q_D(qMRMLSubjectHierarchyModel);
+  d->BatchProcessing = false;
+  // Only rebuild if the structure of the subject hierarchy was changed during the batch processing
+  // (the changes were not applied to the model one by one)
+  d->validateAfterBatchProcessing();
+  if (d->RebuildPending)
+  {
+    this->rebuildFromSubjectHierarchy();
+    return;
+  }
+  // Update the items that were modified during the batch processing.
+  // The model is not rebuilt (that would reset the scroll position, selection, and cell widgets in the views).
+  std::set<vtkIdType> pendingItemUpdates;
+  pendingItemUpdates.swap(d->PendingItemUpdates);
+  for (const vtkIdType itemID : pendingItemUpdates)
+  {
+    this->onSubjectHierarchyItemModified(itemID);
+  }
 }
 
 //------------------------------------------------------------------------------

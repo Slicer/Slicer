@@ -119,6 +119,9 @@ public:
     GeneratedColorRole,
     /// Position of the item among its siblings. Only used temporarily, for reordering child items.
     ChildOrderRole,
+    /// Expanded state of the item that the views were last requested to show (in the name column).
+    /// Used for requesting the expanded state only when it changes.
+    ExpandedStateRequestedRole,
     /// Must stay the last enum in the list.
     LastRole
   };
@@ -212,6 +215,9 @@ public slots:
   void onHardenTransformOnBranchOfCurrentItem();
 
 protected slots:
+  /// Called when the subject hierarchy node is modified. If the scene is batch processing then
+  /// it requests rebuilding the model when the batch processing ends.
+  virtual void onSubjectHierarchyNodeModified();
   virtual void onSubjectHierarchyItemAdded(vtkIdType itemID);
   virtual void onSubjectHierarchyItemAboutToBeRemoved(vtkIdType itemID);
   virtual void onSubjectHierarchyItemRemoved(vtkIdType itemID);

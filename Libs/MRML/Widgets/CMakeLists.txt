@@ -94,6 +94,8 @@ set(MRMLWidgets_SRCS
   qMRMLEventLoggerWidget.h
   qMRMLItemDelegate.cxx
   qMRMLItemDelegate.h
+  qMRMLItemModelUtils.cxx
+  qMRMLItemModelUtils.h
   qMRMLLayoutManager.cxx
   qMRMLLayoutManager.h
   qMRMLLayoutManager_p.h
