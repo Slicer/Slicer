@@ -2801,14 +2801,32 @@ def arrayFromTableColumnModified(tableNode, columnName):
 
 def _vtkArrayFromNumpyArray(narray, deep=False, arrayType=None):
     """
-    Convert a NumPy array into a VTK-compatible array, with special handling for ``VTK_BIT`` arrays.
+    Convert a NumPy array into a VTK-compatible array, with special handling for ``VTK_BIT`` and ``VTK_STRING`` arrays.
 
     When ``arrayType`` is set to ``vtk.VTK_BIT``, this function works around an existing issue in
     the built-in VTK helper ``vtk.util.numpy_support.numpy_to_vtk.numpy_to_vtk`` by manually packing
     the bits. See https://gitlab.kitware.com/vtk/vtk/-/issues/19610
+
+    When ``arrayType`` is set to ``vtk.VTK_STRING``, the values (``str``, or ``bytes`` in UTF-8) are
+    copied into a ``vtkStringArray``, which ``numpy_to_vtk`` does not support. The values are always
+    copied, regardless of ``deep``.
     """
     import numpy as np
     import vtk.util.numpy_support
+
+    if arrayType == vtk.VTK_STRING:
+        resultArray = vtk.vtkStringArray()
+        resultArray.SetNumberOfValues(len(narray))
+        for valueIndex, value in enumerate(narray.tolist()):
+            if isinstance(value, str):
+                # Pass UTF-8 bytes: VTK aborts the process for a str that cannot be encoded as UTF-8
+                value = value.encode()
+            elif isinstance(value, bytes):
+                value.decode()  # raises UnicodeDecodeError if the value is not valid UTF-8
+            else:
+                raise TypeError(f"Expected str or bytes values for a string column, got {type(value).__name__}")
+            resultArray.SetValue(valueIndex, value)
+        return resultArray
 
     if arrayType == vtk.VTK_BIT:
         # Workaround issue with built-in VTK function numpy_to_vtk.
@@ -2857,12 +2875,14 @@ def updateTableFromArray(tableNode, narrays, columnNames=None, setBoolAsUchar=Fa
     :type setBoolAsUchar: bool
     :return: Updated ``vtkMRMLTableNode``.
     :raises ValueError: If the input ``narrays`` is not a recognized format.
+    :raises TypeError: If an ``object`` array contains values that are not ``str`` or ``bytes``.
 
     This function automatically detects the data type of each input array using
     ``vtk.util.numpy_support.get_vtk_array_type`` and maps it to the corresponding VTK array type. As a
     result, a broader range of numeric and complex data (e.g., int, float, and complex) is supported
-    without requiring manual conversions. All existing columns in the target table node are removed
-    before adding new columns.
+    without requiring manual conversions. Arrays of strings (``str`` or UTF-8 ``bytes`` values, also in
+    an ``object`` or ``StringDType`` array) are stored as ``vtkStringArray`` columns. All existing
+    columns in the target table node are removed before adding new columns.
 
     .. warning:: Data in the table node is stored by value (deep copy). Modifying the NumPy array after calling
         this function does not update the table node's data.
@@ -2915,6 +2935,8 @@ def updateTableFromArray(tableNode, narrays, columnNames=None, setBoolAsUchar=Fa
     # For each extracted column, convert to a VTK array and add to the table.
     for columnIndex, ncolumn in enumerate(ncolumns):
         vtype = None
+        if ncolumn.dtype.kind in ("U", "S", "O", "T"):
+            vtype = vtk.VTK_STRING
         if ncolumn.dtype == np.bool_:
             if setBoolAsUchar:
                 # Convert boolean arrays to uint to ensure compatibility with VTK plotting infrastructure:
