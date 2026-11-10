@@ -97,6 +97,21 @@ public:
   /// False by default.
   Q_PROPERTY(bool showEffectCursorInThreeDView READ showEffectCursorInThreeDView WRITE setShowEffectCursorInThreeDView)
 
+  /// If this property is set to true then, while the effect is active, mouse move events (without modifier keys)
+  /// in slice views are captured by the segment editor: objects displayed in the view (such as markups control points
+  /// or slice intersection handles) are not notified when the mouse hovers over them, therefore they are not highlighted
+  /// and they do not change the mouse cursor. Interactions that are already in progress (e.g., panning the view by
+  /// click-and-drag) are not affected.
+  /// It is recommended to enable it in effects that handle mouse interactions in slice views themselves, so that
+  /// hovering over other objects does not suggest that they can be interacted with.
+  /// The value is applied when the effect is activated.
+  /// False by default.
+  Q_PROPERTY(bool captureMouseMoveEventsInSliceView READ captureMouseMoveEventsInSliceView WRITE setCaptureMouseMoveEventsInSliceView)
+
+  /// Same as captureMouseMoveEventsInSliceView, but for 3D views.
+  /// False by default.
+  Q_PROPERTY(bool captureMouseMoveEventsInThreeDView READ captureMouseMoveEventsInThreeDView WRITE setCaptureMouseMoveEventsInThreeDView)
+
 public:
   typedef QObject Superclass;
   qSlicerSegmentEditorAbstractEffect(QObject* parent = nullptr);
@@ -416,6 +431,12 @@ public:
   bool showEffectCursorInSliceView();
   bool showEffectCursorInThreeDView();
 
+  void setCaptureMouseMoveEventsInSliceView(bool capture);
+  void setCaptureMouseMoveEventsInThreeDView(bool capture);
+
+  bool captureMouseMoveEventsInSliceView();
+  bool captureMouseMoveEventsInThreeDView();
+
   /// Get image data of source volume aligned with the modifier labelmap.
   /// \return Pointer to the image data
   Q_INVOKABLE vtkOrientedImageData* sourceVolumeImageData();
@@ -488,6 +509,8 @@ protected:
 
   bool m_ShowEffectCursorInSliceView{ true };
   bool m_ShowEffectCursorInThreeDView{ false };
+  bool m_CaptureMouseMoveEventsInSliceView{ false };
+  bool m_CaptureMouseMoveEventsInThreeDView{ false };
 
   double m_FillValue{ 1.0 };
   double m_EraseValue{ 0.0 };

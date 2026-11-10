@@ -26,6 +26,8 @@
 
 #include "vtkSlicerSegmentationsModuleMRMLDisplayableManagerExport.h"
 
+class vtkMRMLInteractionEventData;
+
 /// \brief Display segmentations in 3D views
 ///
 /// Displays poly data representations of segmentations in 3D viewers
@@ -47,12 +49,34 @@ public:
   /// Get the MRML ID of the picked node, returns empty string if no pick
   const char* GetPickedNodeID() override;
 
+  // @{
+  /// If enabled then this displayable manager claims all mouse move events that are received without
+  /// modifier keys (Shift, Ctrl, Alt) with zero distance. Therefore, other displayable managers do not get
+  /// the focus when the mouse hovers over objects in the view (such as markups control points), so these
+  /// objects are not highlighted and they do not change the mouse cursor.
+  /// Interactions that are already in progress (e.g., rotating the view by click-and-drag) are not affected.
+  /// Segment editor effects enable it to indicate that they handle mouse interactions in the view.
+  /// Disabled by default.
+  vtkSetMacro(CaptureMouseMoveEvents, bool);
+  vtkGetMacro(CaptureMouseMoveEvents, bool);
+  vtkBooleanMacro(CaptureMouseMoveEvents, bool);
+  // @}
+
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2) override;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
+
   /// Get the ID of the picked segment, returns empty string if no pick
   virtual const char* GetPickedSegmentID();
 
 protected:
   vtkMRMLSegmentationsDisplayableManager3D();
   ~vtkMRMLSegmentationsDisplayableManager3D() override;
+
+  /// Returns true if the event is a mouse move event that this displayable manager captures.
+  /// \sa CaptureMouseMoveEvents
+  bool IsCapturedMouseMoveEvent(vtkMRMLInteractionEventData* eventData);
+
+  bool CaptureMouseMoveEvents{ false };
 
   void UnobserveMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;

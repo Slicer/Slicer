@@ -26,6 +26,7 @@
 
 #include "vtkSlicerSegmentationsModuleMRMLDisplayableManagerExport.h"
 
+class vtkMRMLInteractionEventData;
 class vtkMRMLSegmentationDisplayNode;
 class vtkStringArray;
 class vtkDoubleArray;
@@ -77,6 +78,22 @@ public:
   std::string GetCustomSegmentRendererSegmentID(int index);
   // @}
 
+  // @{
+  /// If enabled then this displayable manager claims all mouse move events that are received without
+  /// modifier keys (Shift, Ctrl, Alt) with zero distance. Therefore, other displayable managers do not get
+  /// the focus when the mouse hovers over objects in the view (such as markups control points or slice
+  /// intersection handles), so these objects are not highlighted and they do not change the mouse cursor.
+  /// Interactions that are already in progress (e.g., panning the view by click-and-drag) are not affected.
+  /// Segment editor effects enable it to indicate that they handle mouse interactions in the view.
+  /// Disabled by default.
+  vtkSetMacro(CaptureMouseMoveEvents, bool);
+  vtkGetMacro(CaptureMouseMoveEvents, bool);
+  vtkBooleanMacro(CaptureMouseMoveEvents, bool);
+  // @}
+
+  bool CanProcessInteractionEvent(vtkMRMLInteractionEventData* eventData, double& closestDistance2) override;
+  bool ProcessInteractionEvent(vtkMRMLInteractionEventData* eventData) override;
+
 protected:
   void UnobserveMRMLScene() override;
   void OnMRMLSceneNodeAdded(vtkMRMLNode* node) override;
@@ -97,6 +114,12 @@ protected:
 protected:
   vtkMRMLSegmentationsDisplayableManager2D();
   ~vtkMRMLSegmentationsDisplayableManager2D() override;
+
+  /// Returns true if the event is a mouse move event that this displayable manager captures.
+  /// \sa CaptureMouseMoveEvents
+  bool IsCapturedMouseMoveEvent(vtkMRMLInteractionEventData* eventData);
+
+  bool CaptureMouseMoveEvents{ false };
 
 private:
   vtkMRMLSegmentationsDisplayableManager2D(const vtkMRMLSegmentationsDisplayableManager2D&) = delete;
