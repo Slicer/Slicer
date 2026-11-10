@@ -21,3 +21,29 @@ jobs:
       - uses: Slicer/slicer-check-commit-message-action@26db1d4a0580194025a00bff6f5c24a88c0efb9f # v1.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Reject LLM co-authorship
+        uses: gsactions/commit-message-checker@16fa2d5de096ae0d35626443bcd24f1e756cafee # v2.0.0
+        with:
+          # Reject known assistant names and bot emails in Co-authored-by lines.
+          # Match whole names so human contributors such as Claude Shannon pass.
+          # Keep the start anchor absolute: multiline mode would allow a later
+          # line to match even when the message contains a forbidden co-author.
+          pattern:
+            "^(?![\\s\\S]*(?:^|[\\r\\n])[ \\t]*Co-authored-by[ \\t]*:[ \\t]*\
+            (?:(?:Claude(?:[ \\t]+(?:Code|Opus|Sonnet|Haiku))?|(?:OpenAI[ \\t]+)?(?:ChatGPT|Codex)|\
+            (?:GitHub[ \\t]+)?Copilot|(?:Google[ \\t]+)?Gemini(?:[ \\t]+(?:CLI|Code[ \\t]+Assist))?|\
+            Cursor(?:[ \\t]+Agent)?|Devin|Aider|Codeium|Windsurf)\
+            (?:[ \\t]+[0-9.]+)?[ \\t]*(?:<|[\\r\\n]|$)|\
+            [^\\r\\n]*<(?:noreply@(?:anthropic|openai)\\.com|copilot@github\\.com|cursoragent@cursor\\.com|\
+            (?:[0-9]+\\+)?(?:copilot|gemini-code-assist)(?:\\[bot\\])?@users\\.noreply\\.github\\.com)>))"
+          flags: "i"
+          error: >-
+            Do not list LLMs or AI coding assistants as git co-authors.
+            Remove their Co-authored-by trailers and disable automatic AI
+            co-author attribution in your tools. Human co-authors are welcome.
+            See https://slicer.readthedocs.io/en/latest/developer_guide/contributing.html#how-to-write-commit-messages
+          excludeDescription: "true"
+          excludeTitle: "true"
+          checkAllCommitMessages: "true"
+          accessToken: ${{ secrets.GITHUB_TOKEN }}
