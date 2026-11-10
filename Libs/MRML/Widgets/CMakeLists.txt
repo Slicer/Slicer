@@ -370,6 +370,7 @@ set(MRMLWidgets_LIBRARIES
   MRMLLogic
   MRMLDisplayableManager
   VTK::RenderingQt
+  VTK::IOExportGL2PS
   )
 
 target_link_libraries(${lib_name} ${MRMLWidgets_LIBRARIES})

@@ -5,8 +5,6 @@ set(KIT ${PROJECT_NAME})
 set(${KIT}_EXPORT_DIRECTIVE "Q_SLICER_MODULE_${MODULE_NAME_UPPER}_WIDGETS_EXPORT")
 
 set(${KIT}_INCLUDE_DIRECTORIES
-  ${vtkSlicer${MODULE_NAME}ModuleLogic_SOURCE_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleLogic_BINARY_DIR}
   )
 
 set(${KIT}_SRCS
@@ -26,6 +24,7 @@ set(${KIT}_RESOURCES
   )
 
 set(${KIT}_TARGET_LIBRARIES
+  vtkSlicer${MODULE_NAME}ModuleLogic
   )
 
 #-----------------------------------------------------------------------------

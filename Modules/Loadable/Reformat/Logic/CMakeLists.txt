@@ -1,26 +1,13 @@
-project(vtkSlicer${MODULE_NAME}ModuleLogic)
+set(classes vtkSlicerReformatLogic)
 
-set(KIT ${PROJECT_NAME})
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerReformatModuleLogicExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT")
-
-set(${KIT}_INCLUDE_DIRECTORIES
-  )
-
-set(${KIT}_SRCS
-  vtkSlicer${MODULE_NAME}Logic.cxx
-  vtkSlicer${MODULE_NAME}Logic.h
-  )
-
-set(${KIT}_TARGET_LIBRARIES
-  ${ITK_LIBRARIES}
-  )
-
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleLogic(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
-  )
+vtk_module_add_module(Slicer::ReformatModuleLogic
+  EXPORT_MACRO_PREFIX VTK_SLICER_REFORMAT_MODULE_LOGIC
+  CLASSES ${classes}
+  HEADERS ${wrapper_header_file}
+  EXCLUDE_HEADER_TEST
+)

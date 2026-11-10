@@ -1,188 +1,60 @@
-project(MRMLLogic)
-
-#-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.28.0...3.28.0 FATAL_ERROR)
-#-----------------------------------------------------------------------------
-
-# --------------------------------------------------------------------------
-# Options
-# --------------------------------------------------------------------------
-if(NOT DEFINED BUILD_SHARED_LIBS)
-  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif()
-
 # --------------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------------
 
-#
-# VTK
-#
-if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
-  message(FATAL_ERROR "Since Slicer_USE_PYTHONQT is ON, VTK_WRAP_PYTHON is expected to be ON. "
-                      "Re-configure VTK with python wrapping.")
-endif()
-
+vtk_module_find_package(
+  PACKAGE ITK
+  COMPONENTS
+    ITKCommon
+)
+include(${ITK_USE_FILE})
 
 # --------------------------------------------------------------------------
-# Include dirs
+# Configure headers
 # --------------------------------------------------------------------------
-set(include_dirs
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRMLCore_INCLUDE_DIRS}
-  ${vtkTeem_INCLUDE_DIRS}
-  ${RemoteIO_INCLUDE_DIRS}
-  )
-include_directories(${include_dirs})
-
-# --------------------------------------------------------------------------
-# Install headers
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-endif()
-if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  install(
-    FILES ${headers} ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
-    DESTINATION include/${PROJECT_NAME} COMPONENT Development)
-endif()
-
-# --------------------------------------------------------------------------
-# Sources
-# --------------------------------------------------------------------------
-set(MRMLLogic_SRCS
-  vtkMRMLAbstractLogic.cxx
-  vtkMRMLApplicationLogic.cxx
-  vtkMRMLModuleLogic.cxx
-  vtkMRMLFileIOHandler.cxx
-  vtkMRMLFileIOManager.cxx
-  vtkMRMLFileReader.cxx
-  vtkMRMLFileWriter.cxx
-  vtkMRMLIOOptionsDescription.cxx
-  vtkMRMLIOProperties.cxx
-  vtkMRMLOperationProgress.cxx
-  vtkMRMLNodeWriter.cxx
-  vtkMRMLSceneBundleReader.cxx
-  vtkMRMLColorLogic.cxx
-  vtkMRMLDisplayableHierarchyLogic.cxx
-  vtkMRMLRemoteIOLogic.cxx
-  vtkMRMLLayoutLogic.cxx
-  vtkMRMLSliceLayerLogic.cxx
-  vtkMRMLSliceLogic.cxx
-  vtkMRMLSliceLinkLogic.cxx
-  vtkMRMLViewLogic.cxx
-  vtkMRMLViewLinkLogic.cxx
-
-  # slicer's vtk extensions (filters)
-  vtkImageLabelOutline.cxx
-  vtkImageNeighborhoodFilter.cxx
-  )
-
-# set hints for tcl and python
-set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
-
-# --------------------------------------------------------------------------
-# Build library
-# --------------------------------------------------------------------------
-set(lib_name ${PROJECT_NAME})
-
-set(srcs ${MRMLLogic_SRCS})
-add_library(${lib_name} ${srcs})
-
-set(libs
-  MRMLCore
-  vtkTeem
-  RemoteIO
-  ${VTK_LIBRARIES}
-  )
-
-target_link_libraries(${lib_name} ${libs})
-
-# Apply user-defined properties to the library target.
-if(Slicer_LIBRARY_PROPERTIES)
-  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-endif()
-
-# --------------------------------------------------------------------------
-# Generate export header
-# --------------------------------------------------------------------------
-include(GenerateExportHeader)
-generate_export_header(${lib_name}
-  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/vtkMRMLLogicExport.h
-  EXPORT_MACRO_NAME VTK_MRML_LOGIC_EXPORT
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkMRMLLogicExport.h"
+  OUTPUT_VAR wrapper_header_file
 )
 
-# --------------------------------------------------------------------------
-# Folder
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_FOLDER)
-  set(${PROJECT_NAME}_FOLDER ${PROJECT_NAME})
-endif()
-if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
-  set_target_properties(${lib_name} PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-endif()
+set(classes
+  vtkMRMLAbstractLogic
+  vtkMRMLApplicationLogic
+  vtkMRMLColorLogic
+  vtkMRMLDisplayableHierarchyLogic
+  vtkMRMLRemoteIOLogic
+  vtkMRMLLayoutLogic
+  vtkMRMLSliceLayerLogic
+  vtkMRMLSliceLogic
+  vtkMRMLSliceLinkLogic
+  vtkMRMLViewLogic
+  vtkMRMLViewLinkLogic
+  vtkMRMLModuleLogic
+  vtkMRMLFileIOHandler
+  vtkMRMLFileIOManager
+  vtkMRMLFileReader
+  vtkMRMLFileWriter
+  vtkMRMLIOOptionsDescription
+  vtkMRMLIOProperties
+  vtkMRMLOperationProgress
+  vtkMRMLNodeWriter
+  vtkMRMLSceneBundleReader
+  # slicer's vtk extensions (filters)
+  vtkImageLabelOutline
+  vtkImageNeighborhoodFilter
+)
 
-# --------------------------------------------------------------------------
-# Export target
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
-  set(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
-endif()
-export(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+vtk_module_add_module(Slicer::MRMLLogic
+  EXPORT_MACRO_PREFIX VTK_MRML_LOGIC
+  CLASSES ${classes}
+  HEADERS "${wrapper_header_file}"
+  EXCLUDE_HEADER_TEST
+)
 
-# --------------------------------------------------------------------------
-# Install library
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
-  set(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
-endif()
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
-  set(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
-endif()
+vtk_module_link(Slicer::MRMLLogic PUBLIC ${ITK_LIBRARIES})
 
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
-  )
+vtk_module_set_property(Slicer::MRMLLogic PROPERTY FOLDER VALUE MRMLLogic)
 
-# --------------------------------------------------------------------------
-# Python Wrapping
-# --------------------------------------------------------------------------
-if(VTK_WRAP_PYTHON)
-  include(vtkMacroKitPythonWrap)
-
-  set(_python_wrapped_libraries)
-
-  vtkMacroKitPythonWrap(
-    KIT_NAME ${lib_name}
-    KIT_SRCS ${MRMLLogic_SRCS}
-    KIT_PYTHON_LIBRARIES ${_python_wrapped_libraries}
-    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
-    )
-  # Export target
-  export(TARGETS ${lib_name}Python APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
-  # Folder
-  if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
-    set_target_properties(${lib_name}Python PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    if(TARGET ${lib_name}Hierarchy)
-      set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    endif()
-  endif()
-endif()
-
-# --------------------------------------------------------------------------
-# Testing
-# --------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
-
-# --------------------------------------------------------------------------
-# Set INCLUDE_DIRS variable
-# --------------------------------------------------------------------------
-set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-  CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

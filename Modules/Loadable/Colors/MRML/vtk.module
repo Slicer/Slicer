@@ -1,0 +1,8 @@
+NAME
+  Slicer::ColorsModuleMRML
+LIBRARY_NAME
+  vtkSlicerColorsModuleMRML
+DEPENDS
+  Slicer::MRMLLogic
+DESCRIPTION
+  "vtkSlicerColorsModuleMRML"

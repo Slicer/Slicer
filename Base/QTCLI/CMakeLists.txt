@@ -77,7 +77,8 @@ set(KIT_target_libraries
   qSlicerBaseQTGUI
   ModuleDescriptionParser ${ITK_LIBRARIES}
   MRMLCLI
-  SlicerBaseLogic
+  Slicer::BaseLogic
+  ITKFactoryRegistration
   )
 
 if(Slicer_USE_QtTesting)

@@ -1,0 +1,11 @@
+NAME
+  Slicer::SegmentationsModuleMRML
+LIBRARY_NAME
+  vtkSlicerSegmentationsModuleMRML
+DEPENDS
+  Slicer::MRMLCore
+  Slicer::Teem
+  Slicer::SegmentationCore
+  Slicer::SubjectHierarchyModuleLogic
+DESCRIPTION
+  "vtkSlicerSegmentationsModuleMRML"

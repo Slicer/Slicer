@@ -155,6 +155,8 @@ set_target_properties(${KIT}CxxTests PROPERTIES
   AUTOMOC ON
   )
 
+slicer_module_autoinit(TARGETS ${KIT}CxxTests MODULES ${MRMLWidgets_LIBRARIES})
+
 #-----------------------------------------------------------------------------
 set(INPUT ${MRMLCore_SOURCE_DIR}/Testing/TestData)
 

@@ -1,216 +1,90 @@
-project(SlicerBaseLogic)
-
 # --------------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------------
 
-#
-# ModuleDescriptionParser
-#
-find_package(SlicerExecutionModel REQUIRED ModuleDescriptionParser)
+vtk_module_find_package(
+  PACKAGE SlicerExecutionModel
+  COMPONENTS ModuleDescriptionParser
+  PRIVATE_IF_SHARED
+)
+vtk_module_find_package(
+  PACKAGE LibArchive
+  PRIVATE_IF_SHARED
+)
 
-#
-# VTK
-#
-if(Slicer_USE_PYTHONQT AND NOT VTK_WRAP_PYTHON)
-  message(FATAL_ERROR "Since Slicer_USE_PYTHONQT is ON, VTK_WRAP_PYTHON is expected to be ON. "
-                      "Re-configure VTK with python wrapping.")
-endif()
-
-#
-# ITK
-#
-set(${PROJECT_NAME}_ITK_COMPONENTS
-  ITKCommon
-  ITKIOTransformBase
-  ITKTransform
-  ${ModuleDescriptionParser_ITK_COMPONENTS}
-  )
-find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
-if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
-  foreach(factory_uc IN ITEMS "IMAGEIO" "MESHIO" "TRANSFORMIO")
-    set(ITK_NO_${factory_uc}_FACTORY_REGISTER_MANAGER 1)
-  endforeach()
-else()
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
-endif()
-list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
-list(APPEND ITK_INCLUDE_DIRS
-  ${ITKFactoryRegistration_INCLUDE_DIRS}
-  )
+vtk_module_find_package(
+  PACKAGE ITK
+  COMPONENTS
+    ITKCommon
+    ITKIOTransformBase
+    ITKTransform
+    ${ModuleDescriptionParser_ITK_COMPONENTS}
+)
 include(${ITK_USE_FILE})
 
-#
-# LibArchive
-#
-find_package(LibArchive REQUIRED MODULE)
+# Register the default ITK factories (see Libs/ITKFactoryRegistration).
+list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
 
-# --------------------------------------------------------------------------
-# Subdirectories
-# --------------------------------------------------------------------------
-add_subdirectory(Resources)
-
-# --------------------------------------------------------------------------
-# Include dirs
-# --------------------------------------------------------------------------
-set(include_dirs
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${MRMLCore_INCLUDE_DIRS}
-  ${MRMLLogic_INCLUDE_DIRS}
-  ${MRMLDisplayableManager_INCLUDE_DIRS}
-  ${vtkTeem_INCLUDE_DIRS}
-  ${RemoteIO_INCLUDE_DIRS}
-  ${LibArchive_INCLUDE_DIR}
-  ${MRMLCLI_INCLUDE_DIRS}
-  ${ModuleDescriptionParser_INCLUDE_DIRS}
-  )
-
-if(Slicer_USE_PYTHONQT)
-  list(APPEND include_dirs
-    ${PYTHON_INCLUDE_DIR}
-    )
-endif()
-
-include_directories(${include_dirs})
-
-# --------------------------------------------------------------------------
-# Update Slicer_Base_INCLUDE_DIRS
-# --------------------------------------------------------------------------
-set(Slicer_Base_INCLUDE_DIRS ${Slicer_Base_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  CACHE INTERNAL "Slicer Base includes" FORCE)
-
-# --------------------------------------------------------------------------
-# Install headers
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-endif()
-if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  install(
-    FILES ${headers} ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
-    DESTINATION include/${PROJECT_NAME} COMPONENT Development)
-endif()
+vtk_module_find_package(PACKAGE vtkAddon)
 
 # --------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------
-set(SlicerBaseLogic_SRCS
-  # Logic classes (data management and calculation)
-  vtkSlicerApplicationLogic.cxx
-  vtkSlicerModuleLogic.cxx
-  vtkSlicerTask.cxx
-  vtkDataIOManagerLogic.cxx
-  # slicer's vtk extensions (filters)
-  vtkTransformVisualizerGlyph3D.cxx
-  vtkImageRectangularSource.cxx
-  vtkSystemInformation.cxx
-  vtkImageFillROI.cxx
-  vtkSlicerCLIModuleLogic.cxx
-  )
+add_subdirectory(Resources)
 
-if(Slicer_USE_PYTHONQT)
-  list(APPEND SlicerBaseLogic_SRCS
-    vtkSlicerScriptedFileReaderBridge.cxx
-    vtkSlicerScriptedFileWriterBridge.cxx
-    vtkSlicerScriptedLoadableModuleLogic.cxx
-    )
-endif()
-
-# --------------------------------------------------------------------------
-# Build library
-# --------------------------------------------------------------------------
-set(lib_name SlicerBaseLogic)
-
-#set(srcs ${SlicerBaseLogic_SRCS} ${Instantiator_SRCS})
-set(srcs ${SlicerBaseLogic_SRCS})
-
-add_library(${lib_name} ${srcs})
-
-set(libs
-  MRMLLogic
-  MRMLDisplayableManager
-  ${VTK_LIBRARIES}
-  )
-
-# Archive support used by extensions and by slicer data bundle
-list(APPEND libs
-  ${LibArchive_LIBRARY}
-  MRMLCLI
-  )
-
-if(Slicer_USE_PYTHONQT)
-  set(VTK_COMMON_PYTHON_LIBRARY
-    VTK::WrappingPythonCore # For vtkPythonUtil and vtkPythonArgs
-    )
-  list(APPEND libs
-    ${VTK_COMMON_PYTHON_LIBRARY}
-    ${PYTHON_LIBRARY} # At some point, VTK should be updated to expose VTK_PYTHON_LIBRARY
-    )
-endif()
-
-target_link_libraries(${lib_name} ${libs})
-set_target_properties(${lib_name} PROPERTIES LABELS ${lib_name})
-set_target_properties(${lib_name} PROPERTIES FOLDER "Core-Base")
-
-# Apply user-defined properties to the library target.
-if(Slicer_LIBRARY_PROPERTIES)
-  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-endif()
-
-# --------------------------------------------------------------------------
-# Generate export header
-# --------------------------------------------------------------------------
-include(GenerateExportHeader)
-generate_export_header(${lib_name}
-  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/vtkSlicerBaseLogicExport.h
-  EXPORT_MACRO_NAME VTK_SLICER_BASE_LOGIC_EXPORT
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerBaseLogicExport.h"
+  OUTPUT_VAR wrapper_header_file
 )
 
-# --------------------------------------------------------------------------
-# Export target
-# --------------------------------------------------------------------------
-set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name})
+set(classes
+  # Logic classes (data management and calculation)
+  vtkSlicerApplicationLogic
+  vtkSlicerModuleLogic
+  vtkSlicerTask
+  vtkDataIOManagerLogic
+  # Slicer's VTK extensions (filters)
+  vtkTransformVisualizerGlyph3D
+  vtkImageRectangularSource
+  vtkSystemInformation
+  vtkImageFillROI
+  vtkSlicerCLIModuleLogic
+)
 
-# --------------------------------------------------------------------------
-# Install library
-# --------------------------------------------------------------------------
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${Slicer_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${Slicer_INSTALL_LIB_DIR} COMPONENT Development
+if(Slicer_USE_PYTHONQT)
+  list(APPEND classes
+    vtkSlicerScriptedFileReaderBridge
+    vtkSlicerScriptedFileWriterBridge
+    vtkSlicerScriptedLoadableModuleLogic
   )
-
-# --------------------------------------------------------------------------
-# Python Wrapping
-# --------------------------------------------------------------------------
-if(VTK_WRAP_PYTHON)
-  include(vtkMacroKitPythonWrap)
-
-  set(_python_wrapped_libraries
-    )
-
-  vtkMacroKitPythonWrap(
-    KIT_NAME ${lib_name}
-    KIT_SRCS ${SlicerBaseLogic_SRCS}
-    KIT_PYTHON_LIBRARIES ${_python_wrapped_libraries}
-    KIT_INSTALL_BIN_DIR ${Slicer_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR}
-    )
-  # Export target
-  set_property(GLOBAL APPEND PROPERTY Slicer_TARGETS ${lib_name}Python)
-  set_target_properties(${lib_name}Python PROPERTIES FOLDER "Core-Base")
-  if(TARGET ${lib_name}Hierarchy)
-    set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER "Core-Base")
-  endif()
 endif()
 
-# --------------------------------------------------------------------------
-# Testing (requires some of the examples)
-# --------------------------------------------------------------------------
+set(headers
+  vtkSlicerBaseLogic.h
+  "${wrapper_header_file}"
+)
+
+vtk_module_add_module(Slicer::BaseLogic
+  EXPORT_MACRO_PREFIX VTK_SLICER_BASE_LOGIC
+  CLASSES ${classes}
+  HEADERS ${headers}
+  EXCLUDE_HEADER_TEST
+)
+
+vtk_module_link(Slicer::BaseLogic
+  PUBLIC
+    ${ITK_LIBRARIES} vtkAddon
+  PRIVATE
+    ModuleDescriptionParser
+    ${LibArchive_LIBRARY}
+)
+
+vtk_module_include(Slicer::BaseLogic
+  PRIVATE
+    ${ModuleDescriptionParser_INCLUDE_DIRS}
+    ${LibArchive_INCLUDE_DIRS}
+)
+
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()

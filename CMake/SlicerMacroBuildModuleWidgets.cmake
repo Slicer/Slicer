@@ -120,6 +120,8 @@ macro(SlicerMacroBuildModuleWidgets)
 
   set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_WIDGET_TARGETS ${MODULEWIDGETS_NAME})
 
+  slicer_module_autoinit(TARGETS ${MODULEWIDGETS_NAME} MODULES ${MODULEWIDGETS_TARGET_LIBRARIES})
+
   #-----------------------------------------------------------------------------
   # Update Slicer_ModuleWidgets_INCLUDE_DIRS
   #-----------------------------------------------------------------------------

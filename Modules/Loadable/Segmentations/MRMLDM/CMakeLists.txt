@@ -1,43 +1,29 @@
-project(vtkSlicer${MODULE_NAME}ModuleMRMLDisplayableManager)
-
-set(KIT ${PROJECT_NAME})
-
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT")
-
-set(${KIT}_INCLUDE_DIRECTORIES
-  ${vtkSlicerSegmentationsModuleMRML_INCLUDE_DIRS}
+set(classes
+  vtkMRMLSegmentationsDisplayableManager3D
+  vtkMRMLSegmentationsDisplayableManager2D
+  vtkSegmentationLabelmapSurfaceMapper
   )
 
-set(displayable_manager_SRCS
-  vtkMRML${MODULE_NAME}DisplayableManager3D.cxx
-  vtkMRML${MODULE_NAME}DisplayableManager2D.cxx
-  )
+foreach(class IN LISTS classes)
+  vtk_object_factory_declare(BASE ${class} OVERRIDE ${class})
+endforeach()
 
-SlicerConfigureDisplayableManagerObjectFactory(
-  TARGET_NAME ${KIT}
-  SRCS "${displayable_manager_SRCS}"
-  EXPORT_MACRO "${${KIT}_EXPORT_DIRECTIVE}"
-  EXPORT_HEADER "${KIT}Export.h"
-  OUTPUT_SRCS_VAR displayable_manager_instantiator_SRCS
-  )
+vtk_object_factory_configure(
+  SOURCE_FILE vtk_object_factory_source
+  HEADER_FILE vtk_object_factory_header
+  EXPORT_MACRO "VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT"
+)
 
-set(${KIT}_SRCS
-  ${displayable_manager_instantiator_SRCS}
-  ${displayable_manager_SRCS}
-  vtkSegmentationLabelmapSurfaceMapper.cxx
-  vtkSegmentationLabelmapSurfaceMapper.h
-  )
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerSegmentationsModuleMRMLDisplayableManagerExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
-set(${KIT}_TARGET_LIBRARIES
-  ${MRML_LIBRARIES}
-  vtkSlicerSegmentationsModuleMRML
-  )
-
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleLogic(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
-  )
+vtk_module_add_module(Slicer::SegmentationsModuleMRMLDisplayableManager
+  EXPORT_MACRO_PREFIX VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER
+  CLASSES ${classes}
+  SOURCES ${vtk_object_factory_source}
+  HEADERS ${wrapper_header_file}
+  PRIVATE_HEADERS ${vtk_object_factory_header}
+  EXCLUDE_HEADER_TEST
+)

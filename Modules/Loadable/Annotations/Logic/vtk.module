@@ -1,0 +1,9 @@
+NAME
+  Slicer::AnnotationsModuleLogic
+LIBRARY_NAME
+  vtkSlicerAnnotationsModuleLogic
+DEPENDS
+  Slicer::AnnotationsModuleMRML
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerAnnotationsModuleLogic"

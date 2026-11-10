@@ -5,14 +5,9 @@ set(MODULE_NAME Cameras)
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
-add_subdirectory(Logic)
-
-#-----------------------------------------------------------------------------
 set(MODULE_EXPORT_DIRECTIVE "Q_SLICER_QTMODULES_${MODULE_NAME_UPPER}_EXPORT")
 
 set(MODULE_INCLUDE_DIRECTORIES
-  ${CMAKE_CURRENT_SOURCE_DIR}/Logic
-  ${CMAKE_CURRENT_BINARY_DIR}/Logic
   )
 
 set(MODULE_SRCS

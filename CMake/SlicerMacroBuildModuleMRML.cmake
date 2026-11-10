@@ -72,6 +72,8 @@ macro(SlicerMacroBuildModuleMRML)
     ${MODULEMRML_NO_INSTALL_OPTION}
     )
 
+  slicer_module_autoinit(TARGETS ${lib_name} MODULES ${MODULEMRML_TARGET_LIBRARIES})
+
   set_property(GLOBAL APPEND PROPERTY SLICER_MODULE_MRML_TARGETS ${MODULEMRML_NAME})
 
   #-----------------------------------------------------------------------------

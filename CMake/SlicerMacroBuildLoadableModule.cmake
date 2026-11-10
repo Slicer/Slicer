@@ -244,6 +244,8 @@ macro(slicerMacroBuildLoadableModule)
       ${Slicer_GUI_LIBRARY}
     )
 
+  slicer_module_autoinit(TARGETS ${lib_name} MODULES ${LOADABLEMODULE_TARGET_LIBRARIES})
+
   # Apply user-defined properties to the library target.
   if(Slicer_LIBRARY_PROPERTIES)
     set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
