@@ -122,10 +122,13 @@ void vtkSegmentationConversionPaths::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os, indent);
 
-  vtkSegmentationConversionPath* path = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (this->InitTraversal(it); (path = this->GetNextPath(it));)
+  for (int i = 0; i < this->GetNumberOfPaths(); ++i)
   {
+    vtkSegmentationConversionPath* path = this->GetPath(i);
+    if (!path)
+    {
+      continue;
+    }
     os << indent << "Path:\n";
     path->PrintSelf(os, indent.GetNextIndent());
   }

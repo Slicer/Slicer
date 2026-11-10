@@ -341,11 +341,15 @@ vtkMRMLSliceLogic* vtkMRMLApplicationLogic::GetSliceLogic(vtkMRMLSliceNode* slic
   }
 
   vtkMRMLSliceLogic* logic = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
-  for (logics->InitTraversal(it); (logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < logics->GetNumberOfItems(); ++i)
   {
+    logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetItemAsObject(i));
+    if (!logic)
+    {
+      continue;
+    }
     if (logic->GetSliceNode() == sliceNode)
     {
       break;
@@ -366,11 +370,15 @@ vtkMRMLSliceLogic* vtkMRMLApplicationLogic::GetSliceLogicByLayoutName(const char
   }
 
   vtkMRMLSliceLogic* logic = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
-  for (logics->InitTraversal(it); (logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < logics->GetNumberOfItems(); ++i)
   {
+    logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetItemAsObject(i));
+    if (!logic)
+    {
+      continue;
+    }
     if (logic->GetSliceNode())
     {
       if (!strcmp(logic->GetSliceNode()->GetLayoutName(), layoutName))
@@ -392,11 +400,15 @@ vtkMRMLSliceLogic* vtkMRMLApplicationLogic::GetSliceLogicByModelDisplayNode(vtkM
   }
 
   vtkMRMLSliceLogic* logic = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->SliceLogics;
 
-  for (logics->InitTraversal(it); (logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < logics->GetNumberOfItems(); ++i)
   {
+    logic = vtkMRMLSliceLogic::SafeDownCast(logics->GetItemAsObject(i));
+    if (!logic)
+    {
+      continue;
+    }
     if (logic->GetSliceModelDisplayNode() == displayNode)
     {
       return logic;
@@ -432,11 +444,15 @@ vtkMRMLViewLogic* vtkMRMLApplicationLogic::GetViewLogic(vtkMRMLViewNode* viewNod
   }
 
   vtkMRMLViewLogic* logic = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->ViewLogics;
 
-  for (logics->InitTraversal(it); (logic = vtkMRMLViewLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < logics->GetNumberOfItems(); ++i)
   {
+    logic = vtkMRMLViewLogic::SafeDownCast(logics->GetItemAsObject(i));
+    if (!logic)
+    {
+      continue;
+    }
     if (logic->GetViewNode() == viewNode)
     {
       break;
@@ -457,11 +473,15 @@ vtkMRMLViewLogic* vtkMRMLApplicationLogic::GetViewLogicByLayoutName(const char* 
   }
 
   vtkMRMLViewLogic* logic = nullptr;
-  vtkCollectionSimpleIterator it;
   vtkCollection* logics = this->Internal->ViewLogics;
 
-  for (logics->InitTraversal(it); (logic = vtkMRMLViewLogic::SafeDownCast(logics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < logics->GetNumberOfItems(); ++i)
   {
+    logic = vtkMRMLViewLogic::SafeDownCast(logics->GetItemAsObject(i));
+    if (!logic)
+    {
+      continue;
+    }
     if (logic->GetViewNode())
     {
       if (!strcmp(logic->GetViewNode()->GetLayoutName(), layoutName))
@@ -635,9 +655,13 @@ void vtkMRMLApplicationLogic::FitSliceToContent(bool all, bool onlyIfPropagateVo
     return;
   }
   vtkMRMLSliceLogic* sliceLogic = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (this->Internal->SliceLogics->InitTraversal(it); (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(this->Internal->SliceLogics->GetNextItemAsObject(it)));)
+  for (int i = 0; i < this->Internal->SliceLogics->GetNumberOfItems(); ++i)
   {
+    sliceLogic = vtkMRMLSliceLogic::SafeDownCast(this->Internal->SliceLogics->GetItemAsObject(i));
+    if (!sliceLogic)
+    {
+      continue;
+    }
     if (onlyIfPropagateVolumeSelectionAllowed)
     {
       vtkMRMLSliceCompositeNode* sliceCompositeNode = sliceLogic->GetSliceCompositeNode();
@@ -1029,10 +1053,13 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(vtkMRMLApplicationLog
   vtkSmartPointer<vtkCollection> sliceDisplayNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
   if (sliceDisplayNodes.GetPointer())
   {
-    vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (sliceDisplayNodes->InitTraversal(it); (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sliceDisplayNodes->GetNumberOfItems(); ++i)
     {
+      auto* sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetItemAsObject(i));
+      if (!sliceDisplayNode)
+      {
+        continue;
+      }
       bool wasModified = false;
       switch (operation)
       {
@@ -1059,10 +1086,13 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesEnabled(vtkMRMLApplicationLog
   vtkSmartPointer<vtkCollection> sliceNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
   if (sliceNodes.GetPointer())
   {
-    vtkMRMLSliceNode* sliceNode = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (sliceNodes->InitTraversal(it); (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sliceNodes->GetNumberOfItems(); ++i)
     {
+      auto* sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetItemAsObject(i));
+      if (!sliceNode)
+      {
+        continue;
+      }
       sliceNode->Modified();
     }
   }
@@ -1122,10 +1152,13 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesIntersectionMode(int mode)
   vtkSmartPointer<vtkCollection> sliceDisplayNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
   if (sliceDisplayNodes.GetPointer())
   {
-    vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (sliceDisplayNodes->InitTraversal(it); (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sliceDisplayNodes->GetNumberOfItems(); ++i)
     {
+      auto* sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetItemAsObject(i));
+      if (!sliceDisplayNode)
+      {
+        continue;
+      }
       sliceDisplayNode->SetIntersectingSlicesIntersectionMode(mode);
     }
   }
@@ -1135,10 +1168,13 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesIntersectionMode(int mode)
   vtkSmartPointer<vtkCollection> sliceNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
   if (sliceNodes.GetPointer())
   {
-    vtkMRMLSliceNode* sliceNode = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (sliceNodes->InitTraversal(it); (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sliceNodes->GetNumberOfItems(); ++i)
     {
+      auto* sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetItemAsObject(i));
+      if (!sliceNode)
+      {
+        continue;
+      }
       sliceNode->Modified();
     }
   }
@@ -1189,10 +1225,13 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesLineThicknessMode(int mode)
   vtkSmartPointer<vtkCollection> sliceDisplayNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceDisplayNode"));
   if (sliceDisplayNodes.GetPointer())
   {
-    vtkMRMLSliceDisplayNode* sliceDisplayNode = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (sliceDisplayNodes->InitTraversal(it); (sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sliceDisplayNodes->GetNumberOfItems(); ++i)
     {
+      auto* sliceDisplayNode = static_cast<vtkMRMLSliceDisplayNode*>(sliceDisplayNodes->GetItemAsObject(i));
+      if (!sliceDisplayNode)
+      {
+        continue;
+      }
       sliceDisplayNode->SetIntersectingSlicesLineThicknessMode(mode);
     }
   }
@@ -1202,10 +1241,13 @@ void vtkMRMLApplicationLogic::SetIntersectingSlicesLineThicknessMode(int mode)
   vtkSmartPointer<vtkCollection> sliceNodes = vtkSmartPointer<vtkCollection>::Take(scene->GetNodesByClass("vtkMRMLSliceNode"));
   if (sliceNodes.GetPointer())
   {
-    vtkMRMLSliceNode* sliceNode = nullptr;
-    vtkCollectionSimpleIterator it;
-    for (sliceNodes->InitTraversal(it); (sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetNextItemAsObject(it)));)
+    for (int i = 0; i < sliceNodes->GetNumberOfItems(); ++i)
     {
+      auto* sliceNode = static_cast<vtkMRMLSliceNode*>(sliceNodes->GetItemAsObject(i));
+      if (!sliceNode)
+      {
+        continue;
+      }
       sliceNode->Modified();
     }
   }
