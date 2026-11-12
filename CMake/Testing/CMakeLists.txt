@@ -23,6 +23,10 @@ add_cmakescript_test(
   CMake/UseSlicerMacros.cmake)
 
 add_cmakescript_test(
+  slicer_library_version_properties_test
+  CMake/Testing/SlicerLibraryVersionPropertiesTest.cmake)
+
+add_cmakescript_test(
   slicer_block_ctk_app_launcher_settings_test
   CMake/Testing/SlicerBlockCTKAppLauncherSettingsTest.cmake)
 
