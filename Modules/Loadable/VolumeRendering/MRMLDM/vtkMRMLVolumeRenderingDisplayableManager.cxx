@@ -1107,7 +1107,12 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
 
   vtkImageData* imageData = pipeline->UseTransformedImageData ? pipeline->TransformedImageData.GetPointer() : volumeNode->GetImageData();
   int numberOfChannels = (imageData == nullptr ? 1 : imageData->GetNumberOfScalarComponents());
-  if (numberOfChannels == 3)
+  // In independent components mode each channel has its own transfer functions, therefore
+  // no alpha channel must be added (it would be rendered as an additional, fully opaque component).
+  vtkMRMLVolumePropertyNode* volumePropertyNode = displayNode->GetVolumePropertyNode();
+  bool independentComponents = volumePropertyNode && volumePropertyNode->GetVolumeProperty() //
+                               && volumePropertyNode->GetVolumeProperty()->GetIndependentComponents();
+  if (numberOfChannels == 3 && !independentComponents)
   {
     // RGB volume, generate alpha channel
     pipeline->ComputeAlphaChannel->SetInputConnection(imageConnection);
@@ -1319,7 +1324,6 @@ void vtkMRMLVolumeRenderingDisplayableManager::vtkInternal::UpdateDisplayNodePip
   this->UpdatePipelineROIs(displayNode, pipeline);
 
   // Set volume property
-  vtkMRMLVolumePropertyNode* volumePropertyNode = displayNode->GetVolumePropertyNode();
   if (volumePropertyNode)
   {
     volumePropertyNode->SetPropertyInVolumeNode(pipeline->VolumeActor);
