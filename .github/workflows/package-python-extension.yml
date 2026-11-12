@@ -1,0 +1,64 @@
+name: Package Python Slicer Extension
+
+on:
+  workflow_call:
+    inputs:
+      cmake-args:
+        description: Additional arguments forwarded to the packaging script
+        default: --cmake-arg "-DBUILD_TESTING=OFF"
+        type: string
+
+jobs:
+  package:
+    name: Package on ${{ matrix.name }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: windows-latest
+            name: Windows
+          - runner: ubuntu-latest
+            name: Linux
+          - runner: macos-13
+            name: macOS
+
+    steps:
+      - name: Checkout extension
+        uses: actions/checkout@v6
+
+      - name: Checkout Slicer source
+        uses: actions/checkout@v6
+        with:
+          repository: lassoan/Slicer
+          ref: python-ext-build
+          path: _slicer_src
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.x'
+
+      - name: Set up CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: latest
+
+      - name: Package extension
+        shell: bash
+        run: |
+          python "${{ github.workspace }}/_slicer_src/Utilities/Scripts/package_python_extension.py" \
+            --ext-src "${{ github.workspace }}" \
+            --slicer-src "${{ github.workspace }}/_slicer_src" \
+            --build-dir "${{ runner.temp }}/ext-build" \
+            --dummy-build "${{ runner.temp }}/SlicerDummyBuild" \
+            --output-dir "${{ github.workspace }}/packages" \
+            --slicer-revision "python-ext-build" \
+            ${{ inputs.cmake-args }}
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-${{ matrix.name }}
+          path: packages/
+          if-no-files-found: error
