@@ -24,8 +24,15 @@
 
 // VTK includes
 #include <vtkVersion.h>
+#include <vtkWeakPointer.h>
 
+// STD includes
+#include <map>
+#include <string>
+
+class vtkMRMLFolderDisplayNode;
 class vtkMRMLMessageCollection;
+class vtkMRMLModelHierarchyNode;
 class vtkMRMLModelNode;
 class vtkMRMLStorageNode;
 class vtkMRMLTransformNode;
@@ -81,6 +88,16 @@ public:
   /// Transform models's polydata
   static void TransformModel(vtkMRMLTransformNode* tnode, vtkMRMLModelNode* modelNode, int transformNormals, vtkMRMLModelNode* modelOut);
 
+  /// Set display properties of a folder display node from a legacy model hierarchy node and its display node.
+  /// Display properties (including visibility and opacity) of a collapsed (not expanded) model hierarchy node
+  /// were applied to all its children, while the display node of an expanded model hierarchy node had no effect.
+  static void SetFolderDisplayPropertiesFromModelHierarchy(vtkMRMLFolderDisplayNode* folderDisplayNode, vtkMRMLModelHierarchyNode* hierarchyNode);
+
+  /// Return the folder display node that replaced the display node of the legacy model hierarchy node
+  /// with the specified ID when the scene was imported. Only available in EndImportEvent observers
+  /// that are invoked after the models logic (for converting legacy scene views), returns nullptr otherwise.
+  vtkMRMLFolderDisplayNode* GetImportedModelHierarchyFolderDisplayNode(const std::string& modelHierarchyNodeID);
+
   /// Iterate through all models in the scene, find all their display nodes
   /// and set their visibility flag to flag. Does not touch model hierarchy
   /// nodes with display nodes
@@ -99,6 +116,11 @@ protected:
   void SetMRMLSceneInternal(vtkMRMLScene* newScene) override;
 
   void OnMRMLSceneEndImport() override;
+  void OnMRMLSceneEndBatchProcess() override;
+
+  /// Folder display nodes that replaced model hierarchy display nodes in the current import
+  /// (model hierarchy node ID -> folder display node)
+  std::map<std::string, vtkWeakPointer<vtkMRMLFolderDisplayNode>> ImportedModelHierarchyFolderDisplayNodes;
 };
 
 #endif
