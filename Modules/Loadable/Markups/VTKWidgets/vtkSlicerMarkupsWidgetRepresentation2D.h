@@ -158,7 +158,18 @@ protected:
 
   /// Project accumulated SliceIntersectionWorldPoints to display coordinates and update
   /// the intersection point glyph pipeline (actor visibility, color, scale, LUT).
+  /// Intersection points overlapping a control point visible on the slice are not displayed,
+  /// therefore UpdateSliceControlPointsDisplayPositions() must be called before this method.
   virtual void UpdateSliceIntersectionPointDisplay(double glyphSize, vtkScalarsToColors* colorMap);
+
+  /// Store in SliceControlPointsDisplayPositions the display positions of the control points
+  /// that are visible on the slice.
+  void UpdateSliceControlPointsDisplayPositions();
+
+  /// Return true if a glyph of size glyphSize (in pixels) at displayPos overlaps a control point
+  /// visible on the slice (as stored by UpdateSliceControlPointsDisplayPositions()).
+  /// Used for not hiding control points behind line direction and slice intersection markers.
+  bool IsOverlappingSliceControlPoint(const double displayPos[3], double glyphSize);
 
   class ControlPointsPipeline2D : public ControlPointsPipeline
   {
@@ -233,7 +244,12 @@ protected:
   vtkMTimeType LineDirectionMarkerLastGeometryMTime = 0;
   vtkMTimeType LineDirectionMarkerLastSlicePlaneMTime = 0;
   vtkMTimeType LineDirectionMarkerLastMarkupsDisplayMTime = 0;
+  vtkMTimeType LineDirectionMarkerLastMarkupsNodeMTime = 0;
   bool LineDirectionFirstToLastControlPoint = true;
+
+  /// Display positions of the control points visible on the slice.
+  /// Direction and slice intersection markers overlapping these positions are not displayed.
+  vtkSmartPointer<vtkPoints> SliceControlPointsDisplayPositions;
 
   // Line slice intersection point glyph pipelines (2D).
   // Mark the exact positions where a curve/line crosses the slice plane.
