@@ -1173,18 +1173,40 @@ void vtkMRMLSliceLogic::UpdateReconstructionSlab(vtkMRMLSliceLogic* sliceLogic, 
     sliceSpacing = sliceLogic->GetLowestVolumeSliceSpacing()[2];
   }
 
+  // vtkImageReslice reconstructs the slab from SlabNumberOfSlices samples taken along the slice normal.
+  // Sample the volume finer than its own spacing, as requested by the oversampling factor.
+  double oversamplingFactor = sliceNode->GetSlabReconstructionOversamplingFactor();
+  double slabSampleSpacing = oversamplingFactor > 0 ? sliceSpacing / oversamplingFactor : sliceSpacing;
+
   int slabNumberOfSlices = 1;
   if (sliceNode->GetSlabReconstructionEnabled() //
-      && sliceSpacing > 0                       //
-      && sliceNode->GetSlabReconstructionThickness() > sliceSpacing)
+      && slabSampleSpacing > 0                  //
+      && sliceNode->GetSlabReconstructionThickness() > slabSampleSpacing)
   {
-    slabNumberOfSlices = static_cast<int>(sliceNode->GetSlabReconstructionThickness() / sliceSpacing);
+    slabNumberOfSlices = static_cast<int>(sliceNode->GetSlabReconstructionThickness() / slabSampleSpacing);
+
+    // vtkImageReslice centers the samples on the slice, so an even number of them would straddle the
+    // slice plane instead of including it, placing the reconstruction half a sample off the slice
+    // position. Keeping the count odd makes the slab symmetric about the slice whatever its thickness,
+    // which also means that thickening the slab only adds samples and never moves the existing ones.
+    if (slabNumberOfSlices % 2 == 0)
+    {
+      slabNumberOfSlices++;
+    }
   }
   reslice->SetSlabNumberOfSlices(slabNumberOfSlices);
 
   reslice->SetSlabMode(sliceNode->GetSlabReconstructionType());
 
-  double slabSliceSpacingFraction = sliceSpacing / sliceNode->GetSlabReconstructionOversamplingFactor();
+  // The samples are spaced SlabSliceSpacingFraction apart, expressed as a fraction of the spacing of the
+  // reslice output along the slice normal, so convert the sample spacing from millimeters to that unit.
+  // Without the conversion the reconstructed slab would be sliceNormalSpacing times thinner than requested.
+  double sliceNormalSpacing = sliceNode->GetDimensions()[2] > 0 //
+                                ? sliceNode->GetFieldOfView()[2] / sliceNode->GetDimensions()[2]
+                                : 0.0;
+  double slabSliceSpacingFraction = sliceNormalSpacing > 0 && slabSampleSpacing > 0 //
+                                      ? slabSampleSpacing / sliceNormalSpacing
+                                      : 1.0;
   reslice->SetSlabSliceSpacingFraction(slabSliceSpacingFraction);
 }
 
