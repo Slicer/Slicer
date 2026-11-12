@@ -18,7 +18,6 @@
 #include "vtkMRMLSliceLogic.h"
 
 // MRML includes
-#include <vtkEventBroker.h>
 #include <vtkMRMLCrosshairNode.h>
 #include <vtkMRMLGlyphableVolumeDisplayNode.h>
 #include <vtkMRMLGlyphableVolumeSliceDisplayNode.h>
@@ -827,28 +826,68 @@ vtkMRMLSliceLayerLogic* vtkMRMLSliceLogic::GetNthLayer(int layerIndex)
 //----------------------------------------------------------------------------
 void vtkMRMLSliceLogic::SetNthLayer(int layerIndex, vtkMRMLSliceLayerLogic* layer)
 {
-  // TODO: Simplify the whole set using a macro similar to vtkMRMLSetAndObserve
   if (layerIndex < 0)
   {
     vtkErrorMacro(<< "SetNthLayer: Non-negative layer index is expected.");
     return;
   }
-  vtkMRMLSliceLayerLogic* currentLayer = this->GetNthLayer(layerIndex);
-  if (currentLayer)
+  if (this->GetNthLayer(layerIndex) == layer)
   {
-    currentLayer->SetMRMLScene(0);
+    return;
   }
+
+  // Configuration can synchronously change any layer slot. Keep the requested
+  // layer alive and defer all slot/ownership decisions until afterward.
+  vtkSmartPointer<vtkMRMLSliceLayerLogic> newLayer = layer;
+  if (newLayer)
+  {
+    this->ConfiguringLayers.push_back(newLayer.GetPointer());
+    newLayer->SetMRMLScene(this->GetMRMLScene());
+    newLayer->SetSliceNode(this->SliceNode);
+    this->ConfiguringLayers.pop_back();
+  }
+
+  vtkMRMLSliceLayerLogic* currentLayer = this->GetNthLayer(layerIndex);
+  if (currentLayer == newLayer.GetPointer())
+  {
+    return;
+  }
+  bool currentLayerShared = false;
+  bool newLayerShared = false;
+  for (int index = 0; index < static_cast<int>(this->Layers.size()); ++index)
+  {
+    if (index == layerIndex)
+    {
+      continue;
+    }
+    currentLayerShared |= (currentLayer && this->Layers[index] == currentLayer);
+    newLayerShared |= (newLayer && this->Layers[index] == newLayer.GetPointer());
+  }
+  // Retain the current layer while the manager transfers its ownership.
+  vtkSmartPointer<vtkMRMLSliceLayerLogic> previousLayer = currentLayer;
   if (layerIndex >= static_cast<int>(this->Layers.size()))
   {
-    this->Layers.resize(layerIndex + 1);
+    this->Layers.resize(layerIndex + 1, nullptr);
   }
-  this->Layers.at(layerIndex) = layer;
-  if (layer)
+  vtkMRMLSliceLayerLogic*& layerSlot = this->Layers.at(layerIndex);
+  if (currentLayerShared)
   {
-    layer->SetMRMLScene(this->GetMRMLScene());
-
-    layer->SetSliceNode(this->SliceNode);
-    vtkEventBroker::GetInstance()->AddObservation(layer, vtkCommand::ModifiedEvent, this, this->GetMRMLLogicsCallbackCommand());
+    // Another slot still uses the old layer and its managed observation.
+    layerSlot = nullptr;
+  }
+  if (newLayerShared)
+  {
+    vtkSetAndObserveMRMLLogicMacro(layerSlot, nullptr);
+    layerSlot = newLayer.GetPointer();
+  }
+  else
+  {
+    vtkSetAndObserveMRMLLogicMacro(layerSlot, newLayer.GetPointer());
+  }
+  if (previousLayer && !currentLayerShared
+      && std::find(this->ConfiguringLayers.begin(), this->ConfiguringLayers.end(), previousLayer.GetPointer()) == this->ConfiguringLayers.end())
+  {
+    previousLayer->SetMRMLScene(nullptr);
   }
   this->Modified();
 }
