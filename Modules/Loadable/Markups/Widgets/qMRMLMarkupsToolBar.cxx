@@ -39,10 +39,6 @@
 #include "qMRMLMarkupsToolBar.h"
 #include "qMRMLMarkupsToolBar_p.h"
 #include "qMRMLNodeComboBox.h"
-#include "qMRMLThreeDView.h"
-#include "qMRMLThreeDWidget.h"
-#include "qMRMLSliceView.h"
-#include "qMRMLSliceWidget.h"
 #include "qSlicerAbstractCoreModule.h"
 #include "qSlicerModuleManager.h"
 
@@ -114,10 +110,10 @@ void qMRMLMarkupsToolBarPrivate::addSetModuleButton(vtkSlicerMarkupsLogic* marku
   Q_UNUSED(markupsLogic);
   Q_Q(qMRMLMarkupsToolBar);
 
+  QAction* goToMarkupsAction = new QAction();
   QPushButton* moduleButton = new QPushButton();
-  moduleButton->setObjectName(QString(moduleName + " module shortcut"));
-  //: %1 is the module name
-  moduleButton->setToolTip(tr("Open the %1 module").arg(moduleName));
+  goToMarkupsAction->setObjectName(QString(moduleName + " module shortcut"));
+  goToMarkupsAction->setToolTip("Open the " + moduleName + " module");
   QString iconName = ":/Icons/" + moduleName + ".png";
   moduleButton->setIcon(QIcon(iconName));
   QSignalMapper* mapper = new QSignalMapper(moduleButton);
@@ -548,7 +544,6 @@ void qMRMLMarkupsToolBar::onAddNewMarkupsNodeByClass(const QString& className)
 void qMRMLMarkupsToolBar::onMarkupsNodeChanged(vtkMRMLNode* markupsNode)
 {
   // called when the user selects a node on the toolbar
-  Q_D(qMRMLMarkupsToolBar);
   this->setActiveMarkupsNode(vtkMRMLMarkupsNode::SafeDownCast(markupsNode));
 }
 

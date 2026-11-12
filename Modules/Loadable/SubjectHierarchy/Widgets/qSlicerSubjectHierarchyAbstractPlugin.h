@@ -196,6 +196,11 @@ public:
   /// small upward-pointing arrow in the bottom-right corner.
   Q_INVOKABLE virtual QIcon visibilityIconWithParentHidden(int visible);
 
+  /// Get lock icon for a lock state
+  /// \param locked Lock state (0: unlocked, 1: locked, -1: locking not applicable)
+  /// \return Icon to set, empty icon if nothing to set
+  Q_INVOKABLE virtual QIcon lockIcon(int locked);
+
   /// Returns true if the module can edit properties of this item using editProperties.
   Q_INVOKABLE virtual bool canEditProperties(vtkIdType itemID);
 
@@ -215,6 +220,15 @@ public:
   /// Get display visibility of an owned subject hierarchy item
   /// \return Display visibility (0: hidden, 1: shown, 2: partially shown)
   Q_INVOKABLE virtual int getDisplayVisibility(vtkIdType itemID) const;
+
+  /// Set lock state of an owned subject hierarchy item.
+  /// The default implementation does nothing, as locking is not applicable to most item types.
+  Q_INVOKABLE virtual void setDisplayLocked(vtkIdType itemID, int locked);
+
+  /// Get lock state of an owned subject hierarchy item
+  /// \return Lock state (0: unlocked, 1: locked, -1: locking not applicable for this item,
+  ///   which is what the default implementation returns)
+  Q_INVOKABLE virtual int getDisplayLocked(vtkIdType itemID) const;
 
   /// Set display color of an owned subject hierarchy item
   /// \param color Display color to set
