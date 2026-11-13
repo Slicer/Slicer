@@ -32,6 +32,10 @@
 get_property(Slicer_TARGETS GLOBAL PROPERTY Slicer_TARGETS)
 export(TARGETS ${Slicer_TARGETS} APPEND FILE ${Slicer_BINARY_DIR}/SlicerTargets.cmake)
 
+# This file is a manually generated export set, because we can not export aliases
+get_property(aliases_code_to_export GLOBAL PROPERTY Slicer_ALIASES_CODE_TO_EXPORT)
+file(WRITE "${CMAKE_BINARY_DIR}/SlicerAliasesTargets.cmake" "${aliases_code_to_export}")
+
 #-----------------------------------------------------------------------------
 # Create the SlicerConfig.cmake file containing the Slicer configuration.
 # Since it might generate configuration file depending

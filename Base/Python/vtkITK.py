@@ -7,7 +7,7 @@ namespace.
 # and the "Slicer Python Console" environments. For more details, see Base/Python/slicer/__init__.py
 import vtk  # noqa: F401
 
-from vtkITKPython import *
+from slicer.vtkITK import *
 
 # Cleanup: Removing things the user shouldn't have to see.
 del vtk

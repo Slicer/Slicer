@@ -25,6 +25,7 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
     )
   set(oneValueArgs
     NAME
+    LINK_TARGET
     TESTS_TO_RUN_VAR
     FOLDER
     )
@@ -49,6 +50,11 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
       message(FATAL_ERROR "${var} is mandatory")
     endif()
   endforeach()
+
+  # Default LINK_TARGET to NAME for backwards compatibility
+  if(NOT DEFINED SLICER_TEST_DRIVER_LINK_TARGET)
+    set(SLICER_TEST_DRIVER_LINK_TARGET ${SLICER_TEST_DRIVER_NAME})
+  endif()
 
   if(SLICER_TEST_DRIVER_SOURCES)
 
@@ -104,9 +110,12 @@ macro(SlicerMacroConfigureModuleCxxTestDriver)
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${Slicer_BIN_DIR}
       )
     target_link_libraries(${SLICER_TEST_DRIVER_NAME}CxxTests
-      ${SLICER_TEST_DRIVER_NAME}
+      ${SLICER_TEST_DRIVER_LINK_TARGET}
       ${SLICER_TEST_DRIVER_TARGET_LIBRARIES}
       )
+
+    slicer_module_autoinit(TARGETS "${SLICER_TEST_DRIVER_NAME}CxxTests" MODULES ${SLICER_TEST_DRIVER_TARGET_LIBRARIES})
+
     if(NOT DEFINED SLICER_TEST_DRIVER_FOLDER AND DEFINED MODULE_NAME)
       set(SLICER_TEST_DRIVER_FOLDER "Module-${MODULE_NAME}")
     endif()

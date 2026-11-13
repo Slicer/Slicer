@@ -1,44 +1,22 @@
-project(vtkSlicer${MODULE_NAME}ModuleLogic)
+set(classes
+  vtkSlicerShaderPropertyReader
+  vtkSlicerVolumeRenderingLogic
+  vtkSlicerVolumeRenderingReader
+)
 
-set(KIT ${PROJECT_NAME})
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerVolumeRenderingModuleLogicExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_LOGIC_EXPORT")
+vtk_module_add_module(Slicer::VolumeRenderingModuleLogic
+  EXPORT_MACRO_PREFIX VTK_SLICER_VOLUMERENDERING_MODULE_LOGIC
+  CLASSES ${classes}
+  HEADERS ${wrapper_header_file}
+  EXCLUDE_HEADER_TEST
+)
 
-set(${KIT}_INCLUDE_DIRECTORIES
-  ${vtkSlicer${MODULE_NAME}ModuleMRML_SOURCE_DIR}
-  ${vtkSlicer${MODULE_NAME}ModuleMRML_BINARY_DIR}
-  )
-
-set(${KIT}_SRCS
-  vtkSlicerVolumeRenderingReader.cxx
-  vtkSlicerVolumeRenderingReader.h
-  vtkSlicerShaderPropertyReader.cxx
-  vtkSlicerShaderPropertyReader.h
-  vtkSlicer${MODULE_NAME}Logic.cxx
-  vtkSlicer${MODULE_NAME}Logic.h
-  )
-
-set(${KIT}_TARGET_LIBRARIES
-  vtkSlicer${MODULE_NAME}ModuleMRML
-  )
-
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleLogic(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
-  )
-
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/../Resources/presets.xml
-  ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/presets.xml
-  COPYONLY)
-
-install(
-  FILES ${CMAKE_BINARY_DIR}/${Slicer_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME}/presets.xml
-  DESTINATION ${Slicer_INSTALL_QTLOADABLEMODULES_SHARE_DIR}/${MODULE_NAME} COMPONENT Runtime)
+vtk_module_set_property(Slicer::VolumeRenderingModuleLogic PROPERTY FOLDER VALUE Module-VolumeRendering)
 
 if(BUILD_TESTING)
   add_subdirectory(Testing)

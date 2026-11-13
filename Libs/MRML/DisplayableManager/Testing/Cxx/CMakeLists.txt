@@ -1,4 +1,4 @@
-set(KIT ${PROJECT_NAME})
+set(KIT MRMLDisplayableManager)
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
@@ -29,6 +29,7 @@ set(DisplayableManagerTest_SRCS
   vtkMRMLTestCustomDisplayableManager.cxx
   )
 
+include(SlicerConfigureDisplayableManagerObjectFactory)
 # Create the instantiator for DisplayableManager classes.
 SlicerConfigureDisplayableManagerObjectFactory(
   TARGET_NAME ${KIT}CxxTests
@@ -41,9 +42,9 @@ ctk_add_executable_utf8(${KIT}CxxTests
   ${Tests}
   ${DisplayableManagerTest_SRCS}
   ${DisplayableManagerInstantiatorTest_SRCS})
-target_link_libraries(${KIT}CxxTests ${KIT})
-
-set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+target_link_libraries(${KIT}CxxTests PRIVATE Slicer::MRMLDisplayableManager VTK::TestingRendering)
+vtk_module_autoinit(TARGETS ${KIT}CxxTests MODULES Slicer::MRMLDisplayableManager)
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER MRMLDisplayableManager)
 
 #
 # Add all the tests

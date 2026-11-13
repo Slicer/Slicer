@@ -1,0 +1,10 @@
+NAME
+  Slicer::ITK
+LIBRARY_NAME
+  vtkITK
+DEPENDS
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::CommonExecutionModel
+DESCRIPTION
+  "vtkITK"

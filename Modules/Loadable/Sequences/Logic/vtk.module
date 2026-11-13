@@ -1,0 +1,10 @@
+NAME
+  Slicer::SequencesModuleLogic
+LIBRARY_NAME
+  vtkSlicerSequencesModuleLogic
+DEPENDS
+  Slicer::SequencesModuleMRML
+  Slicer::MarkupsModuleMRML
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerSequencesModuleLogic"

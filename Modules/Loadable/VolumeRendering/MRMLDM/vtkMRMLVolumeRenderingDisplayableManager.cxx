@@ -87,11 +87,6 @@
 #include <vtkTrivialProducer.h>   //TODO: Used for workaround. Remove when fixed
 #include <vtkPiecewiseFunction.h> //TODO: Used for workaround. Remove when fixed
 
-// Register VTK object factory overrides
-#include <vtkAutoInit.h>
-VTK_MODULE_INIT(vtkRenderingContextOpenGL2);
-VTK_MODULE_INIT(vtkRenderingVolumeOpenGL2);
-
 //---------------------------------------------------------------------------
 vtkStandardNewMacro(vtkMRMLVolumeRenderingDisplayableManager);
 

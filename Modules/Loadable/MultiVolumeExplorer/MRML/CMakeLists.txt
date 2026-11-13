@@ -1,32 +1,17 @@
-project(vtkSlicer${MODULE_NAME}ModuleMRML)
-
-set(KIT "${PROJECT_NAME}")
-
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRML_EXPORT")
-
-set(${KIT}_INCLUDE_DIRECTORIES
-  )
-include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
-
-set(${KIT}_SRCS
-  vtkMRMLMultiVolumeNode.cxx
-  vtkMRMLMultiVolumeNode.h
-  vtkMRMLMultiVolumeDisplayNode.cxx
-  vtkMRMLMultiVolumeDisplayNode.h
-  vtkMRMLMultiVolumeStorageNode.cxx
-  vtkMRMLMultiVolumeStorageNode.h
+set(classes
+  vtkMRMLMultiVolumeNode
+  vtkMRMLMultiVolumeDisplayNode
+  vtkMRMLMultiVolumeStorageNode
   )
 
-set(${KIT}_TARGET_LIBRARIES
-  ${MRML_LIBRARIES}
-  ${vtkTeem_LIBRARIES}
-  )
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerMultiVolumeExplorerModuleMRMLExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleMRML(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
-  )
+vtk_module_add_module(Slicer::MultiVolumeExplorerModuleMRML
+  EXPORT_MACRO_PREFIX VTK_SLICER_MULTIVOLUMEEXPLORER_MODULE_MRML
+  CLASSES ${classes}
+  HEADERS ${wrapper_header_file}
+  EXCLUDE_HEADER_TEST
+)

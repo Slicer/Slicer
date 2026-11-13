@@ -1,0 +1,14 @@
+NAME
+  Slicer::BaseLogic
+LIBRARY_NAME
+  SlicerBaseLogic
+DEPENDS
+  VTK::ImagingGeneral
+  Slicer::MRMLDisplayableManager
+  Slicer::MRMLLogic
+  Slicer::RemoteIO
+  Slicer::MRMLCLI
+OPTIONAL_DEPENDS
+  VTK::WrappingPythonCore
+DESCRIPTION
+  "SlicerBaseLogic"

@@ -264,6 +264,9 @@ include(SlicerMacroPythonTesting)
 include(SlicerMacroConfigureGenericCxxModuleTests)
 include(SlicerMacroConfigureGenericPythonModuleTests)
 
+include(SlicerVTKModuleAutoInit)
+include(SlicerVTKModuleHeaderWrapper)
+
 if(DEFINED CMAKE_OSX_ARCHITECTURES)
   mark_as_superbuild( VARS CMAKE_OSX_ARCHITECTURES:STRING ALL_PROJECTS)
 endif()

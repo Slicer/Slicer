@@ -178,7 +178,7 @@ set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG ${SlicerExecutionModel
 set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES_CONFIG ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 
 # Export Targets file.
-set(Slicer_TARGETS_FILE "${Slicer_BINARY_DIR}/SlicerTargets.cmake")
+get_property(Slicer_TARGETS_FILES GLOBAL PROPERTY Slicer_TARGETS_FILES)
 
 # Configure SlicerConfig.cmake for the build tree.
 configure_file(

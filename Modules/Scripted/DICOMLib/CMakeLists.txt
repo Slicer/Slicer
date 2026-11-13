@@ -3,7 +3,6 @@ set(MODULE_NAME DICOMLib)
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
-add_subdirectory(Logic)
 add_subdirectory(Widgets)
 add_subdirectory(SubjectHierarchyPlugins)
 

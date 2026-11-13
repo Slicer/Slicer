@@ -1,117 +1,85 @@
-project(MRMLCore)
 
-#-----------------------------------------------------------------------------
-cmake_minimum_required(VERSION 3.28.0...3.28.0 FATAL_ERROR)
-#-----------------------------------------------------------------------------
+set(MRML_APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}" CACHE STRING "Current MRML scene creator application name" FORCE)
 
-# --------------------------------------------------------------------------
-# Options
-# --------------------------------------------------------------------------
-if(NOT DEFINED BUILD_SHARED_LIBS)
-  option(BUILD_SHARED_LIBS "Build with shared libraries." ON)
-endif()
+# Convert version to 0xXXYYZZ format where XX=major, YY=minor, ZZ=patch version in hexadecimal.
+# Add a leading 1 (256*256*256*1) to force having a leading 0 for major version (e.g., 04 instead of just 4)
+math(EXPR MRML_APPLICATION_VERSION_HEX "1 << 24
+  | ${Slicer_MAIN_PROJECT_VERSION_MAJOR} << 16
+  | ${Slicer_MAIN_PROJECT_VERSION_MINOR} << 8
+  | ${Slicer_MAIN_PROJECT_VERSION_PATCH}"
+  OUTPUT_FORMAT HEXADECIMAL)
 
-set(MRML_APPLICATION_NAME "Slicer" CACHE STRING "Current MRML scene creator application name" )
-mark_as_advanced(MRML_APPLICATION_NAME)
+# Remove leading 1 (remove 0x1 and add back just 0x)
+string(SUBSTRING "${MRML_APPLICATION_VERSION_HEX}" 3 6 MRML_APPLICATION_VERSION_HEX)
+set(MRML_APPLICATION_VERSION "0x${MRML_APPLICATION_VERSION_HEX}" CACHE STRING "Current MRML application version" FORCE)
+set(MRML_APPLICATION_REVISION "${Slicer_MAIN_PROJECT_REVISION}" CACHE STRING "Current MRML application revision number" FORCE)
 
-# The format is: 0xXXYYZZ where XX is the major version, YY the minor and
-# ZZ the patch version.
-# This format is chosen to allow easy comparison in C++ precompiler macros.
-set(MRML_APPLICATION_VERSION 0x040000 CACHE STRING "Current MRML application version" )
-mark_as_advanced(MRML_APPLICATION_VERSION)
+# MRML supports Slicer3 and Slicer4 scenes
+set(MRML_APPLICATION_SUPPORT_VERSION "0x030000" CACHE STRING "MRML application version to support" FORCE)
 
-# Revision can be used to identify version with finer granularity than version.
-# It is an integer number that is incremented with each new software revision.
-set(MRML_APPLICATION_REVISION 0 CACHE STRING "Current MRML application revision number" )
-mark_as_advanced(MRML_APPLICATION_REVISION)
+# Used by configure file, this variable was introduced long time ago but never truely used.
+# vtkTeem is currently a hard dependency of the Slicer::MRMLCore module.
+set(MRML_USE_vtkTeem ON)
 
-# MRML scenes that are older than MRML_APPLICATION_SUPPORT_VERSION won't be supported.
-# Or said differently, MRML_APPLICATION_SUPPORT_VERSION is the earliest version supported
-# for a MRML scene.
-# The format is: 0xXXYYZZ where XX is the major version, YY the minor and
-# ZZ the patch version.
-# For example, set MRML_APPLICATION_SUPPORT_VERSION to 0x040000 if you don't want to
-# support scenes of Slicer 3.
-# Supports Slicer3 and Slicer4 scenes by default.
-set(MRML_APPLICATION_SUPPORT_VERSION 0x030000 CACHE STRING "MRML application version to support" )
-mark_as_advanced(MRML_APPLICATION_SUPPORT_VERSION)
+# Name of the environment variable that contains the application home directory.
+set(MRML_APPLICATION_HOME_DIR_ENV "SLICER_HOME")
 
-option(MRML_USE_vtkTeem "Build MRML with vtkTeem support." ON)
-mark_as_advanced(MRML_USE_vtkTeem)
+# Name of the environment variable that contains subdirectory
+# within the application directory where shared files are stored.
+set(MRML_APPLICATION_SHARE_SUBDIR_ENV "SLICER_SHARE_DIR")
+
+# Name of the environment variable that contains the requested OpenGL profile.
+# Accepted values are "default" (same as not specifying a value) or
+# to force a specific profile: "no", "core", or  "compatibility".
+set(MRML_APPLICATION_OPENGL_PROFILE_ENV "SLICER_OPENGL_PROFILE")
+
+# These variables are referenced for test data
+set(MRMLCore_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "")
+set(MRMLCore_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "")
+
+message(STATUS "Configuring MRML")
+message(STATUS "  MRML_APPLICATION_NAME is ${MRML_APPLICATION_NAME}")
+message(STATUS "  MRML_APPLICATION_VERSION is ${MRML_APPLICATION_VERSION}")
+message(STATUS "  MRML_APPLICATION_REVISION is ${MRML_APPLICATION_REVISION}")
+message(STATUS "  MRML_APPLICATION_SUPPORT_VERSION is ${MRML_APPLICATION_SUPPORT_VERSION}")
 
 # --------------------------------------------------------------------------
 # Dependencies
 # --------------------------------------------------------------------------
 
-#
-# VTK
-#
-#find_package(VTK REQUIRED)
-#include(${VTK_USE_FILE})
+vtk_module_find_package(
+  PACKAGE LibArchive
+  PRIVATE_IF_SHARED
+)
 
-#
-# ITK
-#
-set(${PROJECT_NAME}_ITK_COMPONENTS
-  ITKCommon
-  ITKIOImageBase
-  ITKIOSpatialObjects
-  ITKIOTransformBase
-  ITKMesh
-  ITKTransform
-  )
-find_package(ITK 4.6 COMPONENTS ${${PROJECT_NAME}_ITK_COMPONENTS} REQUIRED)
-if(ITK_VERSION VERSION_GREATER_EQUAL "5.3")
-  foreach(factory_uc IN ITEMS "IMAGEIO" "MESHIO" "TRANSFORMIO")
-    set(ITK_NO_${factory_uc}_FACTORY_REGISTER_MANAGER 1)
-  endforeach()
-else()
-  set(ITK_NO_IO_FACTORY_REGISTER_MANAGER 1) # See Libs/ITKFactoryRegistration/CMakeLists.txt
-endif()
-list(APPEND ITK_LIBRARIES ITKFactoryRegistration)
-list(APPEND ITK_INCLUDE_DIRS ${ITKFactoryRegistration_INCLUDE_DIRS})
+vtk_module_find_package(
+  PACKAGE RapidJSON
+  PRIVATE_IF_SHARED
+)
+
+vtk_module_find_package(
+  PACKAGE Teem
+  PRIVATE_IF_SHARED
+)
+
+vtk_module_find_package(
+  PACKAGE ITK
+  COMPONENTS
+    ITKCommon
+    ITKIOImageBase
+    ITKIONRRD
+    ITKIOSpatialObjects
+    ITKIOTransformBase
+    ITKIOTransformHDF5
+    ITKIOTransformInsightLegacy
+    ITKIOTransformMatlab
+    ITKMesh
+    ITKTransform
+)
+
 include(${ITK_USE_FILE})
 
-#
-# LibArchive
-#
-find_package(LibArchive REQUIRED MODULE)
-
-#
-# vtkTeem
-#
-if(MRML_USE_vtkTeem)
-  find_package(Teem REQUIRED)
-  include(${Teem_USE_FILE})
-endif()
-
-#
-# vtkAddon
-#
-if(NOT Slicer_BUILD_vtkAddon)
-  find_package(vtkAddon REQUIRED)
-endif()
-
-#
-# RapidJSON
-#
-find_package(RapidJSON REQUIRED)
-
-# --------------------------------------------------------------------------
-# Include dirs
-# --------------------------------------------------------------------------
-set(include_dirs
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${CMAKE_CURRENT_BINARY_DIR}
-  ${vtkAddon_INCLUDE_DIRS}
-  ${vtkITK_INCLUDE_DIRS}
-  ${vtkSegmentationCore_INCLUDE_DIRS}
-  ${LibArchive_INCLUDE_DIR}
-  )
-if(MRML_USE_vtkTeem)
-  list(APPEND include_dirs ${vtkTeem_INCLUDE_DIRS})
-endif()
-include_directories(BEFORE ${include_dirs})
+vtk_module_find_package(PACKAGE vtkAddon)
 
 # --------------------------------------------------------------------------
 # Configure headers
@@ -122,208 +90,167 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
   )
 
-# --------------------------------------------------------------------------
-# Install headers
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-endif()
-if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  file(GLOB headers "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
-  install(
-    FILES ${headers} ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
-    DESTINATION include/${PROJECT_NAME} COMPONENT Development)
-endif()
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkMRMLExport.h"
+  OUTPUT_VAR wrapper_header_file
+  ADDITIONAL_INCLUDES "vtkMRMLConfigure.h"
+)
 
 # --------------------------------------------------------------------------
 # Sources
 # --------------------------------------------------------------------------
-set(MRMLCore_SRCS
-  vtkArchive.cxx
-  vtkArchive.h
-  vtkCacheManager.cxx
-  vtkCapPolyData.cxx
-  vtkCodedEntry.cxx
-  vtkCurveMeasurementsCalculator.cxx
-  vtkCurveMeasurementsCalculator.h
-  vtkDataFileFormatHelper.cxx
-  vtkDataIOManager.cxx
-  vtkDataTransfer.cxx
-  vtkEventBroker.cxx
-  vtkImageMapToWindowLevelAddon.cxx
-  vtkImageMathematicsAddon.cxx
-  vtkImplicitInvertableBoolean.cxx
-  vtkMRMLAbstractLayoutNode.cxx
-  vtkMRMLAbstractViewNode.cxx
-  vtkMRMLBSplineTransformNode.cxx
-  vtkMRMLCameraNode.cxx
-  vtkMRMLClipModelsNode.cxx
-  vtkMRMLClipNode.cxx
-  vtkMRMLColorNode.cxx
-  vtkMRMLColorTableNode.cxx
-  vtkMRMLColorTableStorageNode.cxx
-  vtkMRMLColors.cxx
-  vtkMRMLCoreTestingUtilities.cxx
-  vtkMRMLCrosshairNode.cxx
-  vtkMRMLDiffusionTensorDisplayPropertiesNode.cxx
-  vtkMRMLDiffusionWeightedVolumeDisplayNode.cxx
-  vtkMRMLDiffusionWeightedVolumeNode.cxx
-  vtkMRMLDisplayNode.cxx
-  vtkMRMLDisplayableHierarchyNode.cxx
-  vtkMRMLDisplayableNode.cxx
-  vtkMRMLFolderDisplayNode.cxx
-  vtkMRMLGlyphableVolumeDisplayNode.cxx
-  vtkMRMLGlyphableVolumeSliceDisplayNode.cxx
-  vtkMRMLGridTransformNode.cxx
-  vtkMRMLHierarchyNode.cxx
-  vtkMRMLHierarchyStorageNode.cxx
-  vtkMRMLI18N.cxx
-  vtkMRMLI18N.h
-  vtkMRMLInteractionEventData.cxx
-  vtkMRMLInteractionEventData.h
-  vtkMRMLInteractionNode.cxx
-  vtkMRMLJsonElement.cxx
-  vtkMRMLLabelMapVolumeDisplayNode.cxx
-  vtkMRMLLabelMapVolumeNode.cxx
-  vtkMRMLLayoutNode.cxx
-  vtkMRMLLinearTransformNode.cxx
-  vtkMRMLLinearTransformSequenceStorageNode.cxx
-  vtkMRMLLinearTransformSequenceStorageNode.h
-  vtkMRMLMarkupsAngleNode.cxx
-  vtkMRMLMarkupsAngleNode.h
-  vtkMRMLMarkupsClosedCurveNode.cxx
-  vtkMRMLMarkupsClosedCurveNode.h
-  vtkMRMLMarkupsCurveNode.cxx
-  vtkMRMLMarkupsCurveNode.h
-  vtkMRMLMarkupsDisplayNode.cxx
-  vtkMRMLMarkupsDisplayNode.h
-  vtkMRMLMarkupsFiducialDisplayNode.cxx
-  vtkMRMLMarkupsFiducialDisplayNode.h
-  vtkMRMLMarkupsFiducialNode.cxx
-  vtkMRMLMarkupsFiducialNode.h
-  vtkMRMLMarkupsFiducialStorageNode.cxx
-  vtkMRMLMarkupsFiducialStorageNode.h
-  vtkMRMLMarkupsLineNode.cxx
-  vtkMRMLMarkupsLineNode.h
-  vtkMRMLMarkupsNode.cxx
-  vtkMRMLMarkupsNode.h
-  vtkMRMLMarkupsPlaneDisplayNode.cxx
-  vtkMRMLMarkupsPlaneDisplayNode.h
-  vtkMRMLMarkupsPlaneNode.cxx
-  vtkMRMLMarkupsPlaneNode.h
-  vtkMRMLMarkupsROIDisplayNode.cxx
-  vtkMRMLMarkupsROIDisplayNode.h
-  vtkMRMLMarkupsROINode.cxx
-  vtkMRMLMarkupsROINode.h
-  vtkMRMLMarkupsStorageNode.cxx
-  vtkMRMLMeasurement.cxx
-  vtkMRMLMeasurementAngle.cxx
-  vtkMRMLMeasurementAngle.h
-  vtkMRMLMeasurementArea.cxx
-  vtkMRMLMeasurementArea.h
-  vtkMRMLMeasurementLength.cxx
-  vtkMRMLMeasurementLength.h
-  vtkMRMLMeasurementVolume.cxx
-  vtkMRMLMeasurementVolume.h
-  vtkMRMLMessageCollection.cxx
-  vtkMRMLModelDisplayNode.cxx
-  vtkMRMLModelHierarchyNode.cxx
-  vtkMRMLModelNode.cxx
-  vtkMRMLModelStorageNode.cxx
-  vtkMRMLNode.cxx
-  vtkMRMLNodeFactory.cxx
-  vtkMRMLPETProceduralColorNode.cxx
-  vtkMRMLParser.cxx
-  vtkMRMLPlotChartNode.cxx
-  vtkMRMLPlotSeriesNode.cxx
-  vtkMRMLPlotViewNode.cxx
-  vtkMRMLProceduralColorNode.cxx
-  vtkMRMLProceduralColorStorageNode.cxx
-  vtkMRMLROIListNode.cxx
-  vtkMRMLROINode.cxx
-  vtkMRMLScalarVolumeDisplayNode.cxx
-  vtkMRMLScalarVolumeNode.cxx
-  vtkMRMLScene.cxx
-  vtkMRMLSceneViewNode.cxx
-  vtkMRMLSceneViewStorageNode.cxx
-  vtkMRMLScriptedModuleNode.cxx
-  vtkMRMLScriptedModuleNode.h
-  vtkMRMLSegmentationDisplayNode.cxx
-  vtkMRMLSegmentationDisplayNode.h
-  vtkMRMLSegmentationNode.cxx
-  vtkMRMLSegmentationNode.h
-  vtkMRMLSegmentationStorageNode.cxx
-  vtkMRMLSegmentationStorageNode.h
-  vtkMRMLSelectionNode.cxx
-  vtkMRMLSequenceNode.cxx
-  vtkMRMLSequenceNode.h
-  vtkMRMLSequenceStorageNode.cxx
-  vtkMRMLSequenceStorageNode.h
-  vtkMRMLSliceCompositeNode.cxx
-  vtkMRMLSliceDisplayNode.cxx
-  vtkMRMLSliceNode.cxx
-  vtkMRMLSnapshotClipNode.cxx
-  vtkMRMLStaticMeasurement.cxx
-  vtkMRMLStorableNode.cxx
-  vtkMRMLStorageNode.cxx
-  vtkMRMLSubjectHierarchyConstants.h
-  vtkMRMLSubjectHierarchyLegacyNode.cxx
-  vtkMRMLSubjectHierarchyLegacyNode.h
-  vtkMRMLSubjectHierarchyNode.cxx
-  vtkMRMLSubjectHierarchyNode.h
-  vtkMRMLTableNode.cxx
-  vtkMRMLTableSQLiteStorageNode.cxx
-  vtkMRMLTableStorageNode.cxx
-  vtkMRMLTableViewNode.cxx
-  vtkMRMLTextNode.cxx
-  vtkMRMLTextStorageNode.cxx
-  vtkMRMLTransformDisplayNode.cxx
-  vtkMRMLTransformNode.cxx
-  vtkMRMLTransformSequenceStorageNode.cxx
-  vtkMRMLTransformSequenceStorageNode.h
-  vtkMRMLTransformStorageNode.cxx
-  vtkMRMLTransformableNode.cxx
-  vtkMRMLTranslator.h
-  vtkMRMLUnitNode.cxx
-  vtkMRMLVectorVolumeDisplayNode.cxx
-  vtkMRMLViewNode.cxx
-  vtkMRMLVolumeArchetypeStorageNode.cxx
-  vtkMRMLVolumeDisplayNode.cxx
-  vtkMRMLVolumeHeaderlessStorageNode.cxx
-  vtkMRMLVolumeNode.cxx
-  vtkMRMLVolumeSequenceStorageNode.cxx
-  vtkMRMLVolumeSequenceStorageNode.h
-  vtkMRMLdGEMRICProceduralColorNode.cxx
-  vtkObservation.cxx
-  vtkObserverManager.cxx
-  vtkPermissionPrompter.cxx
-  vtkProjectMarkupsCurvePointsFilter.cxx
-  vtkProjectMarkupsCurvePointsFilter.h
-  vtkTagTable.cxx
-  vtkTagTableCollection.cxx
-  vtkURIHandler.cxx
-  # Note: when you add new node types, add
-  # register code to the vtkMRMLScene constructor
-  )
+set(classes
+  vtkArchive
+  vtkCacheManager
+  vtkCapPolyData
+  vtkCodedEntry
+  vtkCurveMeasurementsCalculator
+  vtkDataFileFormatHelper
+  vtkDataIOManager
+  vtkDataTransfer
+  vtkEventBroker
+  vtkImageMapToWindowLevelAddon
+  vtkImageMathematicsAddon
+  vtkImplicitInvertableBoolean
+  vtkMRMLAbstractLayoutNode
+  vtkMRMLAbstractViewNode
+  vtkMRMLBSplineTransformNode
+  vtkMRMLCameraNode
+  vtkMRMLClipModelsNode
+  vtkMRMLClipNode
+  vtkMRMLColorNode
+  vtkMRMLColors
+  vtkMRMLColorTableNode
+  vtkMRMLColorTableStorageNode
+  vtkMRMLCoreTestingUtilities
+  vtkMRMLCrosshairNode
+  vtkMRMLdGEMRICProceduralColorNode
+  vtkMRMLDiffusionImageVolumeNode
+  vtkMRMLDiffusionTensorDisplayPropertiesNode
+  vtkMRMLDiffusionTensorVolumeDisplayNode
+  vtkMRMLDiffusionTensorVolumeNode
+  vtkMRMLDiffusionTensorVolumeSliceDisplayNode
+  vtkMRMLDiffusionWeightedVolumeDisplayNode
+  vtkMRMLDiffusionWeightedVolumeNode
+  vtkMRMLDisplayableHierarchyNode
+  vtkMRMLDisplayableNode
+  vtkMRMLDisplayNode
+  vtkMRMLFolderDisplayNode
+  vtkMRMLGlyphableVolumeDisplayNode
+  vtkMRMLGlyphableVolumeSliceDisplayNode
+  vtkMRMLGridTransformNode
+  vtkMRMLHierarchyNode
+  vtkMRMLHierarchyStorageNode
+  vtkMRMLI18N
+  vtkMRMLInteractionEventData
+  vtkMRMLInteractionNode
+  vtkMRMLJsonElement
+  vtkMRMLLabelMapVolumeDisplayNode
+  vtkMRMLLabelMapVolumeNode
+  vtkMRMLLayoutNode
+  vtkMRMLLinearTransformNode
+  vtkMRMLLinearTransformSequenceStorageNode
+  vtkMRMLMarkupsAngleNode
+  vtkMRMLMarkupsClosedCurveNode
+  vtkMRMLMarkupsCurveNode
+  vtkMRMLMarkupsDisplayNode
+  vtkMRMLMarkupsFiducialDisplayNode
+  vtkMRMLMarkupsFiducialNode
+  vtkMRMLMarkupsFiducialStorageNode
+  vtkMRMLMarkupsLineNode
+  vtkMRMLMarkupsNode
+  vtkMRMLMarkupsPlaneDisplayNode
+  vtkMRMLMarkupsPlaneNode
+  vtkMRMLMarkupsROIDisplayNode
+  vtkMRMLMarkupsROINode
+  vtkMRMLMarkupsStorageNode
+  vtkMRMLMeasurement
+  vtkMRMLMeasurementAngle
+  vtkMRMLMeasurementArea
+  vtkMRMLMeasurementLength
+  vtkMRMLMeasurementVolume
+  vtkMRMLMessageCollection
+  vtkMRMLModelDisplayNode
+  vtkMRMLModelHierarchyNode
+  vtkMRMLModelNode
+  vtkMRMLNodeFactory
+  vtkMRMLModelStorageNode
+  vtkMRMLNode
+  vtkMRMLNRRDStorageNode
+  vtkMRMLParser
+  vtkMRMLPETProceduralColorNode
+  vtkMRMLPlotChartNode
+  vtkMRMLPlotSeriesNode
+  vtkMRMLPlotViewNode
+  vtkMRMLProceduralColorNode
+  vtkMRMLProceduralColorStorageNode
+  vtkMRMLROIListNode
+  vtkMRMLROINode
+  vtkMRMLScalarVolumeDisplayNode
+  vtkMRMLScalarVolumeNode
+  vtkMRMLScene
+  vtkMRMLSceneViewNode
+  vtkMRMLSceneViewStorageNode
+  vtkMRMLScriptedModuleNode
+  vtkMRMLSegmentationDisplayNode
+  vtkMRMLSegmentationNode
+  vtkMRMLSegmentationStorageNode
+  vtkMRMLSelectionNode
+  vtkMRMLSequenceNode
+  vtkMRMLSequenceStorageNode
+  vtkMRMLSliceCompositeNode
+  vtkMRMLSliceDisplayNode
+  vtkMRMLSliceNode
+  vtkMRMLSnapshotClipNode
+  vtkMRMLStaticMeasurement
+  vtkMRMLStorableNode
+  vtkMRMLStorageNode
+  vtkMRMLStreamingVolumeNode
+  vtkMRMLSubjectHierarchyLegacyNode
+  vtkMRMLSubjectHierarchyNode
+  vtkMRMLTableNode
+  vtkMRMLTableSQLiteStorageNode
+  vtkMRMLTableStorageNode
+  vtkMRMLTableViewNode
+  vtkMRMLTensorVolumeNode
+  vtkMRMLTextNode
+  vtkMRMLTextStorageNode
+  vtkMRMLTransformableNode
+  vtkMRMLTransformDisplayNode
+  vtkMRMLTransformNode
+  vtkMRMLTransformSequenceStorageNode
+  vtkMRMLTransformStorageNode
+  vtkMRMLUnitNode
+  vtkMRMLVectorVolumeDisplayNode
+  vtkMRMLVectorVolumeNode
+  vtkMRMLViewNode
+  vtkMRMLVolumeArchetypeStorageNode
+  vtkMRMLVolumeDisplayNode
+  vtkMRMLVolumeHeaderlessStorageNode
+  vtkMRMLVolumeNode
+  vtkMRMLVolumeSequenceStorageNode
+  vtkObservation
+  vtkObserverManager
+  vtkPermissionPrompter
+  vtkProjectMarkupsCurvePointsFilter
+  vtkTagTable
+  vtkTagTableCollection
+  vtkURIHandler
+)
 
-if(MRML_USE_vtkTeem)
-  set(MRMLCore_SRCS
-    ${MRMLCore_SRCS}
-    vtkMRMLDiffusionImageVolumeNode.cxx
-    vtkMRMLDiffusionTensorVolumeDisplayNode.cxx
-    vtkMRMLDiffusionTensorVolumeNode.cxx
-    vtkMRMLDiffusionTensorVolumeSliceDisplayNode.cxx
-    vtkMRMLNRRDStorageNode.cxx
-    vtkMRMLStreamingVolumeNode.cxx
-    vtkMRMLTensorVolumeNode.cxx
-    vtkMRMLVectorVolumeNode.cxx
-    )
-endif()
+set(headers
+  vtkMRML.h
+  vtkMRMLNodePropertyMacros.h
+  vtkMRMLTranslator.h
+  vtkMRMLSubjectHierarchyConstants.h
+  ${CMAKE_CURRENT_BINARY_DIR}/${configure_header_file}
+  ${wrapper_header_file}
+)
 
 set_source_files_properties(
   vtkMRMLCoreTestingUtilities.cxx
   WRAP_EXCLUDE
-  )
+)
 
 # Abstract/pure virtual classes
 
@@ -335,160 +262,39 @@ set_source_files_properties(
   vtkMRMLVolumeDisplayNode.cxx
   vtkMRMLVolumeNode.cxx
   ABSTRACT
-  )
-
-string(REGEX REPLACE "\\.cxx" ".h" MRMLCore_SRCS_HEADERS "${MRMLCore_SRCS}")
-source_group("Header Files" FILES ${MRMLCore_SRCS_HEADERS})
-
-#-----------------------------------------------------------------------------
-# Wrapping hints used by all Tcl, Python and Java wrapping.
-# It can also be used by external wrapping tools.
-set(VTK_WRAP_HINTS ${CMAKE_CURRENT_SOURCE_DIR}/Wrapping/Tcl/hints)
-# --------------------------------------------------------------------------
-# Build library
-# --------------------------------------------------------------------------
-set(srcs ${MRMLCore_SRCS} ${MRMLCore_SRCS_HEADERS})
-
-set(lib_name ${PROJECT_NAME})
-add_library(${lib_name} ${srcs})
-
-set(libs
-  vtkAddon
-  vtkITK
-  vtkSegmentationCore
-  ${ITK_LIBRARIES}
-  ${VTK_LIBRARIES}
-  VTK::IOInfovis
-  ${LibArchive_LIBRARY}
-  RapidJSON
-  )
-if(MRML_USE_vtkTeem)
-  list(APPEND libs vtkTeem)
-endif()
-target_link_libraries(${lib_name} ${libs})
-
-# Apply user-defined properties to the library target.
-if(Slicer_LIBRARY_PROPERTIES)
-  set_target_properties(${lib_name} PROPERTIES ${Slicer_LIBRARY_PROPERTIES})
-endif()
-
-# --------------------------------------------------------------------------
-# Generate export header
-# --------------------------------------------------------------------------
-include(GenerateExportHeader)
-set(configure_include "#include <vtkMRMLConfigure.h>\n")
-generate_export_header(${lib_name}
-  EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/vtkMRMLExport.h
-  EXPORT_MACRO_NAME VTK_MRML_EXPORT
-  CUSTOM_CONTENT_FROM_VARIABLE configure_include
 )
 
 # --------------------------------------------------------------------------
-# Folder
+# Build library
 # --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_FOLDER)
-  set(${PROJECT_NAME}_FOLDER ${PROJECT_NAME})
-endif()
-if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
-  set_target_properties(${lib_name} PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-endif()
 
-# --------------------------------------------------------------------------
-# Export target
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_EXPORT_FILE)
-  set(${PROJECT_NAME}_EXPORT_FILE ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Targets.cmake)
-endif()
-export(TARGETS ${lib_name} APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
+vtk_module_add_module(Slicer::MRMLCore
+  EXPORT_MACRO_PREFIX VTK_MRML
+  CLASSES ${classes}
+  HEADERS ${headers}
+  PRIVATE_HEADERS ${version_header_file}
+  EXCLUDE_HEADER_TEST
+)
 
-# --------------------------------------------------------------------------
-# Install library
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_BIN_DIR)
-  set(${PROJECT_NAME}_INSTALL_BIN_DIR bin)
-endif()
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_LIB_DIR)
-  set(${PROJECT_NAME}_INSTALL_LIB_DIR lib/${PROJECT_NAME})
-endif()
+vtk_module_link(Slicer::MRMLCore
+  PUBLIC
+    vtkAddon
+    ITKFactoryRegistration
+  PRIVATE
+    ${ITK_LIBRARIES}
+    RapidJSON
+    ${LibArchive_LIBRARY}
+    ${Teem_LIBRARIES}
+)
 
-install(TARGETS ${lib_name}
-  RUNTIME DESTINATION ${${PROJECT_NAME}_INSTALL_BIN_DIR} COMPONENT RuntimeLibraries
-  LIBRARY DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT RuntimeLibraries
-  ARCHIVE DESTINATION ${${PROJECT_NAME}_INSTALL_LIB_DIR} COMPONENT Development
-  )
+vtk_module_include(Slicer::MRMLCore
+  PRIVATE
+    ${LibArchive_INCLUDE_DIRS}
+    ${Teem_INCLUDE_DIRS}
+)
 
-# --------------------------------------------------------------------------
-# Python Wrapping
-# --------------------------------------------------------------------------
-if(VTK_WRAP_PYTHON)
-  vtkMacroKitPythonWrap(
-    KIT_NAME ${lib_name}
-    KIT_SRCS ${MRMLCore_SRCS}
-    KIT_INSTALL_BIN_DIR ${${PROJECT_NAME}_INSTALL_BIN_DIR}
-    KIT_INSTALL_LIB_DIR ${${PROJECT_NAME}_INSTALL_LIB_DIR}
-    )
-  # Export target
-  export(TARGETS ${lib_name}Python APPEND FILE ${${PROJECT_NAME}_EXPORT_FILE})
-  # Folder
-  if(NOT "${${PROJECT_NAME}_FOLDER}" STREQUAL "")
-    set_target_properties(${lib_name}Python PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    if(TARGET ${lib_name}Hierarchy)
-      set_target_properties(${lib_name}Hierarchy PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
-    endif()
-  endif()
-endif()
+vtk_module_set_property(Slicer::MRMLCore PROPERTY FOLDER VALUE MRMLCore)
 
-# --------------------------------------------------------------------------
-# Testing (requires some of the examples)
-# --------------------------------------------------------------------------
 if(BUILD_TESTING)
   add_subdirectory(Testing)
 endif()
-
-# --------------------------------------------------------------------------
-# Install Test Data
-# --------------------------------------------------------------------------
-if(NOT DEFINED ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  set(${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT ON)
-endif()
-if(NOT ${PROJECT_NAME}_INSTALL_NO_DEVELOPMENT)
-  #file(GLOB_RECURSE MRMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.mrml")
-  #file(GLOB_RECURSE TCLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.tcl")
-  #file(GLOB_RECURSE XMLFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.xml")
-  #file(GLOB_RECURSE GZFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.gz")
-  #file(GLOB_RECURSE NHDRFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.nhdr")
-  #file(GLOB_RECURSE NRRDFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.nrrd")
-  #file(GLOB_RECURSE VTKFILES RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "Testing/*.vtk")
-
-  #foreach(file
-  #    ${MRMLFILES}
-  #    ${TCLFILES}
-  #    ${XMLFILES}
-  #    ${GZFILES}
-  #    ${NHDRFILES}
-  #    ${NRRDFILES}
-  #    ${VTKFILES}
-  #    )
-  #  message(file:${file})
-  #  configure_file(
-  #    ${CMAKE_CURRENT_SOURCE_DIR}/${file}
-  #    ${CMAKE_BINARY_DIR}/share/${PROJECT_NAME}/${file}
-  #    COPYONLY
-  #    )
-  #endforeach()
-
-  install(DIRECTORY
-    Testing
-    DESTINATION share/${PROJECT_NAME} COMPONENT Development
-    PATTERN "*.cxx" EXCLUDE
-    PATTERN ".svn" EXCLUDE
-    PATTERN "*.tcl" EXCLUDE
-    PATTERN "CMakeLists.txt" EXCLUDE
-    )
-endif()
-
-# --------------------------------------------------------------------------
-# Set INCLUDE_DIRS variable
-# --------------------------------------------------------------------------
-set(${PROJECT_NAME}_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${vtkAddon_INCLUDE_DIRS} ${vtkSegmentationCore_INCLUDE_DIRS}
-  CACHE INTERNAL "${PROJECT_NAME} include dirs" FORCE)

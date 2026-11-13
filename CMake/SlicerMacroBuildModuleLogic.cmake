@@ -74,7 +74,7 @@ macro(SlicerMacroBuildModuleLogic)
   # that are VTK python wrapped.
   if(NOT ${MODULELOGIC_DISABLE_WRAP_PYTHON} AND VTK_WRAP_PYTHON AND BUILD_SHARED_LIBS)
     list(APPEND MODULELOGIC_TARGET_LIBRARIES
-      SlicerBaseLogic
+      Slicer::BaseLogic
       MRMLDisplayableManager
       )
   endif()

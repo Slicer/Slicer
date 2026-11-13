@@ -216,6 +216,21 @@ for kit in available_kits:
 
     del kit
 
+# The Python wrappers of Slicer's loadable modules are installed in separate "slicer" packages.
+# Extending __path__ makes all of them importable as part of this package.
+from pkgutil import extend_path, iter_modules
+from fnmatch import fnmatch
+from importlib import import_module
+__path__ = extend_path(__path__, __name__)
+for _, module_name, is_pkg in iter_modules(__path__):
+    if fnmatch(module_name, "vtkSlicer*Module*"):
+        try:
+          module = import_module(f"{__name__}.{module_name}")
+        except ImportError as e:
+          print(f"Failed to import module ${module_name}:\n{e}")
+        symbols = [name for name in dir(module) if not name.startswith("_")]
+        globals().update({name: getattr(module, name) for name in symbols})
+
 # -----------------------------------------------------------------------------
 # Python base classes of file readers and writers implemented in Python.
 # They are imported after the wrapped classes, as they are subclasses of wrapped classes
