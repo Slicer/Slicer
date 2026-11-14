@@ -216,11 +216,13 @@ Clip segments to the specified region or fill regions of a segment (typically us
 
 By enabling `Apply to visible segments`, all visible segments of the segmentation will be processed (in the order of the segment list).
 
+In slice views, `Slice cut` sets how far the cut reaches from the current slice. With the default `Unlimited`, the cut goes through the entire segmentation, so an outline drawn on one slice changes all slices. `Positive` and `Negative` include only one side of the slice plane, and `Symmetric` limits the cut to the specified thickness around the slice plane (a thickness of 0 includes only the current slice). In 3D views the cut always goes through the entire segmentation along the viewing direction.
+
 ### ![](https://github.com/Slicer/Slicer/releases/download/docs-resources/module_segmenteditor_islands.png) Islands
 
-Use this tool to process "islands", i.e., connected regions that are defined as groups of non-empty voxels which touch each other but are surrounded by empty voxels.
+Use this tool to process "islands", i.e., connected regions that are defined as groups of non-empty voxels which touch each other but are surrounded by empty voxels. Voxels are connected only through shared faces (6-connectivity in 3D), so voxels that touch only at an edge or a corner belong to different islands.
 
-- `Keep largest island`: keep the larges connected region.
+- `Keep largest island`: keep the largest connected region.
 - `Remove small islands`: keep all connected regions that are larger than `minimum size`.
 - `Split islands to segments`: create a unique segment for each connected region of the selected segment.
 - `Keep selected island`: after selecting this mode, click in a non-empty area in a slice view to keep that region and remove all other regions.
