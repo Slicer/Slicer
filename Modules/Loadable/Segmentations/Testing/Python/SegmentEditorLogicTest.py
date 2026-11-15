@@ -139,3 +139,31 @@ class SegmentationLogicTest(ScriptedLoadableModuleTest):
         # Assert the modifications have been taken into account
         segmentArray = slicer.util.arrayFromSegmentInternalBinaryLabelmap(self.logic.GetSegmentationNode(), segmentId)
         np.testing.assert_array_equal(segmentArray, expArray)
+
+    def test_bypass_masking_ignores_editable_intensity_range(self):
+        # Fill the whole modifier labelmap
+        labelMap = self.logic.GetModifierLabelmap()
+        modifierArray = vtk.util.numpy_support.vtk_to_numpy(labelMap.GetPointData().GetScalars())
+        modifierArray[:] = 1
+        labelMap.Modified()
+
+        # Editable intensity range that no voxel of the source volume falls in
+        maxIntensity = float(slicer.util.arrayFromVolume(self.tinyVolumeNode).max())
+        self.segmentEditorNode.SetSourceVolumeIntensityMask(True)
+        self.segmentEditorNode.SetSourceVolumeIntensityMaskRange(maxIntensity + 1, maxIntensity + 2)
+
+        # Without bypass the intensity range masks out everything, with bypass all voxels are added
+        for bypassMasking, expectedVoxelCount in ((False, 0), (True, modifierArray.size)):
+            self.logic.AddEmptySegment()
+            segmentId = self.logic.GetCurrentSegmentID()
+            self.logic.ModifySegmentByLabelmap(
+                self.logic.GetSegmentationNode(),
+                segmentId,
+                labelMap,
+                vtkSlicerSegmentEditorLogic.ModificationModeAdd,
+                labelMap.GetExtent(),
+                True,
+                bypassMasking,
+            )
+            segmentArray = slicer.util.arrayFromSegmentBinaryLabelmap(self.logic.GetSegmentationNode(), segmentId, self.tinyVolumeNode)
+            assert np.count_nonzero(segmentArray) == expectedVoxelCount
