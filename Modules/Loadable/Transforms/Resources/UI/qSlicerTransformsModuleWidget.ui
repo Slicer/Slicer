@@ -140,6 +140,362 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
+       <widget class="ctkCollapsibleGroupBox" name="ModelBasedTransformSourceWidget">
+        <property name="toolTip">
+         <string>The transform is computed from displacement vectors stored at the points of a model, and computed again whenever the model changes.</string>
+        </property>
+        <property name="title">
+         <string>Model-based transform</string>
+        </property>
+        <layout class="QFormLayout" name="modelBasedTransformSourceLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <property name="leftMargin">
+          <number>2</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="rightMargin">
+          <number>2</number>
+         </property>
+         <property name="bottomMargin">
+          <number>2</number>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="ModelBasedSourceModelLabel">
+           <property name="text">
+            <string>Source model:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="qMRMLNodeComboBox" name="ModelBasedSourceModelNodeComboBox">
+           <property name="toolTip">
+            <string>Model whose mesh points hold the displacement vectors that the transform is fitted to.</string>
+           </property>
+           <property name="nodeTypes">
+            <stringlist notr="true">
+             <string>vtkMRMLModelNode</string>
+            </stringlist>
+           </property>
+           <property name="noneEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="addEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="removeEnabled">
+            <bool>false</bool>
+           </property>
+           <property name="editEnabled">
+            <bool>true</bool>
+           </property>
+           <property name="renameEnabled">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="ModelBasedDisplacementArrayLabel">
+           <property name="text">
+            <string>Displacement array:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="ModelBasedDisplacementArrayComboBox">
+           <property name="toolTip">
+            <string>Point data array of the model that holds the displacement vectors.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="ModelBasedDisplacementScaleLabel">
+           <property name="toolTip">
+            <string>Multiplies the displacements of the transform.</string>
+           </property>
+           <property name="text">
+            <string>Displacement scale:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <layout class="QHBoxLayout" name="ModelBasedDisplacementScaleLayout">
+           <item>
+            <widget class="ctkSliderWidget" name="ModelBasedDisplacementScaleSliderWidget">
+             <property name="toolTip">
+              <string>Multiplies the displacements of the transform: 0 is the identity, 1 the fitted displacements, 2 twice as much. For exaggerating small deformations or animating them. The fit is not affected.</string>
+             </property>
+             <property name="decimals">
+              <number>2</number>
+             </property>
+             <property name="minimum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>10.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.010000000000000</double>
+             </property>
+             <property name="value">
+              <double>1.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="ModelBasedDisplacementScaleReverseButton">
+             <property name="toolTip">
+              <string>Move points the opposite way: multiplies the displacements by the negative of the displacement scale.</string>
+             </property>
+             <property name="text">
+              <string>Reverse</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="ModelBasedFitResultLabel">
+           <property name="toolTip">
+            <string>How closely the transform reproduces the displacements at the points.</string>
+           </property>
+           <property name="text">
+            <string>Fit:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="ModelBasedFitResultValueLabel">
+           <property name="toolTip">
+            <string>Largest difference between the transform and the displacements at the points, and the number of refinement levels that the fit used.</string>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <widget class="ctkCollapsibleGroupBox" name="ModelBasedFittingGroupBox">
+           <property name="title">
+            <string>Fitting</string>
+           </property>
+           <property name="collapsed">
+            <bool>true</bool>
+           </property>
+           <layout class="QFormLayout" name="modelBasedFittingLayout">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="ModelBasedExtrapolationDistanceLabel">
+              <property name="toolTip">
+               <string>How far beyond the points the transform is fitted.</string>
+              </property>
+              <property name="text">
+               <string>Extrapolation distance:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="ctkDoubleSpinBox" name="ModelBasedExtrapolationDistanceSpinBox">
+              <property name="toolTip">
+               <string>How far beyond the points the transform is fitted. Within this distance it follows the displacements smoothly; beyond it, see Border mode. Set to a tenth of the diagonal of the points when the transform is created.</string>
+              </property>
+              <property name="suffix">
+               <string> mm</string>
+              </property>
+              <property name="decimals">
+               <number>2</number>
+              </property>
+              <property name="minimum">
+               <double>0.000000</double>
+              </property>
+              <property name="maximum">
+               <double>100000.000000</double>
+              </property>
+              <property name="singleStep">
+               <double>1.000000</double>
+              </property>
+              <property name="value">
+               <double>0.000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="ModelBasedControlPointSpacingLabel">
+              <property name="toolTip">
+               <string>Spacing of the B-spline control points of the coarsest level.</string>
+              </property>
+              <property name="text">
+               <string>Coarsest spacing:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="ctkCoordinatesWidget" name="ModelBasedControlPointSpacingWidget">
+              <property name="toolTip">
+               <string>Spacing of the B-spline control points of the coarsest level, along each axis. Each further level halves it. 0 along an axis means automatic: a tenth of the size of the fitted region along that axis.</string>
+              </property>
+              <property name="decimals">
+               <number>2</number>
+              </property>
+              <property name="singleStep">
+               <double>1.000000</double>
+              </property>
+              <property name="minimum">
+               <double>0.000000</double>
+              </property>
+              <property name="maximum">
+               <double>100000.000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="ModelBasedMinimumControlPointSpacingLabel">
+              <property name="toolTip">
+               <string>Smallest spacing of the B-spline control points that refinement may produce.</string>
+              </property>
+              <property name="text">
+               <string>Finest spacing:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="ctkDoubleSpinBox" name="ModelBasedMinimumControlPointSpacingSpinBox">
+              <property name="toolTip">
+               <string>Smallest spacing of the B-spline control points that refinement may produce. A smaller spacing follows the displacements more closely, at the cost of time and memory. Set to a hundredth of the size of the fitted region when the transform is created.</string>
+              </property>
+              <property name="suffix">
+               <string> mm</string>
+              </property>
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="minimum">
+               <double>0.000000</double>
+              </property>
+              <property name="maximum">
+               <double>100000.000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000</double>
+              </property>
+              <property name="value">
+               <double>0.000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="ModelBasedMaximumNumberOfLevelsLabel">
+              <property name="toolTip">
+               <string>Largest number of refinement levels.</string>
+              </property>
+              <property name="text">
+               <string>Maximum levels:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QSpinBox" name="ModelBasedMaximumNumberOfLevelsSpinBox">
+              <property name="toolTip">
+               <string>Largest number of refinement levels. Each level halves the control point spacing and needs about 8 times as much memory.</string>
+              </property>
+              <property name="minimum">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <number>16</number>
+              </property>
+              <property name="value">
+               <number>8</number>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="ModelBasedToleranceLabel">
+              <property name="toolTip">
+               <string>The fit is refined until the largest error at the points is below this.</string>
+              </property>
+              <property name="text">
+               <string>Tolerance:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="ctkDoubleSpinBox" name="ModelBasedToleranceSpinBox">
+              <property name="toolTip">
+               <string>The fit is refined until the largest error at the points is below this distance, or the finest spacing or the maximum number of levels is reached. Set to a thousandth of the largest displacement when the transform is created.</string>
+              </property>
+              <property name="suffix">
+               <string> mm</string>
+              </property>
+              <property name="decimals">
+               <number>4</number>
+              </property>
+              <property name="minimum">
+               <double>0.000000</double>
+              </property>
+              <property name="maximum">
+               <double>100000.000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.001000</double>
+              </property>
+              <property name="value">
+               <double>0.000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="ModelBasedUseLinearApproximationLabel">
+              <property name="toolTip">
+               <string>Start the fit from the linear transform that best matches the displacements.</string>
+              </property>
+              <property name="text">
+               <string>Linear approximation:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QCheckBox" name="ModelBasedUseLinearApproximationCheckBox">
+              <property name="toolTip">
+               <string>Start the fit from the linear transform that best matches the displacements, so that away from the points the transform follows their overall linear trend (a rotation, a scaling) instead of flattening out.</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="ModelBasedBorderModeLabel">
+              <property name="toolTip">
+               <string>What the transform does beyond the fitted region.</string>
+              </property>
+              <property name="text">
+               <string>Border mode:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="1">
+             <widget class="QComboBox" name="ModelBasedBorderModeComboBox">
+              <property name="toolTip">
+               <string>What the transform does beyond the fitted region (the points and the extrapolation distance around them): keep the displacement at the border of the region, have no displacement outside it, or fade the displacement to zero at its border.</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <widget class="ctkCollapsibleGroupBox" name="MatrixViewGroupBox">
         <property name="enabled">
          <bool>false</bool>
@@ -534,29 +890,167 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="ConvertCollapsibleButton">
+    <widget class="ctkCollapsibleButton" name="ExportImportCollapsibleButton">
      <property name="text">
       <string>Convert</string>
      </property>
      <property name="checked">
       <bool>false</bool>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+     <layout class="QFormLayout" name="exportImportLayout">
       <property name="fieldGrowthPolicy">
        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
       </property>
       <item row="0" column="0">
-       <widget class="QLabel" name="ConvertReferenceVolumeLabel">
+       <widget class="QLabel" name="ExportImportOperationLabel">
+        <property name="text">
+         <string>Operation:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QWidget" name="ExportImportOperationWidget">
+        <layout class="QHBoxLayout" name="exportImportOperationLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="ExportRadioButton">
+           <property name="toolTip">
+            <string>Export the displacement field of the transform to a grid transform or a volume.</string>
+           </property>
+           <property name="text">
+            <string>Export</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="ImportRadioButton">
+           <property name="toolTip">
+            <string>Set the transform from a displacement field stored in a vector volume or in a model.</string>
+           </property>
+           <property name="text">
+            <string>Import</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="exportImportOperationLayoutStretch">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="ExportOutputTypeLabel">
+        <property name="text">
+         <string>Output type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QWidget" name="ExportOutputTypeWidget">
+        <layout class="QHBoxLayout" name="exportOutputTypeLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="ExportGridTransformRadioButton">
+           <property name="toolTip">
+            <string>A transform that stores the displacement field of the transform on the grid of the reference volume.</string>
+           </property>
+           <property name="text">
+            <string>Grid transform</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="ExportMagnitudeVolumeRadioButton">
+           <property name="toolTip">
+            <string>A scalar volume that holds the length of the displacement in each voxel of the reference volume.</string>
+           </property>
+           <property name="text">
+            <string>Magnitude volume</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="ExportVectorVolumeRadioButton">
+           <property name="toolTip">
+            <string>A vector volume that holds the displacement vector (in RAS) in each voxel of the reference volume.</string>
+           </property>
+           <property name="text">
+            <string>Vector volume</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="exportOutputTypeLayoutStretch">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="ExportReferenceVolumeLabel">
         <property name="text">
          <string>Reference volume:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="ConvertReferenceVolumeNodeComboBox">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
+      <item row="2" column="1">
+       <widget class="qMRMLNodeComboBox" name="ExportReferenceVolumeNodeComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>9</horstretch>
@@ -572,7 +1066,7 @@
          </stringlist>
         </property>
         <property name="baseName">
-         <string/>
+         <string></string>
         </property>
         <property name="noneEnabled">
          <bool>false</bool>
@@ -591,18 +1085,15 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="ConvertOutputDisplacementFieldLabel">
+      <item row="3" column="0">
+       <widget class="QLabel" name="ExportOutputNodeLabel">
         <property name="text">
-         <string>Output displacement field:</string>
+         <string>Output node:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="qMRMLNodeComboBox" name="ConvertOutputDisplacementFieldNodeComboBox">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
+      <item row="3" column="1">
+       <widget class="qMRMLNodeComboBox" name="ExportOutputNodeComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>9</horstretch>
@@ -610,13 +1101,11 @@
          </sizepolicy>
         </property>
         <property name="toolTip">
-         <string>Volume or transform node that will store the displacement field. If scalar volume node is chosen then only displacement magnitude is saved. In vector volume or transform node 3D displacement vector is saved.</string>
+         <string>Node that will store the displacement field. If none is selected then a new node is created.</string>
         </property>
         <property name="nodeTypes">
          <stringlist notr="true">
           <string>vtkMRMLTransformNode</string>
-          <string>vtkMRMLScalarVolumeNode</string>
-          <string>vtkMRMLVectorVolumeNode</string>
          </stringlist>
         </property>
         <property name="showChildNodeTypes">
@@ -642,8 +1131,135 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QPushButton" name="ConvertPushButton">
+      <item row="4" column="0">
+       <widget class="QLabel" name="ImportInputTypeLabel">
+        <property name="text">
+         <string>Input type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QWidget" name="ImportInputTypeWidget">
+        <layout class="QHBoxLayout" name="importInputTypeLayout">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="ImportVectorVolumeRadioButton">
+           <property name="toolTip">
+            <string>A vector volume that holds the displacement vector (in RAS) in each voxel. The transform becomes a grid transform.</string>
+           </property>
+           <property name="text">
+            <string>Vector volume</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="ImportModelRadioButton">
+           <property name="toolTip">
+            <string>A model whose mesh points hold displacement vectors in a point data array. A smooth B-spline transform is fitted to them, and follows later changes of the mesh. Its model, array and fitting parameters can then be changed in the Edit section.</string>
+           </property>
+           <property name="text">
+            <string>Model</string>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="importInputTypeLayoutStretch">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="ImportInputNodeLabel">
+        <property name="text">
+         <string>Input node:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="qMRMLNodeComboBox" name="ImportInputNodeComboBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>9</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Node that holds the displacement field.</string>
+        </property>
+        <property name="nodeTypes">
+         <stringlist notr="true">
+          <string>vtkMRMLVectorVolumeNode</string>
+         </stringlist>
+        </property>
+        <property name="showChildNodeTypes">
+         <bool>false</bool>
+        </property>
+        <property name="baseName">
+         <string></string>
+        </property>
+        <property name="noneEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="addEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="removeEnabled">
+         <bool>true</bool>
+        </property>
+        <property name="editEnabled">
+         <bool>false</bool>
+        </property>
+        <property name="renameEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="ImportDisplacementArrayLabel">
+         <property name="toolTip">
+          <string>Point data array of the model that holds the displacement vectors.</string>
+         </property>
+        <property name="text">
+         <string>Displacement array:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QComboBox" name="ImportDisplacementArrayComboBox">
+        <property name="toolTip">
+         <string>Point data array of the model that holds the displacement vectors.</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QPushButton" name="ExportImportPushButton">
         <property name="text">
          <string>Apply</string>
         </property>
@@ -741,6 +1357,11 @@
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>ctkDoubleSpinBox</class>
+   <extends>QWidget</extends>
+   <header>ctkDoubleSpinBox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ctkCoordinatesWidget</class>
    <extends>QWidget</extends>
    <header>ctkCoordinatesWidget.h</header>
@@ -750,6 +1371,11 @@
    <extends>QFrame</extends>
    <header>ctkExpandableWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ctkMatrixWidget</class>
@@ -862,7 +1488,7 @@
   <connection>
    <sender>qSlicerTransformsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ConvertOutputDisplacementFieldNodeComboBox</receiver>
+   <receiver>ExportOutputNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -878,7 +1504,7 @@
   <connection>
    <sender>qSlicerTransformsModuleWidget</sender>
    <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
-   <receiver>ConvertReferenceVolumeNodeComboBox</receiver>
+   <receiver>ExportReferenceVolumeNodeComboBox</receiver>
    <slot>setMRMLScene(vtkMRMLScene*)</slot>
    <hints>
     <hint type="sourcelabel">
@@ -920,6 +1546,38 @@
     <hint type="destinationlabel">
      <x>142</x>
      <y>148</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ImportInputNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>461</x>
+     <y>816</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>504</x>
+     <y>1210</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>qSlicerTransformsModuleWidget</sender>
+   <signal>mrmlSceneChanged(vtkMRMLScene*)</signal>
+   <receiver>ModelBasedSourceModelNodeComboBox</receiver>
+   <slot>setMRMLScene(vtkMRMLScene*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>461</x>
+     <y>816</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>504</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>
