@@ -295,7 +295,7 @@ void qMRMLVolumeInfoWidget::updateWidgetFromMRMLDisplayNode()
   // populate the win/level presets
   for (int presetIndex = 0; presetIndex < displayNode->GetNumberOfWindowLevelPresets(); ++presetIndex)
   {
-    QString windowLevelPreset = QString("%1 | %2").arg(displayNode->GetWindowPreset(presetIndex), displayNode->GetLevelPreset(presetIndex));
+    QString windowLevelPreset = QString("%1 | %2").arg(QString::number(displayNode->GetWindowPreset(presetIndex)), QString::number(displayNode->GetLevelPreset(presetIndex)));
     d->WindowLevelPresetsListWidget->addItem(windowLevelPreset);
   }
 }
