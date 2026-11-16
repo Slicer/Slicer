@@ -42,7 +42,7 @@ Setting/getting effect parameters:
 |---------------------------|--------|--------|---------|----------------------------|
 | Operation                 | enum   | no     | COPY    | COPY, UNION, INTERSECT, SUBTRACT, INVERT, CLEAR, FILL |
 | ModifierSegmentID         | string | no     |         | segment ID                 |
-| BypassMasking             | int    | no     | 0       | 0 or 1                     |
+| BypassMasking             | int    | no     | 1       | 0 or 1                     |
 
 ### Margin
 
@@ -71,7 +71,7 @@ Setting/getting effect parameters:
 | BrushMaximumAbsoluteDiameter | float | yes    | 100.0   | >0.0   |
 | BrushAbsoluteDiameter        | float | yes    | 5.0     | >=0.0  |
 | BrushRelativeDiameter        | float | yes    | 3.0     | >=0.0  |
-| BrushRelativeDiameter        | int   | yes    | 1       | 0 or 1 |
+| BrushDiameterIsRelative      | int   | yes    | 1       | 0 or 1 |
 | BrushSphere                  | int   | yes    | 0       | 0 or 1 |
 | EditIn3DViews                | int   | yes    | 0       | 0 or 1 |
 | ColorSmudge                  | int   | no     | 0       | 0 or 1 |
