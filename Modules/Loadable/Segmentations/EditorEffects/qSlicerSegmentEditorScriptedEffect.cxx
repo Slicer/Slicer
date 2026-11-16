@@ -156,6 +156,7 @@ bool qSlicerSegmentEditorScriptedEffect::setPythonSource(const QString newPython
   }
 
   // Get a reference to the main module and global dictionary
+  PYTHONQT_GIL_SCOPE;
   PyObject* main_module = PyImport_AddModule("__main__");
   PyObject* global_dict = PyModule_GetDict(main_module);
 
@@ -248,6 +249,8 @@ void qSlicerSegmentEditorScriptedEffect::setRequireSegments(bool requireSegments
 QIcon qSlicerSegmentEditorScriptedEffect::icon()
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* result = d->PythonCppAPI.callMethod(d->IconMethod);
   if (!result)
   {
@@ -268,6 +271,8 @@ QIcon qSlicerSegmentEditorScriptedEffect::icon()
 const QString qSlicerSegmentEditorScriptedEffect::helpText() const
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* result = d->PythonCppAPI.callMethod(d->HelpTextMethod);
   if (!result)
   {
@@ -290,6 +295,8 @@ const QString qSlicerSegmentEditorScriptedEffect::helpText() const
 qSlicerSegmentEditorAbstractEffect* qSlicerSegmentEditorScriptedEffect::clone()
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* result = d->PythonCppAPI.callMethod(d->CloneMethod);
   if (!result)
   {
@@ -315,6 +322,7 @@ void qSlicerSegmentEditorScriptedEffect::activate()
   this->Superclass::activate();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->ActivateMethod);
 }
 
@@ -325,6 +333,7 @@ void qSlicerSegmentEditorScriptedEffect::deactivate()
   this->Superclass::deactivate();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->DeactivateMethod);
 }
 
@@ -335,6 +344,7 @@ void qSlicerSegmentEditorScriptedEffect::setupOptionsFrame()
   this->Superclass::setupOptionsFrame();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->SetupOptionsFrameMethod);
 }
 
@@ -342,6 +352,8 @@ void qSlicerSegmentEditorScriptedEffect::setupOptionsFrame()
 QCursor qSlicerSegmentEditorScriptedEffect::createCursor(qMRMLWidget* viewWidget)
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PythonQtConv::QVariantToPyObject(QVariant::fromValue<QObject*>((QObject*)viewWidget)));
   PyObject* result = d->PythonCppAPI.callMethod(d->CreateCursorMethod, arguments);
@@ -361,6 +373,8 @@ QCursor qSlicerSegmentEditorScriptedEffect::createCursor(qMRMLWidget* viewWidget
 bool qSlicerSegmentEditorScriptedEffect::processInteractionEvents(vtkRenderWindowInteractor* callerInteractor, unsigned long eid, qMRMLWidget* viewWidget)
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer((vtkObject*)callerInteractor));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(eid));
@@ -385,6 +399,8 @@ bool qSlicerSegmentEditorScriptedEffect::processInteractionEvents(vtkRenderWindo
 void qSlicerSegmentEditorScriptedEffect::processViewNodeEvents(vtkMRMLAbstractViewNode* callerViewNode, unsigned long eid, qMRMLWidget* viewWidget)
 {
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer((vtkObject*)callerViewNode));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(eid));
@@ -408,6 +424,7 @@ void qSlicerSegmentEditorScriptedEffect::setMRMLDefaults()
   // this->Superclass::setMRMLDefaults();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->SetMRMLDefaultsMethod);
 }
 
@@ -418,6 +435,7 @@ void qSlicerSegmentEditorScriptedEffect::referenceGeometryChanged()
   this->Superclass::referenceGeometryChanged();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->ReferenceGeometryChangedMethod);
 }
 
@@ -428,6 +446,7 @@ void qSlicerSegmentEditorScriptedEffect::sourceVolumeNodeChanged()
   this->Superclass::sourceVolumeNodeChanged();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->SourceVolumeNodeChangedMethod);
 }
 
@@ -439,6 +458,7 @@ void qSlicerSegmentEditorScriptedEffect::masterVolumeNodeChanged()
   this->Superclass::masterVolumeNodeChanged();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->MasterVolumeNodeChangedMethod);
 }
 
@@ -449,6 +469,7 @@ void qSlicerSegmentEditorScriptedEffect::layoutChanged()
   this->Superclass::layoutChanged();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->LayoutChangedMethod);
 }
 
@@ -460,6 +481,8 @@ void qSlicerSegmentEditorScriptedEffect::interactionNodeModified(vtkMRMLInteract
   // is activated.
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer((vtkObject*)interactionNode));
   PyObject* result = d->PythonCppAPI.callMethod(d->InteractionNodeModifiedMethod, arguments);
@@ -487,6 +510,7 @@ void qSlicerSegmentEditorScriptedEffect::updateGUIFromMRML()
   // this->Superclass::updateGUIFromMRML();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->UpdateGUIFromMRMLMethod);
 }
 
@@ -500,6 +524,7 @@ void qSlicerSegmentEditorScriptedEffect::updateMRMLFromGUI()
   // this->Superclass::updateMRMLFromGUI();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->UpdateMRMLFromGUIMethod);
 }
 
@@ -513,5 +538,6 @@ void qSlicerSegmentEditorScriptedEffect::cleanup()
   // this->Superclass::cleanup();
 
   Q_D(const qSlicerSegmentEditorScriptedEffect);
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(d->CleanupMethod);
 }

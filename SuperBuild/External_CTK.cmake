@@ -72,13 +72,13 @@ if(NOT DEFINED CTK_DIR AND NOT Slicer_USE_SYSTEM_${proj})
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_REPOSITORY
-    "${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
+    "${EP_GIT_PROTOCOL}://github.com/Thibault-Pelletier/CTK.git" # TODO: Update back to "${EP_GIT_PROTOCOL}://github.com/commontk/CTK.git"
     QUIET
     )
 
   ExternalProject_SetIfNotDefined(
     Slicer_${proj}_GIT_TAG
-    "d3a09b063cd3353ae7304b8604ed83632013a909"
+    "8714b0b8dcb5c50007d77ff63784a6314fd24e40" # TODO: Update to CTK hash when https://github.com/commontk/CTK/pull/1463 is merged
     QUIET
     )
 

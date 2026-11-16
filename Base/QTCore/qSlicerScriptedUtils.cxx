@@ -36,6 +36,7 @@
 //-----------------------------------------------------------------------------
 bool qSlicerScriptedUtils::loadSourceAsModule(const QString& moduleName, const QString& filePath, PyObject* global_dict, PyObject* local_dict)
 {
+  PYTHONQT_GIL_SCOPE;
   PyObject* pyRes = nullptr;
 
   if (filePath.endsWith(".py") || filePath.endsWith(".pyc"))
@@ -70,6 +71,7 @@ bool qSlicerScriptedUtils::setModuleAttribute(const QString& moduleName, const Q
   }
 
   // Import module
+  PYTHONQT_GIL_SCOPE;
   PyObject* module = PythonQt::self()->getMainModule();
   if (!moduleName.isEmpty())
   {
@@ -135,6 +137,7 @@ qSlicerPythonCppAPI::qSlicerPythonCppAPI() = default;
 //-----------------------------------------------------------------------------
 qSlicerPythonCppAPI::~qSlicerPythonCppAPI()
 {
+  PYTHONQT_GIL_SCOPE;
   if (this->PythonSelf)
   {
     this->APIMethods.clear();
@@ -166,6 +169,7 @@ void qSlicerPythonCppAPI::declareMethod(int id, const char* name)
 //-----------------------------------------------------------------------------
 PyObject* qSlicerPythonCppAPI::instantiateClass(QObject* cpp, const QString& className, PyObject* classToInstantiate)
 {
+  PYTHONQT_GIL_SCOPE;
   PyObject* wrappedThis = PythonQt::self()->priv()->wrapQObject(cpp);
   if (!wrappedThis)
   {
@@ -227,6 +231,8 @@ PyObject* qSlicerPythonCppAPI::callMethod(int id, PyObject* arguments)
   {
     return nullptr;
   }
+
+  PYTHONQT_GIL_SCOPE;
   PyObject* method = this->PythonAPIMethods.value(id).object();
   PythonQt::self()->clearError();
   PyObject* result = PyObject_CallObject(method, arguments);
@@ -246,6 +252,7 @@ PyObject* qSlicerPythonCppAPI::pythonSelf() const
   // For example, each call of calling of
   // slicer.modules.endoscopy.widgetRepresentation().self()
   // would decrease the ref count of the Python widget class by one.
+  PYTHONQT_GIL_SCOPE;
   Py_XINCREF(this->PythonSelf);
   return this->PythonSelf;
 }

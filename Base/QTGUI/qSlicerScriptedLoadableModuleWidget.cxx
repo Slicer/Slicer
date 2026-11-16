@@ -122,6 +122,7 @@ bool qSlicerScriptedLoadableModuleWidget::setPythonSource(const QString& filePat
   }
 
   // Get a reference to the main module and global dictionary
+  PYTHONQT_GIL_SCOPE;
   PyObject* main_module = PyImport_AddModule("__main__");
   PyObject* global_dict = PyModule_GetDict(main_module);
 
@@ -209,6 +210,7 @@ void qSlicerScriptedLoadableModuleWidget::setup()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   this->Superclass::setup();
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(Pimpl::SetupMethod);
 }
 
@@ -217,6 +219,7 @@ void qSlicerScriptedLoadableModuleWidget::enter()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   this->Superclass::enter();
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(Pimpl::EnterMethod);
 }
 
@@ -225,6 +228,7 @@ void qSlicerScriptedLoadableModuleWidget::exit()
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
   this->Superclass::exit();
+  PYTHONQT_GIL_SCOPE;
   d->PythonCppAPI.callMethod(Pimpl::ExitMethod);
 }
 
@@ -232,6 +236,8 @@ void qSlicerScriptedLoadableModuleWidget::exit()
 bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node, QString role /* = QString()*/, QString context /* = QString()*/)
 {
   Q_D(qSlicerScriptedLoadableModuleWidget);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(3);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyTuple_SET_ITEM(arguments, 1, PyUnicode_FromString(role.toUtf8()));
@@ -258,6 +264,8 @@ bool qSlicerScriptedLoadableModuleWidget::setEditedNode(vtkMRMLNode* node, QStri
 double qSlicerScriptedLoadableModuleWidget::nodeEditable(vtkMRMLNode* node)
 {
   Q_D(const qSlicerScriptedLoadableModuleWidget);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyObject* result = d->PythonCppAPI.callMethod(d->NodeEditableMethod, arguments);
