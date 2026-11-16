@@ -24,26 +24,20 @@
 
 #include "vtkMRMLTransformDisplayNode.h"
 
-#include "vtkMRMLColorTableNode.h"
-#include "vtkMRMLModelNode.h"
-#include "vtkMRMLProceduralColorNode.h"
-#include "vtkMRMLTransformNode.h"
-#include "vtkMRMLScene.h"
-#include "vtkMRMLSliceNode.h"
-#include "vtkMRMLVolumeNode.h"
-
-#include <vtkColorTransferFunction.h>
-#include <vtkIntArray.h>
-#include <vtkNew.h>
-#include <vtkMRMLProceduralColorNode.h>
-
 #include <sstream>
 
+namespace
+{
 const char RegionReferenceRole[] = "region";
 const char GlyphPointsReferenceRole[] = "glyphPoints";
-const char* DISPLACEMENT_MAGNITUDE_SCALAR_NAME = "DisplacementMagnitude";
-const char CONTOUR_LEVEL_SEPARATOR = ' ';
-const char* DEFAULT_COLOR_TABLE_NAME = "Displacement to color";
+/// Attributes of the displacement field visualization that earlier Slicer versions wrote
+const char* const LegacyVisualizationAttributeNames[] = {
+  "VisualizationMode",     "GlyphSpacingMm",  "GlyphScalePercent",         "GlyphDisplayRangeMaxMm", "GlyphDisplayRangeMinMm", "GlyphType",
+  "GlyphTipLengthPercent", "GlyphDiameterMm", "GlyphShaftDiameterPercent", "GlyphResolution",        "GlyphResolution2D",      "GlyphTipLengthPercent2D",
+  "GridScalePercent",      "GridSpacingMm",   "GridLineDiameterMm",        "GridResolutionMm",       "GridShowNonWarped",      "ContourResolutionMm",
+  "ContourLevelsMm",       "ContourOpacity",
+};
+} // namespace
 
 //------------------------------------------------------------------------------
 vtkMRMLNodeNewMacro(vtkMRMLTransformDisplayNode);
@@ -60,37 +54,6 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->Visibility2D = 0;
   // If global visibility is turned on then 3D will show up
   this->Visibility3D = 1;
-
-  this->ScalarVisibility = 1;
-  this->SetActiveScalarName(DISPLACEMENT_MAGNITUDE_SCALAR_NAME);
-
-  this->VisualizationMode = VIS_MODE_GLYPH;
-
-  this->GlyphSpacingMm = 10.0;
-  this->GlyphScalePercent = 100;
-  this->GlyphDisplayRangeMaxMm = 100;
-  this->GlyphDisplayRangeMinMm = 0.01;
-  this->GlyphType = GLYPH_TYPE_ARROW;
-  this->GlyphTipLengthPercent = 30;
-  this->GlyphDiameterMm = 5.0;
-  this->GlyphShaftDiameterPercent = 40;
-  this->GlyphResolution = 6;
-  this->GlyphResolution2D = 12;
-  this->GlyphTipLengthPercent2D = 30;
-
-  this->GridScalePercent = 100;
-  this->GridSpacingMm = 15.0;
-  this->GridLineDiameterMm = 1.0;
-  this->GridResolutionMm = 5.0;
-  this->GridShowNonWarped = false;
-
-  this->ContourResolutionMm = 5.0;
-  this->ContourOpacity = 0.8;
-  this->ContourLevelsMm.clear();
-  for (double level = 2.0; level < 20.0; level += 2.0)
-  {
-    this->ContourLevelsMm.push_back(level);
-  }
 
   this->EditorVisibility = false;
   this->EditorVisibility3D = true;
@@ -118,12 +81,9 @@ vtkMRMLTransformDisplayNode::vtkMRMLTransformDisplayNode()
   this->RotationHandleComponentVisibilitySlice[3] = true;
   this->TranslationHandleComponentVisibilitySlice[3] = true;
 
-  vtkNew<vtkIntArray> regionModifiedEvents;
-  regionModifiedEvents->InsertNextValue(vtkCommand::ModifiedEvent);
-  regionModifiedEvents->InsertNextValue(vtkMRMLTransformableNode::TransformModifiedEvent);
-  this->AddNodeReferenceRole(RegionReferenceRole, RegionReferenceRole, regionModifiedEvents);
-
-  this->AddNodeReferenceRole(GlyphPointsReferenceRole, GlyphPointsReferenceRole, nullptr, ContentModifiedObserveEnabled /* observe content modified events */);
+  // Read and written as attributes under the same names as before, so that they are kept until they are converted
+  this->AddNodeReferenceRole(RegionReferenceRole, RegionReferenceRole);
+  this->AddNodeReferenceRole(GlyphPointsReferenceRole, GlyphPointsReferenceRole);
 }
 
 //----------------------------------------------------------------------------
@@ -136,29 +96,11 @@ void vtkMRMLTransformDisplayNode::WriteXML(ostream& of, int nIndent)
 
   vtkMRMLWriteXMLBeginMacro(of);
 
-  of << " VisualizationMode=\"" << ConvertVisualizationModeToString(this->VisualizationMode) << "\"";
-
-  of << " GlyphSpacingMm=\"" << this->GlyphSpacingMm << "\"";
-  of << " GlyphScalePercent=\"" << this->GlyphScalePercent << "\"";
-  of << " GlyphDisplayRangeMaxMm=\"" << this->GlyphDisplayRangeMaxMm << "\"";
-  of << " GlyphDisplayRangeMinMm=\"" << this->GlyphDisplayRangeMinMm << "\"";
-  of << " GlyphType=\"" << ConvertGlyphTypeToString(this->GlyphType) << "\"";
-  of << " GlyphTipLengthPercent=\"" << this->GlyphTipLengthPercent << "\"";
-  of << " GlyphDiameterMm=\"" << this->GlyphDiameterMm << "\"";
-  of << " GlyphShaftDiameterPercent=\"" << this->GlyphShaftDiameterPercent << "\"";
-  of << " GlyphResolution=\"" << this->GlyphResolution << "\"";
-  of << " GlyphResolution2D=\"" << this->GlyphResolution2D << "\"";
-  of << " GlyphTipLengthPercent2D=\"" << this->GlyphTipLengthPercent2D << "\"";
-
-  of << " GridScalePercent=\"" << this->GridScalePercent << "\"";
-  of << " GridSpacingMm=\"" << this->GridSpacingMm << "\"";
-  of << " GridLineDiameterMm=\"" << this->GridLineDiameterMm << "\"";
-  of << " GridResolutionMm=\"" << this->GridResolutionMm << "\"";
-  of << " GridShowNonWarped=\"" << this->GridShowNonWarped << "\"";
-
-  of << " ContourResolutionMm=\"" << this->ContourResolutionMm << "\"";
-  of << " ContourLevelsMm=\"" << this->GetContourLevelsMmAsString() << "\"";
-  of << " ContourOpacity=\"" << this->ContourOpacity << "\"";
+  // As they were read
+  for (const auto& nameAndValue : this->LegacyVisualizationAttributes)
+  {
+    of << " " << nameAndValue.first << "=\"" << this->XMLAttributeEncodeString(nameAndValue.second) << "\"";
+  }
 
   of << " EditorVisibility=\"" << this->EditorVisibility << "\"";
   of << " EditorSliceIntersectionVisibility=\"" << this->EditorSliceIntersectionVisibility << "\"";
@@ -203,36 +145,18 @@ void vtkMRMLTransformDisplayNode::ReadXMLAttributes(const char** atts)
 
   vtkMRMLReadXMLBeginMacro(atts);
 
-  if (!strcmp(xmlReadAttName, "VisualizationMode"))
+  bool legacyVisualizationAttribute = false;
+  for (const char* legacyAttributeName : LegacyVisualizationAttributeNames)
   {
-    this->VisualizationMode = ConvertVisualizationModeFromString(xmlReadAttValue);
-    continue;
+    if (!strcmp(xmlReadAttName, legacyAttributeName))
+    {
+      this->LegacyVisualizationAttributes[legacyAttributeName] = xmlReadAttValue;
+      legacyVisualizationAttribute = true;
+      break;
+    }
   }
-  READ_FROM_ATT(GlyphSpacingMm);
-  READ_FROM_ATT(GlyphScalePercent);
-  READ_FROM_ATT(GlyphDisplayRangeMaxMm);
-  READ_FROM_ATT(GlyphDisplayRangeMinMm);
-  if (!strcmp(xmlReadAttName, "GlyphType"))
+  if (legacyVisualizationAttribute)
   {
-    this->GlyphType = ConvertGlyphTypeFromString(xmlReadAttValue);
-    continue;
-  }
-  READ_FROM_ATT(GlyphTipLengthPercent);
-  READ_FROM_ATT(GlyphDiameterMm);
-  READ_FROM_ATT(GlyphShaftDiameterPercent);
-  READ_FROM_ATT(GlyphResolution);
-  READ_FROM_ATT(GlyphResolution2D);
-  READ_FROM_ATT(GlyphTipLengthPercent2D);
-  READ_FROM_ATT(GridScalePercent);
-  READ_FROM_ATT(GridSpacingMm);
-  READ_FROM_ATT(GridLineDiameterMm);
-  READ_FROM_ATT(GridResolutionMm);
-  READ_FROM_ATT(GridShowNonWarped);
-  READ_FROM_ATT(ContourResolutionMm);
-  READ_FROM_ATT(ContourOpacity);
-  if (!strcmp(xmlReadAttName, "ContourLevelsMm"))
-  {
-    SetContourLevelsMmFromString(xmlReadAttValue);
     continue;
   }
   READ_FROM_ATT(EditorVisibility);
@@ -275,33 +199,9 @@ void vtkMRMLTransformDisplayNode::CopyContent(vtkMRMLNode* anode, bool deepCopy 
 
   vtkMRMLCopyBeginMacro(anode);
 
-  vtkMRMLCopyIntMacro(VisualizationMode);
-
-  vtkMRMLCopyFloatMacro(GlyphSpacingMm);
-  vtkMRMLCopyFloatMacro(GlyphScalePercent);
-  vtkMRMLCopyFloatMacro(GlyphDisplayRangeMaxMm);
-  vtkMRMLCopyFloatMacro(GlyphDisplayRangeMinMm);
-  vtkMRMLCopyIntMacro(GlyphType);
-
-  vtkMRMLCopyFloatMacro(GlyphTipLengthPercent);
-  vtkMRMLCopyFloatMacro(GlyphDiameterMm);
-  vtkMRMLCopyFloatMacro(GlyphShaftDiameterPercent);
-  vtkMRMLCopyIntMacro(GlyphResolution);
-
-  vtkMRMLCopyIntMacro(GlyphResolution2D);
-  vtkMRMLCopyFloatMacro(GlyphTipLengthPercent2D);
-
-  vtkMRMLCopyFloatMacro(GridScalePercent);
-  vtkMRMLCopyFloatMacro(GridSpacingMm);
-  vtkMRMLCopyFloatMacro(GridLineDiameterMm);
-  vtkMRMLCopyFloatMacro(GridResolutionMm);
-  vtkMRMLCopyBooleanMacro(GridShowNonWarped);
-
-  vtkMRMLCopyFloatMacro(ContourResolutionMm);
-  vtkMRMLCopyFloatMacro(ContourOpacity);
-  if (this->ContourLevelsMm != node->ContourLevelsMm)
+  if (this->LegacyVisualizationAttributes != node->LegacyVisualizationAttributes)
   {
-    this->ContourLevelsMm = node->ContourLevelsMm;
+    this->LegacyVisualizationAttributes = node->LegacyVisualizationAttributes;
     this->Modified();
   }
   vtkMRMLCopyBooleanMacro(EditorVisibility);
@@ -336,27 +236,10 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
 
   vtkMRMLPrintBeginMacro(os, indent);
 
-  os << indent << "VisualizationMode = " << ConvertVisualizationModeToString(this->VisualizationMode) << "\n";
-  os << indent << "GlyphScalePercent = " << this->GlyphScalePercent << "\n";
-  os << indent << "GlyphDisplayRangeMaxMm = " << this->GlyphDisplayRangeMaxMm << "\n";
-  os << indent << "GlyphDisplayRangeMinMm = " << this->GlyphDisplayRangeMinMm << "\n";
-  os << indent << "GlyphType = " << ConvertGlyphTypeToString(this->GlyphType) << "\n";
-  os << indent << "GlyphTipLengthPercent = " << this->GlyphTipLengthPercent << "\n";
-  os << indent << "GlyphDiameterMm = " << this->GlyphDiameterMm << "\n";
-  os << indent << "GlyphShaftDiameterPercent = " << this->GlyphShaftDiameterPercent << "\n";
-  os << indent << "GlyphResolution = " << this->GlyphResolution << "\n";
-  os << indent << "GlyphResolution2D = " << this->GlyphResolution2D << "\n";
-  os << indent << "GlyphTipLengthPercent2D = " << this->GlyphTipLengthPercent2D << "\n";
-
-  os << indent << "GridScalePercent = " << this->GridScalePercent << "\n";
-  os << indent << "GridSpacingMm = " << this->GridSpacingMm << "\n";
-  os << indent << "GridLineDiameterMm = " << this->GridLineDiameterMm << "\n";
-  os << indent << "GridResolutionMm = " << this->GridResolutionMm << "\n";
-  os << indent << "GridShowNonWarped = " << this->GridShowNonWarped << "\n";
-
-  os << indent << "ContourResolutionMm = " << this->ContourResolutionMm << "\n";
-  os << indent << "ContourOpacity = " << this->ContourOpacity << "\n";
-  os << indent << "ContourLevelsMm = " << GetContourLevelsMmAsString() << "\n";
+  for (const auto& nameAndValue : this->LegacyVisualizationAttributes)
+  {
+    os << indent << "Legacy " << nameAndValue.first << " = " << nameAndValue.second << "\n";
+  }
 
   os << indent << " EditorVisibility=\"" << this->EditorVisibility << "\n";
   os << indent << " EditorSliceIntersectionVisibility=\"" << this->EditorSliceIntersectionVisibility << "\n";
@@ -378,317 +261,43 @@ void vtkMRMLTransformDisplayNode::PrintSelf(ostream& os, vtkIndent indent)
   vtkMRMLPrintEndMacro();
 }
 
-//---------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::ProcessMRMLEvents(vtkObject* caller, unsigned long event, void* callData)
+//----------------------------------------------------------------------------
+bool vtkMRMLTransformDisplayNode::HasLegacyVisualization()
 {
-  if (caller != nullptr                                                                                    //
-      && (event == vtkCommand::ModifiedEvent || event == vtkMRMLTransformableNode::TransformModifiedEvent) //
-      && caller == GetRegionNode()                                                                         //
-      && this->Visibility)
+  return (!this->LegacyVisualizationAttributes.empty() //
+          || this->GetNodeReference(RegionReferenceRole) != nullptr || this->GetNodeReference(GlyphPointsReferenceRole) != nullptr);
+}
+
+//----------------------------------------------------------------------------
+std::string vtkMRMLTransformDisplayNode::GetLegacyVisualizationAttribute(const std::string& attributeName)
+{
+  auto nameAndValue = this->LegacyVisualizationAttributes.find(attributeName);
+  return (nameAndValue != this->LegacyVisualizationAttributes.end() ? nameAndValue->second : std::string());
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLTransformDisplayNode::GetLegacyRegionNodeReferenceRole()
+{
+  return RegionReferenceRole;
+}
+
+//----------------------------------------------------------------------------
+const char* vtkMRMLTransformDisplayNode::GetLegacyGlyphPointsNodeReferenceRole()
+{
+  return GlyphPointsReferenceRole;
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformDisplayNode::ClearLegacyVisualization()
+{
+  MRMLNodeModifyBlocker blocker(this);
+  if (!this->LegacyVisualizationAttributes.empty())
   {
-    // update visualization if the region node is changed
-    // Note: this updates all the 2D views as well, so instead of a generic modified event a separate
-    // even for 2D and 3D views could be useful.
-    // If 3D visibility is disabled then we can ignore this event, as the region is only used for 3D display.
+    this->LegacyVisualizationAttributes.clear();
     this->Modified();
   }
-  else if (caller != nullptr                            //
-           && caller == GetGlyphPointsNode()            // event can be any content modified event
-           && this->VisualizationMode == VIS_MODE_GLYPH //
-           && (this->Visibility || this->GetVisibility2D()))
-  {
-    // update visualization if glyph points are changed
-    this->Modified();
-  }
-  else if (caller != nullptr                     //
-           && event == vtkCommand::ModifiedEvent //
-           && caller == GetColorNode())
-  {
-    // update visualization if the color node is changed
-    this->Modified();
-  }
-  else
-  {
-    this->Superclass::ProcessMRMLEvents(caller, event, callData);
-  }
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLTransformDisplayNode::GetRegionNode()
-{
-  return this->GetNodeReference(RegionReferenceRole);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::SetAndObserveRegionNode(vtkMRMLNode* node)
-{
-  this->SetAndObserveNthNodeReferenceID(RegionReferenceRole, 0, node ? node->GetID() : nullptr);
-}
-
-//----------------------------------------------------------------------------
-vtkMRMLNode* vtkMRMLTransformDisplayNode::GetGlyphPointsNode()
-{
-  return this->GetNodeReference(GlyphPointsReferenceRole);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::SetAndObserveGlyphPointsNode(vtkMRMLNode* node)
-{
-  this->SetAndObserveNthNodeReferenceID(GlyphPointsReferenceRole, 0, node ? node->GetID() : nullptr);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::SetContourLevelsMm(double* values, int size)
-{
-  this->ContourLevelsMm.clear();
-  for (int i = 0; i < size; i++)
-  {
-    this->ContourLevelsMm.push_back(values[i]);
-  }
-  this->Modified();
-}
-
-//----------------------------------------------------------------------------
-double* vtkMRMLTransformDisplayNode::GetContourLevelsMm()
-{
-  if (this->ContourLevelsMm.size() == 0)
-  {
-    return nullptr;
-  }
-  // std::vector values are guaranteed to be stored in a continuous block in memory,
-  // so we can return the address to the first one
-  return &(this->ContourLevelsMm[0]);
-}
-
-//----------------------------------------------------------------------------
-unsigned int vtkMRMLTransformDisplayNode::GetNumberOfContourLevels()
-{
-  return this->ContourLevelsMm.size();
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLTransformDisplayNode::ConvertVisualizationModeToString(int modeIndex)
-{
-  switch (modeIndex)
-  {
-    case VIS_MODE_GLYPH: return "GLYPH";
-    case VIS_MODE_GRID: return "GRID";
-    case VIS_MODE_CONTOUR: return "CONTOUR";
-    default: return "";
-  }
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLTransformDisplayNode::ConvertVisualizationModeFromString(const char* modeString)
-{
-  if (modeString == nullptr)
-  {
-    return -1;
-  }
-  for (int modeIndex = 0; modeIndex < VIS_MODE_LAST; modeIndex++)
-  {
-    if (strcmp(modeString, vtkMRMLTransformDisplayNode::ConvertVisualizationModeToString(modeIndex)) == 0)
-    {
-      return modeIndex;
-    }
-  }
-  return -1;
-}
-
-//----------------------------------------------------------------------------
-const char* vtkMRMLTransformDisplayNode::ConvertGlyphTypeToString(int modeIndex)
-{
-  switch (modeIndex)
-  {
-    case GLYPH_TYPE_ARROW: return "ARROW";
-    case GLYPH_TYPE_CONE: return "CONE";
-    case GLYPH_TYPE_SPHERE: return "SPHERE";
-    default: return "";
-  }
-}
-
-//----------------------------------------------------------------------------
-int vtkMRMLTransformDisplayNode::ConvertGlyphTypeFromString(const char* modeString)
-{
-  if (modeString == nullptr)
-  {
-    return -1;
-  }
-  for (int modeIndex = 0; modeIndex < GLYPH_TYPE_LAST; modeIndex++)
-  {
-    if (strcmp(modeString, vtkMRMLTransformDisplayNode::ConvertGlyphTypeToString(modeIndex)) == 0)
-    {
-      return modeIndex;
-    }
-  }
-  return -1;
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLTransformDisplayNode::GetContourLevelsMmAsString()
-{
-  return ConvertContourLevelsToString(this->ContourLevelsMm);
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::SetContourLevelsMmFromString(const char* str)
-{
-  std::vector<double> newLevels = this->ConvertContourLevelsFromString(str);
-  if (this->IsContourLevelEqual(newLevels, this->ContourLevelsMm))
-  {
-    // no change
-    return;
-  }
-  this->ContourLevelsMm = newLevels;
-  this->Modified();
-}
-
-//----------------------------------------------------------------------------
-std::vector<double> vtkMRMLTransformDisplayNode::ConvertContourLevelsFromString(const char* str)
-{
-  return vtkMRMLTransformDisplayNode::StringToDoubleVector(str);
-}
-
-//----------------------------------------------------------------------------
-std::vector<double> vtkMRMLTransformDisplayNode::StringToDoubleVector(const char* str)
-{
-  std::vector<double> values;
-  std::stringstream ss(str);
-  std::string itemString;
-  double itemDouble;
-  while (std::getline(ss, itemString, CONTOUR_LEVEL_SEPARATOR))
-  {
-    std::stringstream itemStream;
-    itemStream << itemString;
-    itemStream >> itemDouble;
-    values.push_back(itemDouble);
-  }
-  return values;
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLTransformDisplayNode::ConvertContourLevelsToString(const std::vector<double>& levels)
-{
-  return vtkMRMLTransformDisplayNode::DoubleVectorToString(&(levels[0]), levels.size());
-}
-
-//----------------------------------------------------------------------------
-std::string vtkMRMLTransformDisplayNode::DoubleVectorToString(const double* values, int numberOfValues)
-{
-  std::stringstream ss;
-  for (int i = 0; i < numberOfValues; i++)
-  {
-    if (i > 0)
-    {
-      ss << CONTOUR_LEVEL_SEPARATOR;
-    }
-    ss << values[i];
-  }
-  return ss.str();
-}
-
-//----------------------------------------------------------------------------
-bool vtkMRMLTransformDisplayNode::IsContourLevelEqual(const std::vector<double>& levels1, const std::vector<double>& levels2)
-{
-  if (levels1.size() != levels2.size())
-  {
-    return false;
-  }
-  const double COMPARISON_TOLERANCE = 0.01;
-  for (unsigned int i = 0; i < levels1.size(); i++)
-  {
-    if (fabs(levels1[i] - levels2[i]) > COMPARISON_TOLERANCE)
-    {
-      return false;
-    }
-  }
-  return true;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::GetContourLevelsMm(std::vector<double>& levels)
-{
-  levels = this->ContourLevelsMm;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::SetDefaultColors()
-{
-  if (!this->GetScene())
-  {
-    vtkErrorMacro("vtkMRMLTransformDisplayNode::SetDefaultColors failed: scene is not set");
-    return;
-  }
-
-  // Create and set a new color table node
-  vtkNew<vtkMRMLProceduralColorNode> colorNode;
-  colorNode->SetName(this->GetScene()->GenerateUniqueName(DEFAULT_COLOR_TABLE_NAME).c_str());
-  colorNode->SetAttribute("Category", "Transform display");
-  // The color node is a procedural color node, which is saved using a storage node.
-  // Hidden nodes are not saved if they use a storage node, therefore
-  // the color node must be visible.
-  colorNode->SetHideFromEditors(false);
-
-  vtkColorTransferFunction* colorMap = colorNode->GetColorTransferFunction();
-  // Map: mm -> RGB
-  colorMap->AddRGBPoint(1.0, 0.2, 0.2, 0.2);
-  colorMap->AddRGBPoint(2.0, 0.0, 1.0, 0.0);
-  colorMap->AddRGBPoint(5.0, 1.0, 1.0, 0.0);
-  colorMap->AddRGBPoint(10.0, 1.0, 0.0, 0.0);
-
-  this->GetScene()->AddNode(colorNode.GetPointer());
-  this->SetAndObserveColorNodeID(colorNode->GetID());
-}
-
-//----------------------------------------------------------------------------
-vtkColorTransferFunction* vtkMRMLTransformDisplayNode::GetColorMap()
-{
-  vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::SafeDownCast(GetColorNode());
-  if (colorNode == nullptr                                //
-      || colorNode->GetColorTransferFunction() == nullptr //
-      || colorNode->GetColorTransferFunction()->GetSize() == 0)
-  {
-    // We don't have a color node or it is not the right type
-    this->SetDefaultColors();
-    colorNode = vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
-    if (colorNode == nullptr)
-    {
-      vtkErrorMacro("vtkMRMLTransformDisplayNode::GetColorMap failed: could not create default color node");
-      return nullptr;
-    }
-  }
-  vtkColorTransferFunction* colorMap = colorNode->GetColorTransferFunction();
-  return colorMap;
-}
-
-//----------------------------------------------------------------------------
-void vtkMRMLTransformDisplayNode::SetColorMap(vtkColorTransferFunction* newColorMap)
-{
-  int oldModified = this->StartModify();
-  vtkMRMLProceduralColorNode* colorNode = vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
-  if (colorNode == nullptr)
-  {
-    // We don't have a color node or it is not the right type
-    this->SetDefaultColors();
-    colorNode = vtkMRMLProceduralColorNode::SafeDownCast(this->GetColorNode());
-  }
-  if (colorNode != nullptr)
-  {
-    if (colorNode->GetColorTransferFunction() == nullptr)
-    {
-      vtkNew<vtkColorTransferFunction> ctf;
-      colorNode->SetAndObserveColorTransferFunction(ctf.GetPointer());
-    }
-    if (!vtkMRMLProceduralColorNode::IsColorMapEqual(colorNode->GetColorTransferFunction(), newColorMap))
-    {
-      colorNode->GetColorTransferFunction()->DeepCopy(newColorMap);
-    }
-  }
-  else
-  {
-    vtkErrorMacro("vtkMRMLTransformDisplayNode::SetColorMap failed: could not create default color node");
-  }
-  this->EndModify(oldModified);
+  this->RemoveNodeReferenceIDs(RegionReferenceRole);
+  this->RemoveNodeReferenceIDs(GlyphPointsReferenceRole);
 }
 
 //----------------------------------------------------------------------------
