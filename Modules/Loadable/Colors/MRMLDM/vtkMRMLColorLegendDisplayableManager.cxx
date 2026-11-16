@@ -314,10 +314,13 @@ bool vtkMRMLColorLegendDisplayableManager::vtkInternal::UpdateActor(vtkMRMLColor
         vtkCollection* sliceLogics = mrmlAppLogic ? mrmlAppLogic->GetSliceLogics() : nullptr;
         if (sliceLogics)
         {
-          vtkMRMLSliceLogic* sliceLogic;
-          vtkCollectionSimpleIterator it;
-          for (sliceLogics->InitTraversal(it); (sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetNextItemAsObject(it)));)
+          for (int si = 0; si < sliceLogics->GetNumberOfItems(); ++si)
           {
+            vtkMRMLSliceLogic* sliceLogic = vtkMRMLSliceLogic::SafeDownCast(sliceLogics->GetItemAsObject(si));
+            if (!sliceLogic)
+            {
+              continue;
+            }
             vtkMRMLModelNode* sliceModelNode = sliceLogic->GetSliceModelNode();
             vtkMRMLDisplayNode* sliceModelDisplayNode = (sliceModelNode ? sliceModelNode->GetDisplayNode() : nullptr);
             if (sliceModelDisplayNode)

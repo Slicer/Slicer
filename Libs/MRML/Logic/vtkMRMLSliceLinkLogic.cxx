@@ -338,13 +338,12 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceNodeEvent(vtkMRMLSliceNode* sliceNode)
     this->BroadcastingEventsOn();
 
     int requiredViewGroup = sliceNode->GetViewGroup();
-    vtkMRMLSliceNode* sNode;
-    vtkCollectionSimpleIterator it;
     vtkSmartPointer<vtkCollection> nodes;
     nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceNode"));
-    for (nodes->InitTraversal(it); (sNode = vtkMRMLSliceNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
+    for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
     {
-      if (sNode == sliceNode || !sNode)
+      vtkMRMLSliceNode* sNode = vtkMRMLSliceNode::SafeDownCast(nodes->GetItemAsObject(i));
+      if (!sNode || sNode == sliceNode)
       {
         continue;
       }
@@ -557,14 +556,13 @@ void vtkMRMLSliceLinkLogic::BroadcastSliceCompositeNodeEvent(vtkMRMLSliceComposi
     {
       requiredViewGroup = sliceNode->GetViewGroup();
     }
-    vtkMRMLSliceCompositeNode* cNode;
-    vtkCollectionSimpleIterator it;
     vtkSmartPointer<vtkCollection> nodes;
     nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode"));
 
-    for (nodes->InitTraversal(it); (cNode = vtkMRMLSliceCompositeNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
+    for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
     {
-      if (cNode == sliceCompositeNode || !cNode)
+      vtkMRMLSliceCompositeNode* cNode = vtkMRMLSliceCompositeNode::SafeDownCast(nodes->GetItemAsObject(i));
+      if (!cNode || cNode == sliceCompositeNode)
       {
         continue;
       }
@@ -617,12 +615,16 @@ vtkMRMLSliceCompositeNode* vtkMRMLSliceLinkLogic::GetCompositeNode(vtkMRMLSliceN
 {
   vtkMRMLSliceCompositeNode* compositeNode = nullptr;
 
-  vtkCollectionSimpleIterator it;
   vtkSmartPointer<vtkCollection> nodes;
   nodes.TakeReference(this->GetMRMLScene()->GetNodesByClass("vtkMRMLSliceCompositeNode"));
 
-  for (nodes->InitTraversal(it); (compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    compositeNode = vtkMRMLSliceCompositeNode::SafeDownCast(nodes->GetItemAsObject(i));
+    if (!compositeNode)
+    {
+      continue;
+    }
     if (compositeNode->GetLayoutName() && !strcmp(compositeNode->GetLayoutName(), sliceNode->GetName()))
     {
       break;

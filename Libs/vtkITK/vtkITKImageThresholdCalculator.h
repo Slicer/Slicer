@@ -19,6 +19,7 @@
 #include "vtkImageData.h"
 #include "vtkObjectFactory.h"
 #include "vtkMatrix4x4.h"
+#include "vtkVersion.h"
 
 #include "vtkITK.h"
 #include "itkImageIOBase.h"
@@ -79,7 +80,7 @@ public:
   /// to avoid hiding Update override.
   using vtkAlgorithm::Update;
   /// The main interface which triggers the writer to start.
-  void Update() override;
+  bool Update() override;
 
 protected:
   vtkITKImageThresholdCalculator();
@@ -89,6 +90,7 @@ protected:
   double Threshold;
 
 private:
+  bool UpdateImpl();
   vtkITKImageThresholdCalculator(const vtkITKImageThresholdCalculator&) = delete;
   void operator=(const vtkITKImageThresholdCalculator&) = delete;
 };

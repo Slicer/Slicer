@@ -459,11 +459,15 @@ void vtkMRMLSceneViewNode::AddMissingNodes()
   }
 
   // add the missing ones from the scene
-  vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
   int nodesAdded = 0;
-  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < sceneNodes->GetNumberOfItems(); ++i)
   {
+    node = vtkMRMLNode::SafeDownCast(sceneNodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
     // ignore scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
     // sceneview nodes nor top level scene view hierarchy nodes
@@ -547,13 +551,17 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
     }
   }
   // Identify which nodes must be removed from the scene.
-  vtkCollectionSimpleIterator it;
   vtkCollection* sceneNodes = this->Scene->GetNodes();
   // Use smart pointer to ensure the nodes still exist when being removed.
   // Indeed, removing a node can have the side effect of removing other nodes.
   std::stack<vtkSmartPointer<vtkMRMLNode>> removedNodes;
-  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < sceneNodes->GetNumberOfItems(); ++i)
   {
+    node = vtkMRMLNode::SafeDownCast(sceneNodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     std::map<std::string, vtkMRMLNode*>::iterator iter = snapshotMap.find(std::string(node->GetID()));
     // don't remove the scene view nodes, the snapshot clip nodes, hierarchy nodes associated with the
     // sceneview nodes nor top level scene view hierarchy nodes
@@ -634,8 +642,13 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
 
   // this->Scene->UpdateNodeReferences(this->Nodes);
 
-  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < sceneNodes->GetNumberOfItems(); ++i)
   {
+    node = vtkMRMLNode::SafeDownCast(sceneNodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (this->IncludeNodeInSceneView(node) && node->GetSaveWithScene())
     {
       node->UpdateScene(this->Scene);
@@ -653,8 +666,13 @@ bool vtkMRMLSceneViewNode::RestoreScene(bool removeNodes)
 
 #ifndef NDEBUG
   // sanity checks
-  for (sceneNodes->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(sceneNodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < sceneNodes->GetNumberOfItems(); ++i)
   {
+    node = vtkMRMLNode::SafeDownCast(sceneNodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     assert(node->GetScene() == this->Scene);
   }
 #endif
