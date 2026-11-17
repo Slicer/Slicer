@@ -88,8 +88,14 @@ void qMRMLSortFilterColorProxyModel::setShowEmptyColors(bool show)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowEmptyColors = show;
+  this->endFilterChange();
+#else
   d->ShowEmptyColors = show;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------

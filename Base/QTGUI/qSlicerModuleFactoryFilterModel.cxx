@@ -118,8 +118,14 @@ bool qSlicerModuleFactoryFilterModel::showToLoad() const
 void qSlicerModuleFactoryFilterModel::setShowToLoad(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowToLoad = show;
+  this->endFilterChange();
+#else
   d->ShowToLoad = show;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -133,8 +139,14 @@ bool qSlicerModuleFactoryFilterModel::showToIgnore() const
 void qSlicerModuleFactoryFilterModel::setShowToIgnore(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowToIgnore = show;
+  this->endFilterChange();
+#else
   d->ShowToIgnore = show;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -148,8 +160,14 @@ bool qSlicerModuleFactoryFilterModel::showLoaded() const
 void qSlicerModuleFactoryFilterModel::setShowLoaded(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowLoaded = show;
+  this->endFilterChange();
+#else
   d->ShowLoaded = show;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -163,8 +181,14 @@ bool qSlicerModuleFactoryFilterModel::showIgnored() const
 void qSlicerModuleFactoryFilterModel::setShowIgnored(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowIgnored = show;
+  this->endFilterChange();
+#else
   d->ShowIgnored = show;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -178,8 +202,14 @@ bool qSlicerModuleFactoryFilterModel::showFailed() const
 void qSlicerModuleFactoryFilterModel::setShowFailed(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowFailed = show;
+  this->endFilterChange();
+#else
   d->ShowFailed = show;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -193,8 +223,14 @@ bool qSlicerModuleFactoryFilterModel::showBuiltIn() const
 void qSlicerModuleFactoryFilterModel::setShowBuiltIn(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowBuiltIn = show;
+  this->endFilterChange();
+#else
   d->ShowBuiltIn = show;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -208,8 +244,14 @@ bool qSlicerModuleFactoryFilterModel::showHidden() const
 void qSlicerModuleFactoryFilterModel::setShowHidden(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowHidden = show;
+  this->endFilterChange();
+#else
   d->ShowHidden = show;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -223,8 +265,14 @@ bool qSlicerModuleFactoryFilterModel::showTesting() const
 void qSlicerModuleFactoryFilterModel::setShowTesting(bool show)
 {
   Q_D(qSlicerModuleFactoryFilterModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowTesting = show;
+  this->endFilterChange();
+#else
   d->ShowTesting = show;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------

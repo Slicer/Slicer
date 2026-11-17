@@ -58,6 +58,18 @@
 #include "qSlicerSubjectHierarchyAbstractPlugin.h"
 #include "qSlicerSubjectHierarchyDefaultPlugin.h"
 
+namespace
+{
+int qVariantTypeId(const QVariant& value)
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+  return value.typeId();
+#else
+  return value.userType();
+#endif
+}
+} // namespace
+
 //------------------------------------------------------------------------------
 qMRMLSubjectHierarchyModelPrivate::qMRMLSubjectHierarchyModelPrivate(qMRMLSubjectHierarchyModel& object)
   : q_ptr(&object)
@@ -424,7 +436,7 @@ QStandardItem* qMRMLSubjectHierarchyModel::subjectHierarchySceneItem() const
       continue;
     }
     QVariant uid = child->data(qMRMLSubjectHierarchyModel::SubjectHierarchyItemIDRole);
-    if (uid.type() == QVariant::LongLong && uid == d->SubjectHierarchyNode->GetSceneItemID())
+    if (qVariantTypeId(uid) == QMetaType::LongLong && uid == d->SubjectHierarchyNode->GetSceneItemID())
     {
       return child;
     }

@@ -245,7 +245,7 @@ QIcon qSlicerSegmentEditorScriptedLabelEffect::icon()
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Icon);
+  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QMetaType::QIcon);
   if (resultVariant.isNull())
   {
     return this->Superclass::icon();
@@ -342,7 +342,7 @@ QCursor qSlicerSegmentEditorScriptedLabelEffect::createCursor(qMRMLWidget* viewW
   }
 
   // Parse result
-  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QVariant::Cursor);
+  QVariant resultVariant = PythonQtConv::PyObjToQVariant(result, QMetaType::QCursor);
   return resultVariant.value<QCursor>();
 }
 

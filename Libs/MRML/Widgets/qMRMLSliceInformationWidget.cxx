@@ -68,7 +68,7 @@ void qMRMLSliceInformationWidgetPrivate::setupUi(qMRMLWidget* widget)
   this->SliceSpacingModeGroup = new QButtonGroup(widget);
   this->SliceSpacingModeGroup->addButton(this->AutomaticSliceSpacingRadioButton, vtkMRMLSliceNode::AutomaticSliceSpacingMode);
   this->SliceSpacingModeGroup->addButton(this->PrescribedSliceSpacingRadioButton, vtkMRMLSliceNode::PrescribedSliceSpacingMode);
-  this->connect(this->SliceSpacingModeGroup, SIGNAL(buttonReleased(int)), q, SLOT(setSliceSpacingMode(int)));
+  this->connect(this->SliceSpacingModeGroup, SIGNAL(idReleased(int)), q, SLOT(setSliceSpacingMode(int)));
 
   // Connect Prescribed spacing
   this->connect(this->PrescribedSpacingSpinBox, SIGNAL(valueChanged(double)), q, SLOT(setPrescribedSliceSpacing(double)));

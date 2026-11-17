@@ -125,7 +125,7 @@ void qSlicerTableColumnPropertiesWidget::setup()
   d->PropertyEditWidgets << d->ComponentCountLineEdit;
   d->PropertyEditWidgets << d->ComponentNamesLineEdit;
 
-  connect(d->DataTypeComboBox, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(onDataTypeChanged(const QString&)));
+  connect(d->DataTypeComboBox, SIGNAL(currentTextChanged(const QString&)), this, SLOT(onDataTypeChanged(const QString&)));
   for (QLineEdit* const widget : d->PropertyEditWidgets)
   {
     connect(widget, SIGNAL(textEdited(const QString&)), this, SLOT(onPropertyChanged(const QString&)));

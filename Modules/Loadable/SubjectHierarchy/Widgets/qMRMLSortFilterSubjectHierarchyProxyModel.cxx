@@ -254,8 +254,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setNameFilter(QString filter)
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->NameFilter = filter;
+  this->endFilterChange();
+#else
   d->NameFilter = filter;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -268,8 +274,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::addItemAttributeFilter(QString a
   }
 
   qMRMLSortFilterSubjectHierarchyProxyModelPrivate::AttributeFilter newFilter(attributeName, attributeValue, include);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ItemAttributeFilters << newFilter;
+  this->endFilterChange();
+#else
   d->ItemAttributeFilters << newFilter;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -283,8 +295,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeItemAttributeFilter(QStrin
     return;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ItemAttributeFilters.removeAt(foundIndex);
+  this->endFilterChange();
+#else
   d->ItemAttributeFilters.removeAt(foundIndex);
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -298,6 +316,16 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeItemAttributeFilter(QStrin
     return;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  while (foundIndices.size() > 0)
+  {
+    // Remove the largest index first
+    int lastIndex = foundIndices.takeLast();
+    d->ItemAttributeFilters.removeAt(lastIndex);
+  }
+  this->endFilterChange();
+#else
   while (foundIndices.size() > 0)
   {
     // Remove the largest index first
@@ -305,6 +333,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeItemAttributeFilter(QStrin
     d->ItemAttributeFilters.removeAt(lastIndex);
   }
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -320,8 +349,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::addNodeAttributeFilter(QString a
   }
 
   qMRMLSortFilterSubjectHierarchyProxyModelPrivate::AttributeFilter newFilter(attributeName, attributeValue, include, className);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->NodeAttributeFilters << newFilter;
+  this->endFilterChange();
+#else
   d->NodeAttributeFilters << newFilter;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -335,8 +370,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeNodeAttributeFilter(QStrin
     return;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->NodeAttributeFilters.removeAt(foundIndex);
+  this->endFilterChange();
+#else
   d->NodeAttributeFilters.removeAt(foundIndex);
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -350,6 +391,16 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeNodeAttributeFilter(QStrin
     return;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  while (foundIndices.size() > 0)
+  {
+    // Remove the largest index first
+    int lastIndex = foundIndices.takeLast();
+    d->NodeAttributeFilters.removeAt(lastIndex);
+  }
+  this->endFilterChange();
+#else
   while (foundIndices.size() > 0)
   {
     // Remove the largest index first
@@ -357,6 +408,7 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::removeNodeAttributeFilter(QStrin
     d->NodeAttributeFilters.removeAt(lastIndex);
   }
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -364,12 +416,19 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setIncludeItemAttributeNamesFilt
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+#endif
   d->removeFiltersByIncludeFlag(d->ItemAttributeFilters, true);
   for (const QString& filter : filterList)
   {
     this->addItemAttributeFilter(filter);
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->endFilterChange();
+#else
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -394,12 +453,19 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setIncludeNodeAttributeNamesFilt
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+#endif
   d->removeFiltersByIncludeFlag(d->NodeAttributeFilters, true);
   for (const QString& filter : filterList)
   {
     this->addNodeAttributeFilter(filter);
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->endFilterChange();
+#else
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -424,12 +490,19 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setExcludeItemAttributeNamesFilt
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+#endif
   d->removeFiltersByIncludeFlag(d->ItemAttributeFilters, false);
   for (const QString& filter : filterList)
   {
     this->addItemAttributeFilter(filter, QString(), false);
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->endFilterChange();
+#else
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -454,12 +527,19 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setExcludeNodeAttributeNamesFilt
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+#endif
   d->removeFiltersByIncludeFlag(d->NodeAttributeFilters, false);
   for (const QString& filter : filterList)
   {
     this->addNodeAttributeFilter(filter, QString(), false);
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->endFilterChange();
+#else
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -483,12 +563,19 @@ QStringList qMRMLSortFilterSubjectHierarchyProxyModel::excludeNodeAttributeNames
 void qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeNameFilter(QString filter)
 {
   Q_D(qMRMLSortFilterSubjectHierarchyProxyModel);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+#endif
   d->ItemAttributeFilters.clear();
   if (!filter.isEmpty())
   {
     this->addItemAttributeFilter(filter);
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->endFilterChange();
+#else
   this->invalidateFilter();
+#endif
   qWarning() << "qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeNameFilter is deprecated, "
                 "use addItemAttributeFilter or removeItemAttributeFilter instead";
 }
@@ -514,8 +601,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeValueFilter(QString 
     return;
   }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ItemAttributeFilters[0].AttributeValue = filter;
+  this->endFilterChange();
+#else
   d->ItemAttributeFilters[0].AttributeValue = filter;
   this->invalidateFilter();
+#endif
   qWarning() << "qMRMLSortFilterSubjectHierarchyProxyModel::setAttributeValueFilter is deprecated,"
                 " use addItemAttributeFilter or removeItemAttributeFilter instead";
 }
@@ -539,8 +632,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setLevelFilter(QStringList filte
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->LevelFilter = filter;
+  this->endFilterChange();
+#else
   d->LevelFilter = filter;
   this->invalidateFilter();
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -551,8 +650,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setNodeTypes(const QStringList& 
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->NodeTypes = types;
+  this->endFilterChange();
+#else
   d->NodeTypes = types;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -563,8 +668,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setHideChildNodeTypes(const QStr
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->HideChildNodeTypes = types;
+  this->endFilterChange();
+#else
   d->HideChildNodeTypes = types;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -582,8 +693,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setHideItemsUnaffiliatedWithItem
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->HideItemsUnaffiliatedWithItemID = itemID;
+  this->endFilterChange();
+#else
   d->HideItemsUnaffiliatedWithItemID = itemID;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -601,8 +718,14 @@ void qMRMLSortFilterSubjectHierarchyProxyModel::setShowEmptyHierarchyItems(bool 
   {
     return;
   }
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+  this->beginFilterChange();
+  d->ShowEmptyHierarchyItems = show;
+  this->endFilterChange();
+#else
   d->ShowEmptyHierarchyItems = show;
   this->invalidateFilter();
+#endif
 }
 
 //-----------------------------------------------------------------------------
