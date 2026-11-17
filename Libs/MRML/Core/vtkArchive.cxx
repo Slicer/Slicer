@@ -150,7 +150,7 @@ void list_item_verbose(FILE* out, struct archive_entry* entry)
   /* Format the time using 'ls -l' conventions. */
   tim = archive_entry_mtime(entry);
 #define HALF_YEAR (time_t)365 * 86400 / 2
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32)
   /* Windows' strftime function does not support %e format. */
 # define DAY_FMT "%d"
 #else
@@ -178,9 +178,6 @@ void list_item_verbose(FILE* out, struct archive_entry* entry)
     fprintf(out, " -> %s", archive_entry_symlink(entry));
   }
 }
-#ifdef __BORLANDC__
-# pragma warn - 8066 /* unreachable code */
-#endif
 
 // --------------------------------------------------------------------------
 long copy_data(struct archive* ar, struct archive* aw)
