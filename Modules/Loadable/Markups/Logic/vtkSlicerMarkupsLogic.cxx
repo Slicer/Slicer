@@ -309,7 +309,7 @@ void vtkSlicerMarkupsLogic::SetMRMLSceneInternal(vtkMRMLScene* newScene)
   priorities->InsertNextValue(0.0);
 
   events->InsertNextValue(vtkMRMLScene::EndImportEvent);
-  // This priority must be higher than the default value used in vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal
+  // This priority must be higher than the value used in vtkSlicerSceneViewsModuleLogic::SetMRMLSceneInternal
   // to ensure vtkSlicerMarkupsLogic::OnMRMLSceneEndImport() runs before
   // vtkSlicerSceneViewsModuleLogic::OnMRMLSceneEndImport() to convert old annotation nodes before converting old scene view nodes.
   priorities->InsertNextValue(10.0);

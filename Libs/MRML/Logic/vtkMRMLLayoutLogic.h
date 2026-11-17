@@ -149,6 +149,12 @@ protected:
   /// Create a vtkMRMLLayoutNode if there is no layout node in the scene
   void UpdateLayoutNode();
 
+  /// Legacy scene files (saved before the singleton tag was written to the file) store the layout node
+  /// without singleton tag, therefore when such a scene is imported the layout node is added as a second
+  /// layout node instead of being merged into the existing one. Apply the view arrangement and panel
+  /// settings of these nodes to the singleton layout node and remove them from the scene.
+  void MergeLegacyLayoutNodes();
+
   /// Not public as we internally take care of choosing/updating the layout node
   void SetLayoutNode(vtkMRMLLayoutNode* layoutNode);
 

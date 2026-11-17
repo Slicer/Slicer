@@ -20,7 +20,7 @@ set(qtmodules
   Plots
   Segmentations
   Sequences
-  SceneViews # Scene views depends on Sequences
+  SceneViews # Scene views depends on Models and Sequences
   Markups # Markups depends on SceneViews (for testing) and Annotations
   LayerDM # LayerDM depends on Markups (for testing)
   SlicerWelcome

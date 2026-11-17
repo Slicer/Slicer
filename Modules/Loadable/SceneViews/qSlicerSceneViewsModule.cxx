@@ -189,7 +189,7 @@ QStringList qSlicerSceneViewsModule::categories() const
 //-----------------------------------------------------------------------------
 QStringList qSlicerSceneViewsModule::dependencies() const
 {
-  return QStringList() << QString("Sequences");
+  return QStringList() << QString("Models") << QString("Sequences");
 }
 
 //-----------------------------------------------------------------------------
