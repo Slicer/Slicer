@@ -649,6 +649,23 @@ void qSlicerSubjectHierarchyPluginHandler::onSubjectHierarchyNodeEvent(vtkObject
       }
     }
 
+    if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+    {
+      // Item events are compressed (and invoked without item ID) if they are invoked while the subject hierarchy
+      // node is being modified (between StartModify and EndModify). The added items are not known, therefore
+      // find plugin for all the items that are not owned by any plugin.
+      std::vector<vtkIdType> allItemIDs;
+      shNode->GetItemChildren(shNode->GetSceneItemID(), allItemIDs, true);
+      for (const vtkIdType currentItemID : allItemIDs)
+      {
+        if (shNode->GetItemOwnerPluginName(currentItemID).empty())
+        {
+          pluginHandler->findAndSetOwnerPluginForSubjectHierarchyItem(currentItemID);
+        }
+      }
+      return;
+    }
+
     // Find plugin for added subject hierarchy item and "claim" it
     pluginHandler->findAndSetOwnerPluginForSubjectHierarchyItem(itemID);
   }

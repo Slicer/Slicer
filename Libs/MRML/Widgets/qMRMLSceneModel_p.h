@@ -35,6 +35,8 @@
 // Qt includes
 class QStandardItemModel;
 #include <QFlags>
+#include <QHash>
+#include <QList>
 #include <QMap>
 
 // qMRML includes
@@ -64,6 +66,10 @@ public:
   void init();
 
   QModelIndexList indexes(const QString& nodeID) const;
+  /// Get the indexes of all the columns in the row of \a index (empty list if the index is invalid)
+  QModelIndexList allColumnIndexes(const QModelIndex& index) const;
+  /// Returns true if the item is the item of a node (not the scene item, an extra item, or a category item)
+  static bool isNodeItem(QStandardItem* item);
 
   QStringList extraItems(QStandardItem* parent, const QString& extraType) const;
   void insertExtraItem(int row, QStandardItem* parent, const QString& text, const QString& extraType, const Qt::ItemFlags& flags, const QString& extraItemData = "");
@@ -72,11 +78,25 @@ public:
   void listenNodeModifiedEvent();
   void reparentItems(QList<QStandardItem*>& children, int newIndex, QStandardItem* newParent);
 
-  /// This method is called by qMRMLSceneModel::populateScene() to speed up
-  /// the loading of large scene. By explicitly specifying the \a index, it
-  /// skips repetitive scene traversal calls caused by
+  /// Insert the node (and its parent if not in the model yet) at the given row under its parent.
+  /// By explicitly specifying the \a index, it skips repetitive scene traversal calls caused by
   /// qMRMLSceneModel::nodeIndex(vtkMRMLNode*).
   QStandardItem* insertNode(vtkMRMLNode* node, int index);
+
+  /// Create the model items (one for each column) of a node. The items are not inserted in the model.
+  QList<QStandardItem*> createNodeItems(vtkMRMLNode* node);
+
+  /// Reorder the rows that qMRMLSceneModel::populateScene() created (in scene order) to match the order
+  /// of the nodes in this model (see qMRMLSceneModel::nodeIndex()). The rows are not in the model yet.
+  /// \a topLevelRows are the rows of the children of the scene item, \a parentItems are the items
+  /// (in the first column) that have child rows.
+  /// In the base model the nodes are in scene order, therefore this method does nothing.
+  virtual void sortPopulatedRows(QList<QList<QStandardItem*>>& topLevelRows, const QList<QStandardItem*>& parentItems);
+
+  /// Add all the node items in the subtree of \a item (including \a item) to the RowCache.
+  void addToRowCacheRecursively(QStandardItem* item);
+  /// Remove all the node items in the subtree of \a item (including \a item) from the RowCache.
+  void removeFromRowCacheRecursively(QStandardItem* item);
 
   vtkSmartPointer<vtkCallbackCommand> CallBack;
   qMRMLSceneModel::NodeTypes ListenNodeModifiedEvent;
@@ -97,17 +117,18 @@ public:
   vtkWeakPointer<vtkMRMLScene> MRMLScene;
   QStandardItem* DraggedItem;
   mutable QList<vtkMRMLNode*> DraggedNodes;
-  QList<vtkMRMLNode*> MisplacedNodes;
   // We keep a list of QStandardItem instead of vtkMRMLNode* because they are
   // likely to be unreachable when browsing the model
   QList<QList<QStandardItem*>> Orphans;
 
-  // Map from MRML node to row.
-  // It just stores the result of the latest lookup by indexFromNode,
-  // not guaranteed to contain up-to-date information, should be just used
-  // as a search hint. If the node cannot be found at the given index then
-  // we need to browse through all model items.
-  mutable QMap<vtkMRMLNode*, QPersistentModelIndex> RowCache;
+  // Map from MRML node to the model item (in the first column) of the node.
+  // It is kept up-to-date from the rowsInserted and rowsAboutToBeRemoved signals of the model
+  // (QStandardItemModel emits these signals for all item insertions and removals, including
+  // moving items with takeRow/insertRow), therefore it only contains items that are in the model.
+  // An item pointer is used instead of a persistent model index, because inserting a row in a
+  // QStandardItemModel updates all the persistent indexes (which would make inserting a node
+  // in a model of N nodes an O(N) operation).
+  mutable QHash<vtkMRMLNode*, QStandardItem*> RowCache;
 };
 
 #endif

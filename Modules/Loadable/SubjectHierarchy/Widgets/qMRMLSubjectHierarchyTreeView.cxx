@@ -113,6 +113,10 @@ public:
 
   void updateColors();
 
+  /// If the scene is batch processing then store the selection that is requested, because the
+  /// tree is rebuilt at the end of the batch processing (and the selection is lost)
+  void setSelectedItemsToRestore(const QList<vtkIdType>& items);
+
 public:
   qMRMLSubjectHierarchyModel* Model{ nullptr };
   qMRMLSortFilterSubjectHierarchyProxyModel* SortFilterModel{ nullptr };
@@ -229,6 +233,10 @@ void qMRMLSubjectHierarchyTreeViewPrivate::init()
 
   // Set appropriate defaults
   q->setIndentation(8);
+  // All rows have the same height (one line of text with icons). Without this, the view computes
+  // the size hint of every row whenever the layout is updated (after each item insertion, move, or
+  // when scrolling to the selected item), which makes interactive editing slow in large scenes.
+  q->setUniformRowHeights(true);
   q->setDragDropMode(QAbstractItemView::InternalMove);
   q->setSelectionMode(QAbstractItemView::ExtendedSelection);
   q->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
@@ -313,13 +321,27 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupVisibilityButton(const QModelInd
     return;
   }
 
+  QIcon icon = proxyIndex.data(qMRMLSubjectHierarchyModel::VisibilityIconRole).value<QIcon>();
+  auto* existingButton = qobject_cast<QToolButton*>(q->indexWidget(proxyIndex));
+  if (existingButton && existingButton->property("itemID").value<vtkIdType>() == itemID)
+  {
+    // Button is already set up for this item (setupAllButtons may be called many times, for example
+    // after each row insertion while loading a scene). Creating and showing new buttons is expensive,
+    // so just make sure the icon is up-to-date.
+    if (existingButton->icon().cacheKey() != icon.cacheKey())
+    {
+      existingButton->setIcon(icon);
+    }
+    return;
+  }
+
   auto* button = new QToolButton();
   button->setAutoRaise(true);
   button->setFocusPolicy(Qt::NoFocus);
   int iconSize = button->style()->pixelMetric(QStyle::PM_SmallIconSize);
   button->setIconSize(QSize(iconSize, iconSize));
   button->setStyleSheet("QToolButton { padding: 0px; }");
-  button->setIcon(proxyIndex.data(qMRMLSubjectHierarchyModel::VisibilityIconRole).value<QIcon>());
+  button->setIcon(icon);
   button->setProperty("itemID", QVariant::fromValue(itemID));
 
   QObject::connect(button, &QToolButton::clicked, q, &qMRMLSubjectHierarchyTreeView::onVisibilityButtonClicked);
@@ -362,6 +384,19 @@ void qMRMLSubjectHierarchyTreeViewPrivate::setupColorButton(const QModelIndex& p
   if (!color.isValid() || color.alpha() == 0)
   {
     q->setIndexWidget(proxyIndex, nullptr);
+    return;
+  }
+  auto* existingButton = qobject_cast<QToolButton*>(q->indexWidget(proxyIndex));
+  if (existingButton && existingButton->property("itemID").value<vtkIdType>() == itemID)
+  {
+    // Button is already set up for this item, just make sure the icon and the stored index are up-to-date
+    // (see setupVisibilityButton)
+    QIcon icon = this->colorIcon(color);
+    if (existingButton->icon().cacheKey() != icon.cacheKey())
+    {
+      existingButton->setIcon(icon);
+    }
+    existingButton->setProperty("persistentIndex", QVariant::fromValue(QPersistentModelIndex(proxyIndex)));
     return;
   }
   auto* button = new QToolButton();
@@ -773,6 +808,18 @@ void qMRMLSubjectHierarchyTreeViewPrivate::updateColors()
   }
 }
 
+//------------------------------------------------------------------------------
+void qMRMLSubjectHierarchyTreeViewPrivate::setSelectedItemsToRestore(const QList<vtkIdType>& items)
+{
+  Q_Q(qMRMLSubjectHierarchyTreeView);
+  vtkMRMLScene* scene = q->mrmlScene();
+  if (!scene || !scene->IsBatchProcessing() || scene->IsClosing())
+  {
+    return;
+  }
+  this->SelectedItemsToRestore = items;
+}
+
 //--------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeViewPrivate::setVisibilityOfSelectedItems(VisibilityAction visibilityAction)
 {
@@ -964,7 +1011,7 @@ vtkMRMLNode* qMRMLSubjectHierarchyTreeView::currentNode() const
 //------------------------------------------------------------------------------
 void qMRMLSubjectHierarchyTreeView::setCurrentItem(vtkIdType itemID)
 {
-  Q_D(const qMRMLSubjectHierarchyTreeView);
+  Q_D(qMRMLSubjectHierarchyTreeView);
   if (!d->SortFilterModel)
   {
     qCritical() << Q_FUNC_INFO << ": Invalid data model";
@@ -975,6 +1022,12 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItem(vtkIdType itemID)
   // Call selectionModel()->setCurrentIndex rather than selectionModel()->select because select method does not set the current index.
   // It is only required if this method is called programmatically because mousePressEvent set the current index before selecting the item.
   this->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
+  QList<vtkIdType> items;
+  if (itemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    items << itemID;
+  }
+  d->setSelectedItemsToRestore(items);
 }
 
 //------------------------------------------------------------------------------
@@ -1045,6 +1098,8 @@ void qMRMLSubjectHierarchyTreeView::setCurrentItems(QList<vtkIdType> items)
       this->selectionModel()->setCurrentIndex(itemIndex, QItemSelectionModel::Select | QItemSelectionModel::Rows);
     }
   }
+
+  d->setSelectedItemsToRestore(items);
 }
 
 //------------------------------------------------------------------------------
@@ -1961,6 +2016,10 @@ void qMRMLSubjectHierarchyTreeView::expandItem(vtkIdType itemID)
     QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
     if (itemIndex.isValid())
     {
+      // Request a delayed layout first: it makes expand() only store the expanded state (no immediate
+      // relayout and geometry update), which is important when many items are expanded in a row
+      // (e.g., after loading a scene). The layout is performed once, from the event loop.
+      this->scheduleDelayedItemsLayout();
       this->expand(itemIndex);
     }
   }
@@ -1975,6 +2034,8 @@ void qMRMLSubjectHierarchyTreeView::collapseItem(vtkIdType itemID)
     QModelIndex itemIndex = d->SortFilterModel->indexFromSubjectHierarchyItem(itemID);
     if (itemIndex.isValid())
     {
+      // See expandItem()
+      this->scheduleDelayedItemsLayout();
       this->collapse(itemIndex);
     }
   }
@@ -2404,6 +2465,17 @@ void qMRMLSubjectHierarchyTreeView::onSubjectHierarchyItemModified(vtkObject* ca
   {
     vtkIdType* itemIdPtr = reinterpret_cast<vtkIdType*>(callData);
     itemID = *itemIdPtr;
+  }
+  if (itemID == vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID)
+  {
+    // Item events are compressed (and invoked without item ID) if they are invoked while the subject hierarchy
+    // node is being modified (between StartModify and EndModify). Any item may have been modified.
+    vtkIdType currentItemID = this->currentItem();
+    if (currentItemID != vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID && currentItemID != shNode->GetSceneItemID())
+    {
+      emit currentItemModified(currentItemID);
+    }
+    return;
   }
 
   // Forward `currentItemModified` if the modified item or one of

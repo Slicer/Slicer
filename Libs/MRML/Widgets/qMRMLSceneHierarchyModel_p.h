@@ -55,6 +55,10 @@ public:
   virtual void init();
   virtual vtkMRMLHierarchyNode* CreateHierarchyNode() const;
 
+  void sortPopulatedRows(QList<QList<QStandardItem*>>& topLevelRows, const QList<QStandardItem*>& parentItems) override;
+  /// Sort the rows (that are not in the model yet) in the order of the nodes in the hierarchy
+  void sortRows(QList<QList<QStandardItem*>>& rows) const;
+
   int ExpandColumn;
 };
 
