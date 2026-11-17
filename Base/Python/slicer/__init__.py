@@ -171,7 +171,7 @@ For more details, see the generated Slicer API documentation.
 # first accessed, instead of eagerly star-importing all ~125 modules. The shim
 # also registers its attribute index with vtkmodules, so that when a C++ method
 # returns an object of a class that has not been imported yet (for example
-# vtkChartXY from vtkChartsCore), the wrapping imports the module providing that
+# vtkIOCesium3DTiles), the wrapping imports the module providing that
 # class instead of returning the object as its nearest already-imported base
 # class.
 #
@@ -215,6 +215,21 @@ for kit in available_kits:
             print(detail)
 
     del kit
+
+# The Python wrappers of Slicer's loadable modules are installed in separate "slicer" packages.
+# Extending __path__ makes all of them importable as part of this package.
+from pkgutil import extend_path, iter_modules
+from fnmatch import fnmatch
+from importlib import import_module
+__path__ = extend_path(__path__, __name__)
+for _, module_name, is_pkg in iter_modules(__path__):
+    if fnmatch(module_name, "vtkSlicer*Module*"):
+        try:
+            module = import_module(f"{__name__}.{module_name}")
+        except ImportError as e:
+            print(f"Failed to import module ${module_name}:\n{e}")
+        symbols = [name for name in dir(module) if not name.startswith("_")]
+        globals().update({name: getattr(module, name) for name in symbols})
 
 # -----------------------------------------------------------------------------
 # Python base classes of file readers and writers implemented in Python.

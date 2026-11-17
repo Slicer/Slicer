@@ -1,0 +1,8 @@
+NAME
+  Slicer::TemplateKeyModuleLogic
+LIBRARY_NAME
+  vtkSlicerTemplateKeyModuleLogic
+DEPENDS
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerTemplateKeyModuleLogic"

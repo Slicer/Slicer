@@ -65,11 +65,6 @@
 #include "qMRMLMarkupsOptionsWidgetsFactory.h"
 #include "qMRMLNodeComboBox.h"
 
-// DisplayableManager initialization
-#include <vtkAutoInit.h>
-
-VTK_MODULE_INIT(vtkSlicerMarkupsModuleMRMLDisplayableManager);
-
 static const double UPDATE_VIRTUAL_OUTPUT_NODES_PERIOD_SEC = 0.020; // refresh output with a maximum of 50FPS
 
 //-----------------------------------------------------------------------------

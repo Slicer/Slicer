@@ -1,0 +1,9 @@
+NAME
+  Slicer::MultiVolumeExplorerModuleMRML
+LIBRARY_NAME
+  vtkSlicerMultiVolumeExplorerModuleMRML
+DEPENDS
+  Slicer::MRMLLogic
+  Slicer::Teem
+DESCRIPTION
+  "vtkSlicerMultiVolumeExplorerModuleMRML"

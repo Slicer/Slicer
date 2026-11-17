@@ -19,22 +19,6 @@ set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES
   CACHE INTERNAL "SlicerExecutionModel extra executable target libraries" FORCE
   )
 
-if(Slicer_BUILD_vtkAddon)
-  list(APPEND dirs
-    vtkAddon
-    )
-endif()
-
-list(APPEND dirs
-  vtkTeem
-  vtkITK
-  vtkSegmentationCore
-  MRML/Core
-  MRML/CLI
-  RemoteIO
-  MRML/Logic
-  MRML/DisplayableManager
-  )
 if(Slicer_USE_IDImageIO)
   list(APPEND dirs
     MRML/IDImageIO
@@ -54,31 +38,6 @@ list(APPEND dirs
 # either ModuleDescriptionParser or program/library depending on ModuleDescriptionParser.
 set(ModuleDescriptionParser_USE_PYTHON OFF)
 
-set(MRML_APPLICATION_NAME "${Slicer_MAIN_PROJECT_APPLICATION_NAME}" CACHE STRING "Current MRML scene creator application name" FORCE)
-
-# Convert version to 0xXXYYZZ format where XX=major, YY=minor, ZZ=patch version in hexadecimal.
-# Add a leading 1 (256*256*256*1) to force having a leading 0 for major version (e.g., 04 instead of just 4)
-math(EXPR MRML_APPLICATION_VERSION_HEX "1 << 24
-  | ${Slicer_MAIN_PROJECT_VERSION_MAJOR} << 16
-  | ${Slicer_MAIN_PROJECT_VERSION_MINOR} << 8
-  | ${Slicer_MAIN_PROJECT_VERSION_PATCH}"
-  OUTPUT_FORMAT HEXADECIMAL)
-
-# Remove leading 1 (remove 0x1 and add back just 0x)
-string(SUBSTRING "${MRML_APPLICATION_VERSION_HEX}" 3 6 MRML_APPLICATION_VERSION_HEX)
-set(MRML_APPLICATION_VERSION "0x${MRML_APPLICATION_VERSION_HEX}" CACHE STRING "Current MRML application version" FORCE)
-
-set(MRML_APPLICATION_REVISION "${Slicer_MAIN_PROJECT_REVISION}" CACHE STRING "Current MRML application revision number" FORCE)
-
-# MRML supports Slicer3 and Slicer4 scenes
-set(MRML_APPLICATION_SUPPORT_VERSION "0x030000" CACHE STRING "MRML application version to support" FORCE)
-
-message(STATUS "Configuring MRML")
-message(STATUS "  MRML_APPLICATION_NAME is ${MRML_APPLICATION_NAME}")
-message(STATUS "  MRML_APPLICATION_VERSION is ${MRML_APPLICATION_VERSION}")
-message(STATUS "  MRML_APPLICATION_REVISION is ${MRML_APPLICATION_REVISION}")
-message(STATUS "  MRML_APPLICATION_SUPPORT_VERSION is ${MRML_APPLICATION_SUPPORT_VERSION}")
-
 # Qt designer plugins
 set(MRML_BUILD_QT_DESIGNER_PLUGINS ${Slicer_BUILD_QT_DESIGNER_PLUGINS})
 
@@ -87,16 +46,6 @@ if(Slicer_USE_IDImageIO)
   set(MRMLIDImageIO_ITKFACTORIES_DIR ${Slicer_ITKFACTORIES_DIR})
   set(MRMLIDImageIO_INSTALL_ITKFACTORIES_DIR ${Slicer_INSTALL_ITKFACTORIES_DIR})
 endif()
-
-# Name of the environment variable that contains the requested OpenGL profile.
-# Accepted values are "default" (same as not specifying a value) or
-# to force a specific profile: "no", "core", or  "compatibility".
-set(MRML_APPLICATION_OPENGL_PROFILE_ENV "SLICER_OPENGL_PROFILE")
-
-# vtkITK contains tests that uses MRML's test data.
-set(MRML_TEST_DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/MRML/Core/Testing/TestData)
-
-set(VTKITK_BUILD_DICOM_SUPPORT ${Slicer_BUILD_DICOM_SUPPORT})
 
 set(MRML_WIDGETS_HAVE_WEBENGINE_SUPPORT ${Slicer_BUILD_WEBENGINE_SUPPORT})
 
@@ -150,7 +99,7 @@ set(Slicer_Libs_INCLUDE_DIRS ${include_dirs} CACHE INTERNAL "Slicer Libs include
 # Anticipating the move of MRML related libraries to a standalone project,
 # let's group these libraries.
 # Note also that since MRMLIDImageIO is an ITK plugin it is NOT added to that list.
-set(_mrml_libraries MRMLCore MRMLLogic MRMLDisplayableManager MRMLCLI)
+set(_mrml_libraries Slicer::MRMLCore Slicer::MRMLLogic Slicer::MRMLDisplayableManager Slicer::MRMLCLI)
 set(MRML_LIBRARIES ${_mrml_libraries} CACHE INTERNAL "MRML libraries" FORCE)
 
 #-----------------------------------------------------------------------------
@@ -162,18 +111,13 @@ set(_vtk_wrapped_libraries
   vtkITK
   MRMLCore
   MRMLLogic
-  )
+  MRMLCLI
+  vtkAddon
+)
 
-if(Slicer_BUILD_vtkAddon)
-  list(APPEND _vtk_wrapped_libraries
-    vtkAddon
-    )
-endif()
 if(Slicer_USE_PYTHONQT AND VTK_WRAP_PYTHON)
   list(APPEND _vtk_wrapped_libraries MRMLDisplayableManager)
 endif()
-
-list(APPEND _vtk_wrapped_libraries MRMLCLI)
 
 set(Slicer_Libs_VTK_WRAPPED_LIBRARIES
   ${_vtk_wrapped_libraries} CACHE INTERNAL "Slicer Libs VTK wrapped" FORCE)

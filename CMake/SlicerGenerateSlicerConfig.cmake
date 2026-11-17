@@ -138,8 +138,8 @@ set(Slicer_EP_COMPONENT_VARS_CONFIG
   "set(Slicer_VTK_COMPONENTS \"${Slicer_VTK_COMPONENTS}\")")
 
 # List all required external project
-set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK CTKAppLauncherLib ITK CURL Teem VTK RapidJSON SlicerExecutionModel)
-set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG CURL CTKAppLauncherLib RapidJSON)
+set(Slicer_EXTERNAL_PROJECTS_CONFIG CTK CTKAppLauncherLib ITK CURL Teem VTK RapidJSON SlicerExecutionModel vtkAddon)
+set(Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG CURL CTKAppLauncherLib RapidJSON vtkAddon)
 if(Slicer_USE_CTKAPPLAUNCHER)
   list(APPEND Slicer_EXTERNAL_PROJECTS_CONFIG CTKAppLauncher)
   list(APPEND Slicer_EXTERNAL_PROJECTS_NO_USEFILE_CONFIG CTKAppLauncher)
@@ -178,7 +178,7 @@ set(SlicerExecutionModel_EXTRA_INCLUDE_DIRECTORIES_CONFIG ${SlicerExecutionModel
 set(SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES_CONFIG ${SlicerExecutionModel_EXTRA_EXECUTABLE_TARGET_LIBRARIES})
 
 # Export Targets file.
-set(Slicer_TARGETS_FILE "${Slicer_BINARY_DIR}/SlicerTargets.cmake")
+get_property(Slicer_TARGETS_FILES GLOBAL PROPERTY Slicer_TARGETS_FILES)
 
 # Configure SlicerConfig.cmake for the build tree.
 configure_file(

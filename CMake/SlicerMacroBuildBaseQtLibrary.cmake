@@ -238,6 +238,8 @@ macro(SlicerMacroBuildBaseQtLibrary)
   # Folder
   set_target_properties(${lib_name} PROPERTIES FOLDER "Core-Base")
 
+  slicer_module_autoinit(TARGETS ${lib_name} MODULES ${SLICERQTBASELIB_TARGET_LIBRARIES})
+
   #-----------------------------------------------------------------------------
   # Install library
   #-----------------------------------------------------------------------------

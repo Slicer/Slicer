@@ -1,4 +1,4 @@
-set(KIT ${PROJECT_NAME})
+set(KIT MRMLLogic)
 
 #-----------------------------------------------------------------------------
 set(${KIT}Testing_ITK_COMPONENTS
@@ -42,13 +42,13 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   )
 
 ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${KIT} ${ITK_LIBRARIES})
+target_link_libraries(${KIT}CxxTests PRIVATE Slicer::MRMLLogic ${ITK_LIBRARIES} VTK::InteractionImage)
 
-set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER MRMLLogic)
 
 #-----------------------------------------------------------------------------
 macro(simple_file_test TESTNAME FILE)
-  simple_test(${TESTNAME}_${FILE} DRIVER_TESTNAME ${TESTNAME} DATA{${MRMLCore_SOURCE_DIR}/Testing/TestData/${FILE}})
+  simple_test(${TESTNAME}_${FILE} DRIVER_TESTNAME ${TESTNAME} DATA{${CMAKE_SOURCE_DIR}/Libs/MRML/Core/Testing/TestData/${FILE}})
 endmacro()
 
 #-----------------------------------------------------------------------------

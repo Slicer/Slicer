@@ -42,9 +42,10 @@ void qSlicerPythonManager::executeInitializationScripts()
     return;
   }
 
-  // slicerqt.py must live at bin/Python/ (not bin/Python/slicer/) so that CTK's
-  // executeFile sys.path.insert doesn't shadow PyPI packages with slicer/*.py.
-  this->executeFile(app->slicerHome() + "/bin/Python/slicerqt.py");
+  // slicerqt.py must live at lib/site-packages/ (not lib/site-packages/slicer/)
+  // so that CTK's executeFile sys.path.insert doesn't shadow PyPI packages with
+  // slicer/*.py.
+  this->executeFile(app->slicerHome() + "/lib/site-packages/slicerqt.py");
 }
 
 //-----------------------------------------------------------------------------

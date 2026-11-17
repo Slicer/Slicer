@@ -297,6 +297,7 @@ set(VTK_DEBUG_LEAKS ${Slicer_USE_VTK_DEBUG_LEAKS})
 
 option(Slicer_BUILD_DICOM_SUPPORT "Build Slicer with DICOM support" ON)
 mark_as_superbuild(Slicer_BUILD_DICOM_SUPPORT)
+set(VTKITK_BUILD_DICOM_SUPPORT ${Slicer_BUILD_DICOM_SUPPORT})
 
 option(Slicer_BUILD_MULTIVOLUME_SUPPORT "Build Slicer with MultiVolume support (MultiVolumeExplorer and MultiVolumeImporter modules)" ON)
 mark_as_advanced(Slicer_BUILD_MULTIVOLUME_SUPPORT)
@@ -651,6 +652,8 @@ set(Slicer_VTK_COMPONENTS
   FiltersParallel
   GUISupportQtSQL
   IOExport
+  IOExportGL2PS
+  IOGeometry
   IOImage
   IOLegacy
   IOPLY
@@ -935,14 +938,6 @@ foreach(dep QT ${Slicer_DEPENDENCIES})
 endforeach()
 
 #-----------------------------------------------------------------------------
-# Update CMake module path
-#------------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${vtkAddon_CMAKE_DIR}
-  ${CMAKE_MODULE_PATH}
-  )
-
-#-----------------------------------------------------------------------------
 # CMake Qt automatic code generation
 #-----------------------------------------------------------------------------
 set_property(GLOBAL PROPERTY AUTOGEN_SOURCE_GROUP "Generated")
@@ -1034,13 +1029,17 @@ endif()
 # will be removed.
 
 #-----------------------------------------------------------------------------
+# vtkAddon
+#-----------------------------------------------------------------------------
+# The legacy Slicer module build macros use vtkAddon's wrapping infrastructure.
+find_package(vtkAddon REQUIRED)
+
+#-----------------------------------------------------------------------------
 # VTK
 #-----------------------------------------------------------------------------
 find_package(VTK REQUIRED)
-set(VTK_LIBRARIES "")
 find_package(VTK ${Slicer_VTK_MINIMUM_SUPPORTED_VERSION} COMPONENTS ${Slicer_VTK_COMPONENTS} REQUIRED)
 set(VTK_GUI_SUPPORT_QT_TARGET_NAME "VTK::GUISupportQt")
-
 if(NOT TARGET ${VTK_GUI_SUPPORT_QT_TARGET_NAME})
   message(FATAL_ERROR "error: VTK was not configured to use Qt, you probably need "
                     "to recompile it with VTK_USE_GUISUPPORT ON, VTK_Group_Qt ON, "
@@ -1056,14 +1055,16 @@ include(${CTK_USE_FILE})
 #-----------------------------------------------------------------------------
 # Update CMake module path
 #-----------------------------------------------------------------------------
-set(CMAKE_MODULE_PATH
-  ${CTK_CMAKE_DIR}
-  ${CMAKE_MODULE_PATH}
-  ${CTK_CMAKE_UTILITIES_DIR})
+list(APPEND CMAKE_MODULE_PATH
+  "${vtkAddon_CMAKE_DIR}"
+  "${CTK_CMAKE_DIR}"
+  "${CTK_CMAKE_UTILITIES_DIR}"
+)
 
 #-----------------------------------------------------------------------------
-# CMake Function(s) and Macro(s) from CTK
+# CMake Function(s) and Macro(s) from vtkAddon and CTK
 #-----------------------------------------------------------------------------
+include(vtkMacroKitPythonWrap)
 include(ctkFunctionAddExecutableUtf8)
 
 #-----------------------------------------------------------------------------
@@ -1215,6 +1216,11 @@ endif()
 #-----------------------------------------------------------------------------
 # Subdirectories
 #-----------------------------------------------------------------------------
+
+include(SlicerVTKModuleHeaderWrapper)
+include(SlicerVTKModuleBuild)
+include(SlicerVTKModuleAutoInit)
+slicer_vtk_module_build()
 
 add_subdirectory(Libs)
 add_subdirectory(Base)
@@ -1384,7 +1390,7 @@ endforeach()
 
 # Add target configuring 'vtkSlicerVersionConfigure.h' at build time.
 include(SlicerConfigureVersionHeaderTarget)
-add_dependencies(SlicerBaseLogic SlicerConfigureVersionHeader)
+add_dependencies(BaseLogic SlicerConfigureVersionHeader)
 add_dependencies(MRMLCore SlicerConfigureVersionHeader)
 
 list(APPEND files vtkSlicerVersionConfigure.h)

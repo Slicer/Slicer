@@ -10,8 +10,8 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   )
 
 ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${PROJECT_NAME})
-set_target_properties(${KIT}CxxTests PROPERTIES FOLDER ${${PROJECT_NAME}_FOLDER})
+target_link_libraries(${KIT}CxxTests PRIVATE Slicer::SegmentationCore)
+set_target_properties(${KIT}CxxTests PROPERTIES FOLDER vtkSegmentationCore)
 
 simple_test( vtkSegmentationTest1 )
 simple_test( vtkSegmentationTest2 )
