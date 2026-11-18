@@ -27,7 +27,7 @@
 #      which always starts at the main executable, so plugins that carry no rpath
 #      of their own still load correctly), and @loader_path / @executable_path are
 #      expanded relative to the binary / main executable. Absolute system
-#      libraries (/usr/lib, /System) are allowed.
+#      libraries (/usr/lib, /System except /System/Volumes/Data) are allowed.
 #
 #   WARNING (reported, but do not fail):
 #   3. Non-relocatable LC_RPATH entries, i.e. absolute paths that are not system
@@ -145,8 +145,9 @@ function(_bv_is_macho f out)
     return()
   endif()
   file(READ "${f}" _magic LIMIT 4 HEX)
-  # feedface/feedfacf: 32/64-bit; cafebabe/bebafeca: fat; c[ef]faedfe: byte-swapped.
-  if(_magic MATCHES "^(feedface|feedfacf|cafebabe|bebafeca|cefaedfe|cffaedfe)")
+  # feedface/feedfacf: 32/64-bit; c[ef]faedfe: byte-swapped.
+  # cafebabe/bebafeca: fat; cafebabf/bfbafeca: fat64.
+  if(_magic MATCHES "^(feedface|feedfacf|cafebabe|bebafeca|cafebabf|bfbafeca|cefaedfe|cffaedfe)")
     set(${out} TRUE PARENT_SCOPE)
   else()
     set(${out} FALSE PARENT_SCOPE)
@@ -167,13 +168,18 @@ function(_bv_parse binary out_rpaths out_deps out_weak)
   execute_process(
     COMMAND "${OTOOL_EXECUTABLE}" -l "${binary}"
     OUTPUT_VARIABLE _out
-    ERROR_QUIET
+    ERROR_VARIABLE _err
     RESULT_VARIABLE _rv
     )
   set(_rpaths "")
   set(_deps "")
   set(_weak "")
   if(_rv EQUAL 0)
+    # otool may report a non-object file on stdout and still exit successfully.
+    if(_out MATCHES ": is not an object file(\n|$)")
+      message(FATAL_ERROR
+        "Failed to inspect '${binary}' with otool -l:\n${_out}")
+    endif()
     string(REPLACE "\n" ";" _lines "${_out}")
     set(_cur "")
     foreach(_ln IN LISTS _lines)
@@ -194,6 +200,9 @@ function(_bv_parse binary out_rpaths out_deps out_weak)
         # LC_ID_DYLIB name (the library's own install name) is intentionally ignored.
       endif()
     endforeach()
+  else()
+    message(FATAL_ERROR
+      "Failed to inspect '${binary}' with otool -l (result: ${_rv}):\n${_err}")
   endif()
   set(${out_rpaths} "${_rpaths}" PARENT_SCOPE)
   set(${out_deps} "${_deps}" PARENT_SCOPE)
@@ -227,7 +236,7 @@ function(_bv_resolve dep loader_dir rpaths out_status)
     list(APPEND _dirs ${global_rpath_dirs})
     set(_first_outside "")
     foreach(_d IN LISTS _dirs)
-      if(EXISTS "${_d}/${_rest}")
+      if(EXISTS "${_d}/${_rest}" AND NOT IS_DIRECTORY "${_d}/${_rest}")
         get_filename_component(_rr "${_d}/${_rest}" REALPATH)
         string(FIND "${_rr}" "${app_real}/" _idx)
         if(_idx EQUAL 0)
@@ -243,11 +252,13 @@ function(_bv_resolve dep loader_dir rpaths out_status)
     endif()
   elseif(dep MATCHES "^@(loader_path|executable_path)/")
     _bv_expand_at("${dep}" "${loader_dir}" _cand)
-    if(EXISTS "${_cand}")
+    if(EXISTS "${_cand}" AND NOT IS_DIRECTORY "${_cand}")
       set(_resolved "${_cand}")
     endif()
   elseif(dep MATCHES "^/")
-    if(dep MATCHES "^(/usr/lib/|/System/)")
+    # The writable Data volume must follow normal dependency resolution.
+    if(dep MATCHES "^(/usr/lib/|/System/)"
+        AND NOT dep MATCHES "^/System/Volumes/Data/")
       set(${out_status} "SYSTEM" PARENT_SCOPE)
       return()
     elseif(dep MATCHES "^(/usr/local/|/opt/)")
@@ -259,7 +270,7 @@ function(_bv_resolve dep loader_dir rpaths out_status)
         return()
       endif()
     endif()
-    if(EXISTS "${dep}")
+    if(EXISTS "${dep}" AND NOT IS_DIRECTORY "${dep}")
       set(_resolved "${dep}")
     endif()
   endif()
@@ -525,6 +536,10 @@ message("")
 if(_errors GREATER 0)
   message(FATAL_ERROR "Bundle verification FAILED with ${_errors} error(s): "
     "the application bundle is not self-contained. See the report above.")
+endif()
+
+if(_n_binaries EQUAL 0)
+  message(FATAL_ERROR "Bundle verification FAILED: no Mach-O binaries found in '${app_path}'.")
 endif()
 
 message(STATUS "Bundle verification PASSED: ${_n_binaries} Mach-O file(s) checked, "
