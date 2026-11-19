@@ -21,6 +21,10 @@ xcode-select --install
   - For packaging and redistributing Slicer: build Qt using [Build-qt6.sh](https://github.com/Slicer/Slicer/blob/macos-arm64-building/Utilities/Scripts/Build-qt6.sh)
 - Setting `CMAKE_OSX_DEPLOYMENT_TARGET` CMake variable specifies the minimum macOS version a generated installer may target. So it should be equal to or less than the version of SDK you are building on. Note that the SDK version is set using `CMAKE_OSX_SYSROOT` CMake variable automatically initialized during CMake configuration.
 
+### Qt 6 accessibility crashes
+
+Qt 6.11.0 through 6.11.2 are affected by a [Cocoa accessibility bug](https://qt-project.atlassian.net/browse/QTBUG-149612) that can crash an application while an accessibility client queries a table. If you encounter an accessibility-related crash with these versions, test a build against a Qt release containing the fix, or [backport the Qt fix](https://github.com/qt/qtbase/commit/b74d6cb3c5e8418602494ae549b60839d88ef858) when building Qt from source. Retest with the accessibility client active.
+
 ## Checkout Slicer source files
 
 Notes:
