@@ -160,12 +160,22 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
       ${EXTERNAL_PROJECT_OPTIONAL_CMAKE_ARGS})
   endif()
 
+  # Patches applied to python-cmake-buildsystem until they are integrated upstream.
+  # When updating Slicer_${proj}_GIT_TAG, remove the patches already integrated.
+  set(_patch_dir ${CMAKE_CURRENT_LIST_DIR}/python-cmake-buildsystem-patches)
+  file(GLOB _patches LIST_DIRECTORIES false "${_patch_dir}/*.patch")
+
   ExternalProject_Add(${proj}
     ${${proj}_EP_ARGS}
     GIT_REPOSITORY "${Slicer_${proj}_GIT_REPOSITORY}"
     GIT_TAG "${Slicer_${proj}_GIT_TAG}"
     SOURCE_DIR ${EP_SOURCE_DIR}
     BINARY_DIR ${EP_BINARY_DIR}
+    PATCH_COMMAND ${CMAKE_COMMAND}
+      -DGIT_EXECUTABLE:FILEPATH=${GIT_EXECUTABLE}
+      -DSOURCE_DIR:PATH=${EP_SOURCE_DIR}
+      -DPATCH_DIR:PATH=${_patch_dir}
+      -P ${CMAKE_CURRENT_LIST_DIR}/python_apply_patches.cmake
     CMAKE_CACHE_ARGS
       -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
       #-DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags} # Not used
@@ -197,6 +207,10 @@ if((NOT DEFINED PYTHON_INCLUDE_DIR
     DEPENDS
       python-source ${${proj}_DEPENDENCIES}
     )
+  if(_patches)
+    # Re-run the patch step when a patch is added or modified
+    ExternalProject_Add_StepDependencies(${proj} patch ${_patches})
+  endif()
   set(python_DIR ${CMAKE_BINARY_DIR}/${proj}-install)
 
   if(UNIX)

@@ -1,0 +1,80 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?D=C5=BEenan=20Zuki=C4=87?= <dzenan.zukic@kitware.com>
+Date: Thu, 19 Nov 2026 09:55:46 -0500
+Subject: [PATCH] fix(libpython): Avoid splitting PYTHONPATH definition with
+ Visual Studio generators
+
+Building Python >= 3.11 with a Visual Studio generator failed compiling
+Modules/getpath.c when MSBuild uses the MultiToolTask to compile
+(UseMultiToolTask=true, for example set as an environment variable):
+
+    getpath.c(891,45): error C7772: invalid string literal
+
+or, with older MSVC versions:
+
+    getpath.c(891,45): error C2001: newline in constant
+
+The PYTHONPATH compile definition contained ';' separators, which the
+Visual Studio generators write as "%3B" in the PreprocessorDefinitions
+of the .vcxproj. The default CL task passes the definition unchanged,
+but the MultiToolTask splits the list on them, so cl.exe received:
+
+    /D "PYTHONPATH=\"L" /D "Lib\\lib-dynload" /D "Lib\\lib-dynload\\Release\""
+
+leaving PYTHONPATH defined as an unterminated string literal.
+
+Join the entries using the C octal escape sequence "\073" (';') so that
+no literal semicolon appears in the definition, which works the same with
+all generators and MSBuild compile tasks.
+
+Also drop the "L" wide character modifier: it was placed inside the
+quotes, so it did not make the literal wide but instead added a bogus
+"<prefix>\L" entry to sys.path. getpath.c expects a narrow string
+(decode_to_dict() takes a "const char *"). An empty EXTRA_PYTHONPATH no
+longer produces an empty leading entry.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ cmake/libpython/CMakeLists.txt | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
+
+diff --git a/cmake/libpython/CMakeLists.txt b/cmake/libpython/CMakeLists.txt
+index 3317b53..5c3580a 100644
+--- a/cmake/libpython/CMakeLists.txt
++++ b/cmake/libpython/CMakeLists.txt
+@@ -861,10 +861,22 @@ set(LIBPYTHON_SOURCES
+     $<$<AND:$<BOOL:${WIN32}>,$<VERSION_GREATER_EQUAL:${PY_VERSION},3.11>>:${SRC_DIR}/PC/dl_nt.c>
+ )
+ if(WIN32 AND PY_VERSION VERSION_GREATER_EQUAL "3.11")
+-    set(PYTHONPATH "${EXTRA_PYTHONPATH}\\\;${LIBDIR}\\\\lib-dynload")
+-    set(PYTHONPATH "${PYTHONPATH}\\\;${LIBDIR}\\\\lib-dynload\\\\$<CONFIG>")
+-
+-    set(_wide_char_modifier "L")
++    # Entries are separated using the octal escape sequence "\073" (';') so that
++    # the compile definition contains no literal semicolon. The Visual Studio
++    # generators write it as "%3B"; when MSBuild compiles using the
++    # MultiToolTask (UseMultiToolTask=true), PreprocessorDefinitions are split
++    # on it, which truncated the macro to '"L' and caused "error C7772: invalid
++    # string literal" (or "error C2001: newline in constant"). The value is a
++    # narrow string as expected by getpath.c.
++    set(_pythonpath_entries)
++    if(NOT "${EXTRA_PYTHONPATH}" STREQUAL "")
++        list(APPEND _pythonpath_entries "${EXTRA_PYTHONPATH}")
++    endif()
++    list(APPEND _pythonpath_entries
++        "${LIBDIR}\\\\lib-dynload"
++        "${LIBDIR}\\\\lib-dynload\\\\$<CONFIG>"
++        )
++    list(JOIN _pythonpath_entries "\\073" PYTHONPATH)
+ 
+     set_property(
+         SOURCE ${SRC_DIR}/Modules/getpath.c
+@@ -875,7 +887,7 @@ if(WIN32 AND PY_VERSION VERSION_GREATER_EQUAL "3.11")
+             VPATH="..\\\\.."
+             PYDEBUGEXT="$<$<CONFIG:Debug>:_d>"
+             PLATLIBDIR="${LIBDIR}"
+-            PYTHONPATH="${_wide_char_modifier}${PYTHONPATH}"
++            PYTHONPATH="${PYTHONPATH}"
+         )
+     set_property(
+         SOURCE ${SRC_DIR}/PC/dl_nt.c
