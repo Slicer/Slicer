@@ -146,10 +146,10 @@ public:
   typedef std::map<vtkMRMLSegmentationNode*, std::set<vtkMRMLSegmentationDisplayNode*>> SegmentationToDisplayCacheType;
   SegmentationToDisplayCacheType SegmentationToDisplayNodes;
 
-  /// Display pipeline of segments of a binary labelmap layer, used when the 3D representation is binary labelmap.
-  /// The labelmap is rendered as smooth surfaces, computed on the GPU. Segments of a layer that have the same (snapped)
-  /// opacity are shown by one pipeline (translucent ones are composited front to back by the mapper, without the
-  /// surfaces where they touch each other), so that rendering stays fast when many segments are translucent.
+  /// Display pipeline of the segments of a binary labelmap layer, used when the 3D representation is binary labelmap.
+  /// The labelmap is rendered as smooth surfaces, computed on the GPU. All shown segments of a layer are shown by one
+  /// pipeline, each with its own color and opacity (the mapper composites translucent segments front to back,
+  /// with the surfaces where segments touch each other).
   struct LabelmapPipeline
   {
     LabelmapPipeline()
@@ -166,16 +166,8 @@ public:
     /// Pickable segments shown by the pipeline
     std::map<int, std::string> PickableSegmentIDsByLabel;
   };
-  /// Opacity of translucent segments is snapped to the closest of a few evenly spaced levels between 0 and 1
-  /// (\sa vtkMRMLSegmentationDisplayNode::SetNumberOfLabelmapSurfaceOpacityLevels; 0 and 1 are not used, because
-  /// the segment would be hidden or opaque), so that the number of pipelines (each with its own distance field on
-  /// the GPU) is limited per layer, and changing the opacity of a segment slightly does not move it to another
-  /// pipeline (which would compute the distance field again). The levels are defined by the display node, so that
-  /// automatic opacity computation can choose opacities that are rendered as distinct levels.
-  /// first: shared labelmap of the layer, second: -1 for the opaque segments, otherwise the snapped opacity level of
-  /// the translucent segments (\sa vtkMRMLSegmentationDisplayNode::GetLabelmapSurfaceTranslucentOpacityLevel)
-  typedef std::pair<vtkOrientedImageData*, int> LabelmapPipelineKey;
-  typedef std::map<LabelmapPipelineKey, LabelmapPipeline> LabelmapPipelineMapType;
+  /// first: shared labelmap of the layer
+  typedef std::map<vtkOrientedImageData*, LabelmapPipeline> LabelmapPipelineMapType;
   std::map<vtkMRMLSegmentationDisplayNode*, LabelmapPipelineMapType> LabelmapPipelines;
 
   /// Labelmap resampled into world coordinates, for segmentations under non-linear transforms
@@ -910,10 +902,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipeli
     }
   }
 
-  // Shown segments of each labelmap layer, grouped by opacity
+  // Shown segments of each labelmap layer, with their opacities
   const char* binaryLabelmapName = vtkSegmentationConverter::GetSegmentationBinaryLabelmapRepresentationName();
-  std::map<LabelmapPipelineKey, std::vector<std::string>> shownSegmentIDsInPipelines;
-  std::map<LabelmapPipelineKey, double> pipelineOpacities;
+  std::map<vtkOrientedImageData*, std::vector<std::pair<std::string, double>>> shownSegmentIDsInPipelines;
   double displayOpacity = hierarchyOpacity * displayNode->GetOpacity3D() * genericDisplayNode->GetOpacity();
   if (visible && displayOpacity > 0.0)
   {
@@ -933,10 +924,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipeli
       {
         continue;
       }
-      bool opaque = (opacity >= 1.0);
-      LabelmapPipelineKey key(labelmap, opaque ? -1 : displayNode->GetLabelmapSurfaceTranslucentOpacityLevel(opacity));
-      shownSegmentIDsInPipelines[key].push_back(segmentID);
-      pipelineOpacities[key] = opaque ? 1.0 : displayNode->GetLabelmapSurfaceTranslucentOpacity(key.second);
+      shownSegmentIDsInPipelines[labelmap].push_back(std::make_pair(segmentID, std::min(opacity, 1.0)));
     }
   }
 
@@ -963,7 +951,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipeli
     bool used = false;
     for (const auto& shownSegmentIDsInPipeline : shownSegmentIDsInPipelines)
     {
-      used |= (nonLinearNodeToWorld && shownSegmentIDsInPipeline.first.first == transformedIt->first);
+      used |= (nonLinearNodeToWorld && shownSegmentIDsInPipeline.first == transformedIt->first);
     }
     transformedIt = used ? std::next(transformedIt) : transformedLabelmaps.erase(transformedIt);
   }
@@ -987,15 +975,14 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipeli
 
   for (const auto& shownSegmentIDsInPipeline : shownSegmentIDsInPipelines)
   {
-    const LabelmapPipelineKey& key = shownSegmentIDsInPipeline.first;
-    LabelmapPipelineMapType::iterator pipelineIt = pipelines.find(key);
+    vtkOrientedImageData* labelmap = shownSegmentIDsInPipeline.first;
+    LabelmapPipelineMapType::iterator pipelineIt = pipelines.find(labelmap);
     if (pipelineIt == pipelines.end())
     {
-      pipelineIt = pipelines.insert(std::make_pair(key, LabelmapPipeline())).first;
+      pipelineIt = pipelines.insert(std::make_pair(labelmap, LabelmapPipeline())).first;
       this->External->GetRenderer()->AddActor(pipelineIt->second.Actor);
     }
     LabelmapPipeline& pipeline = pipelineIt->second;
-    vtkOrientedImageData* labelmap = key.first;
     if (nonLinearNodeToWorld)
     {
       labelmap = this->GetTransformedLabelmap(displayNode, labelmap, nonLinearNodeToWorld);
@@ -1003,8 +990,9 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipeli
     pipeline.Mapper->SetLabelmap(labelmap);
     pipeline.Mapper->RemoveAllLabelColors();
     pipeline.PickableSegmentIDsByLabel.clear();
-    for (const std::string& segmentID : shownSegmentIDsInPipeline.second)
+    for (const std::pair<std::string, double>& segmentIDAndOpacity : shownSegmentIDsInPipeline.second)
     {
+      const std::string& segmentID = segmentIDAndOpacity.first;
       double color[3] = { vtkSegment::SEGMENT_COLOR_INVALID[0], vtkSegment::SEGMENT_COLOR_INVALID[1], vtkSegment::SEGMENT_COLOR_INVALID[2] };
       if (overrideHierarchyDisplayNode)
       {
@@ -1015,7 +1003,7 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipeli
         displayNode->GetSegmentColor(segmentID, color);
       }
       int labelValue = segmentation->GetSegment(segmentID)->GetLabelValue();
-      pipeline.Mapper->SetLabelColor(labelValue, color[0], color[1], color[2]);
+      pipeline.Mapper->SetLabelColor(labelValue, color[0], color[1], color[2], segmentIDAndOpacity.second);
       vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
       displayNode->GetSegmentDisplayProperties(segmentID, properties);
       if (segmentationNode->GetSelectable() && properties.Pickable)
@@ -1047,7 +1035,8 @@ void vtkMRMLSegmentationsDisplayableManager3D::vtkInternal::UpdateLabelmapPipeli
     pipeline.Mapper->SetOutlineWidth(std::max(1.0, static_cast<double>(displayNode->GetLineWidth())));
 
     vtkProperty* actorProperty = pipeline.Actor->GetProperty();
-    actorProperty->SetOpacity(pipelineOpacities[key]);
+    // Opacities are those of the segments (set in the mapper)
+    actorProperty->SetOpacity(1.0);
     actorProperty->SetAmbient(genericDisplayNode->GetSelected() ? genericDisplayNode->GetSelectedAmbient() : genericDisplayNode->GetAmbient());
     actorProperty->SetSpecular(genericDisplayNode->GetSelected() ? genericDisplayNode->GetSelectedSpecular() : genericDisplayNode->GetSpecular());
     actorProperty->SetDiffuse(genericDisplayNode->GetDiffuse());
