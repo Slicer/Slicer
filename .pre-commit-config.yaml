@@ -16,7 +16,7 @@ repos:
       - id: mixed-line-ending
         exclude: "\\.(svg|vtk|vtp)$"
       - id: trailing-whitespace
-        exclude: "\\.(svg|vtk|vtp)$"
+        exclude: "\\.(patch|svg|vtk|vtp)$"
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.17.3

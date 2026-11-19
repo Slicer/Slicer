@@ -1,0 +1,3 @@
+# Keep patches byte-identical (LF line endings, blank context lines) so that
+# "git apply" works independently of core.autocrlf.
+*.patch -text -whitespace

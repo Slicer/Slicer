@@ -1,0 +1,57 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: "Hans J. Johnson" <hans.j.johnson@gmail.com>
+Date: Sat, 22 Aug 2026 15:05:52 -0500
+Subject: [PATCH] fix(extension_testcapi): Locate python3.lib on single-config
+ generators
+
+Linking _testcapi failed on Windows with the Ninja and NMake generators:
+
+    LINK : fatal error LNK1104: cannot open file 'python3.lib'
+
+_testcapi contains translation units that define Py_LIMITED_API
+(vectorcall_limited.c, heaptype_relative.c). PC/pyconfig.h then emits
+`pragma comment(lib,"python3.lib")`, so the stable-ABI import library
+must be on the linker's search path.
+
+The search path was built by hand as
+
+    ${PROJECT_BINARY_DIR}/CMakeBuild/libpython/$<CONFIG>
+
+$<CONFIG> expands for every generator, but only multi-config generators
+append the configuration to a target's archive output directory. Since
+libpython3-shared sets LIBRARY_OUTPUT_DIRECTORY and
+RUNTIME_OUTPUT_DIRECTORY but no ARCHIVE_OUTPUT_DIRECTORY, on a
+single-config generator python3.lib lands directly in the libpython
+binary directory -- one level above where the $<CONFIG> form looked.
+Visual Studio agreed with the hardcoded path, which is why this went
+unnoticed.
+
+Use $<TARGET_LINKER_FILE_DIR:libpython3-shared> so the directory comes
+from the target itself and stays correct for both generator classes.
+The target is already a hard dependency of extension_testcapi on the
+next line, so it is guaranteed to exist here.
+---
+ CMakeLists.txt | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 730e0fa..b676eab 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -650,8 +650,14 @@ endif()
+ # find "Python3.lib" as it is specified in "PC/pyconfig." using
+ # `pragma comment(lib,"python3.lib")`.
+ if(WIN32 AND TARGET extension_testcapi)
+-    set(libpython_output_dir "${PROJECT_BINARY_DIR}/CMakeBuild/libpython/$<CONFIG>")
+-    target_link_directories(extension_testcapi PRIVATE ${libpython_output_dir})
++    # Ask CMake where the target's import library actually is instead of
++    # reconstructing the path. Hardcoding ".../CMakeBuild/libpython/$<CONFIG>"
++    # is only correct for multi-config generators, which append the
++    # configuration to the archive output directory themselves. Single-config
++    # generators (Ninja, NMake Makefiles) do not, and libpython3-shared sets no
++    # ARCHIVE_OUTPUT_DIRECTORY, so python3.lib lands directly in the libpython
++    # binary directory -- one level above where the $<CONFIG> form looked.
++    target_link_directories(extension_testcapi PRIVATE $<TARGET_LINKER_FILE_DIR:libpython3-shared>)
+     # Ensure import library is generated before linking the extension
+     add_dependencies(extension_testcapi libpython3-shared)
+ endif()
