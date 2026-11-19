@@ -258,6 +258,7 @@ qSlicerSegmentEditorScissorsEffectPrivate::qSlicerSegmentEditorScissorsEffectPri
 
   this->BrushPolyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
   this->BrushPolyDataNormals->AutoOrientNormalsOn();
+  this->BrushPolyDataNormals->SplittingOff();
 
   this->WorldToModifierLabelmapIjkTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   this->WorldToModifierLabelmapIjkTransform = vtkSmartPointer<vtkTransform>::New();
