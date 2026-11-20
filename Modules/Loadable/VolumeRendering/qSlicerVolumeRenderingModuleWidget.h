@@ -94,6 +94,7 @@ protected slots:
   void onROICropDisplayCheckBoxToggled(bool toggle);
   void onChartsExtentChanged();
   void onEffectiveRangeModified();
+  void onCurrentComponentChanged();
 
   void setSoftEdgeVoxels(double SoftEdgeVoxels);
 

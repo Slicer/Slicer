@@ -152,7 +152,7 @@ void qSlicerVolumeRenderingModuleWidgetPrivate::setupUi(qSlicerVolumeRenderingMo
   this->VolumePropertyNodeWidget->setThreshold(!volumeRenderingLogic->GetUseLinearRamp());
   QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(thresholdChanged(bool)), q, SLOT(onThresholdChanged(bool)));
   QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(chartsExtentChanged()), q, SLOT(onChartsExtentChanged()));
-  QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(componentChanged(int)), q, SLOT(onEffectiveRangeModified()));
+  QObject::connect(this->VolumePropertyNodeWidget, SIGNAL(componentChanged(int)), q, SLOT(onCurrentComponentChanged()));
 
   QObject::connect(this->VolumePropertyNodeComboBox, SIGNAL(currentNodeChanged(vtkMRMLNode*)), this->PresetComboBox, SLOT(setMRMLVolumePropertyNode(vtkMRMLNode*)));
 
@@ -1091,6 +1091,24 @@ void qSlicerVolumeRenderingModuleWidget::onEffectiveRangeModified()
 
   // Update presets slider range
   d->PresetComboBox->updatePresetSliderRange();
+}
+
+//-----------------------------------------------------------
+void qSlicerVolumeRenderingModuleWidget::onCurrentComponentChanged()
+{
+  Q_D(qSlicerVolumeRenderingModuleWidget);
+
+  vtkMRMLVolumePropertyNode* volumePropertyNode = this->mrmlVolumePropertyNode();
+  if (!volumePropertyNode)
+  {
+    return;
+  }
+
+  // Each component has its own transfer functions, which may span a very different intensity range,
+  // therefore the effective range of the previously displayed component cannot be reused
+  // (it would clip the charts of the current component).
+  volumePropertyNode->CalculateEffectiveRange(d->VolumePropertyNodeWidget->currentComponent());
+  this->onEffectiveRangeModified();
 }
 
 //-----------------------------------------------------------
