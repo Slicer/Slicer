@@ -103,7 +103,7 @@ public:
 
   /// @{
   /// Configures the behavior for blending layers.
-  /// The default value is true, indicating that the layers will be clipped to fit the background.
+  /// If enabled, all layers above the background volume will be clipped to the background volume's extents.
   vtkGetMacro(ClipToBackgroundVolume, bool);
   vtkSetMacro(ClipToBackgroundVolume, bool);
   /// @}
