@@ -46,6 +46,7 @@
 #include <vtkPlane.h>
 #include <vtkPlaneCollection.h>
 #include <vtkPointData.h>
+#include <vtkPropCollection.h>
 #include <vtkProperty.h>
 #include <vtkWeakPointer.h>
 #include <vtkShaderProgram.h>
@@ -58,6 +59,7 @@
 #include <array>
 #include <cmath>
 #include <map>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <vector>
@@ -68,6 +70,10 @@ namespace
 // Distances are computed exactly up to this distance (in voxels) from the surface. Farther voxels are only known to be
 // farther than this, which is enough for ray casting.
 const int BandVoxels = 32;
+
+// Size (in voxels of the grid, along each axis) of the blocks in which rays that are inside the surface leap over
+// voxels that are not near a surface between segments.
+const int InterfaceBlockSize = 4;
 
 // Standard deviation of the Gaussian smoothing for SmoothingFactor = 1, relative to the largest voxel size.
 // The default SmoothingFactor (0.5) keeps the surface smooth without rounding off small details.
@@ -360,41 +366,29 @@ void main()
 }
 )";
 
-// Colors of the segments at the voxels of the grid, for coloring the surface (alpha = 0 where there is no shown segment
-// near). Computing them once, rather than at every surface point of every frame, makes rendering several times faster.
-const char* ColorFS = R"(
-// Color and opacity of the shown label at a grid position, or alpha = 0 if there is no shown label there.
-vec4 labelColorAtGrid(vec3 gridPosition)
+// Label of the shown segment in a voxel of the grid
+const char* ShownLabelFS = R"(
+// Label of the shown segment in a voxel of the grid (0 if there is none): that of the labelmap voxel at its center or,
+// in a downsampled grid (if wholeBlock is true), of the first of the labelmap voxels that isShownVoxel samples.
+int shownLabelAt(ivec3 voxel, bool wholeBlock)
 {
   ivec3 labelSize = ivec3(labelDimensions + vec3(0.5));
   ivec3 factor = ivec3(downsampling + vec3(0.5));
-  ivec3 voxel = ivec3(floor(gridPosition + vec3(0.5)));
   ivec3 labelVoxel = (voxel - ivec3(padding)) * factor;
   if (any(lessThan(voxel, ivec3(padding))) || any(greaterThanEqual(labelVoxel, labelSize)))
   {
-    return vec4(0.0);
+    return 0;
   }
-  labelVoxel = min(labelVoxel + factor / 2, labelSize - ivec3(1));
-  int label = int(texelFetch(labelTexture, labelVoxel, 0).r * labelScale + 0.5);
-  if (label <= 0 || label >= paletteSize)
+  int label = int(texelFetch(labelTexture, min(labelVoxel + factor / 2, labelSize - ivec3(1)), 0).r * labelScale + 0.5);
+  if (isShownLabel(label))
   {
-    return vec4(0.0);
+    return label;
   }
-  return texelFetch(paletteTexture, ivec2(label % 256, label / 256), 0);
-}
-
-// Color of a shown label in the labelmap voxels of a downsampled grid voxel (alpha = 0 if there is none).
-// Samples the same labelmap voxels as isShownVoxel.
-vec4 labelColorInBlock(ivec3 voxel)
-{
-  ivec3 labelSize = ivec3(labelDimensions + vec3(0.5));
-  ivec3 factor = ivec3(downsampling + vec3(0.5));
+  if (!wholeBlock || factor == ivec3(1))
+  {
+    return 0;
+  }
   ivec3 stride = (factor + ivec3(3)) / 4;
-  ivec3 labelVoxel = (voxel - ivec3(padding)) * factor;
-  if (any(lessThan(voxel, ivec3(padding))) || any(greaterThanEqual(labelVoxel, labelSize)))
-  {
-    return vec4(0.0);
-  }
   for (int k = 0; k < 4; k++)
   {
     for (int j = 0; j < 4; j++)
@@ -406,80 +400,236 @@ vec4 labelColorInBlock(ivec3 voxel)
         {
           continue;
         }
-        int label = int(texelFetch(labelTexture, min(labelVoxel + offset, labelSize - ivec3(1)), 0).r * labelScale + 0.5);
-        if (label > 0 && label < paletteSize)
+        label = int(texelFetch(labelTexture, min(labelVoxel + offset, labelSize - ivec3(1)), 0).r * labelScale + 0.5);
+        if (isShownLabel(label))
         {
-          vec4 color = texelFetch(paletteTexture, ivec2(label % 256, label / 256), 0);
-          if (color.a > 0.0)
+          return label;
+        }
+      }
+    }
+  }
+  return 0;
+}
+)";
+
+// Segment of each voxel of the grid: the label of the shown segment that the voxel is in, or of the nearest shown
+// segment if it is in none (the surface is not exactly where the segments end: smoothing moves it, and fills narrow gaps
+// between segments). The ray casting shader finds the segment at a point from these labels, so the colors and opacities
+// of the segments are only looked up in the palette: changing them does not need any computation.
+// The label is stored in two bytes (low, high).
+const char* SegmentFS = R"(
+uniform mat3 gridToPhysical;
+void main()
+{
+  ivec3 center = currentVoxel();
+  int label = shownLabelAt(center, true);
+  if (label == 0)
+  {
+    // Not in a shown segment: the nearest one (in physical distance), up to two voxels away
+    float nearestDistance = 1.0e30;
+    for (int dz = -2; dz <= 2; dz++)
+    {
+      for (int dy = -2; dy <= 2; dy++)
+      {
+        for (int dx = -2; dx <= 2; dx++)
+        {
+          int neighborLabel = shownLabelAt(center + ivec3(dx, dy, dz), false);
+          if (neighborLabel > 0)
           {
-            return color;
+            float neighborDistance = length(gridToPhysical * vec3(float(dx), float(dy), float(dz)));
+            if (neighborDistance < nearestDistance)
+            {
+              nearestDistance = neighborDistance;
+              label = neighborLabel;
+            }
           }
         }
       }
     }
   }
-  return vec4(0.0);
+  gl_FragData[0] = vec4(float(label % 256) / 255.0, float(label / 256) / 255.0, 0.0, 1.0);
 }
+)";
 
-// Color of the segments at a grid position: colors of nearby voxels that are inside shown segments, weighted by their
-// distance (in voxels), so that seams between segments are soft. Voxels behind thin segments get negligible weight.
-vec4 segmentColor(vec3 gridPosition)
+// Voxels of the grid that are near a surface between segments (the voxel and its 26 neighbors are not all of the same
+// segment), and what the ray casting shader needs to find that surface between the voxels.
+//
+// The boundary between two segments in a labelmap is a staircase. As for the outer surface, the smooth surface that the
+// staircase samples is found by smoothing: the share of a segment at a voxel is the Gaussian weighted fraction of the
+// voxels around it that are of that segment (same standard deviation as the smoothing of the distance field, up to one
+// voxel), and the surface between two segments is where their shares, interpolated between the voxels, are equal.
+// Only two segments are stored for a voxel: its own and the other one that has the largest share around it.
+//
+// Output: label of the other segment (two bytes; 0 if there is none), share of the own segment (the other segment has
+// the rest), whether the voxel is near a surface between segments. Rays that are inside the surface look for a surface
+// between segments only near these voxels (elsewhere the 8 voxels around any position are of the same segment).
+const char* InterfaceFS = R"(
+uniform sampler3D segmentTexture;
+uniform vec3 smoothingSigma;
+int segmentLabelAt(ivec3 voxel)
 {
-  ivec3 center = ivec3(floor(gridPosition + vec3(0.5)));
-  vec4 sum = vec4(0.0);
-  float sumWeights = 0.0;
-  for (int dz = -1; dz <= 1; dz++)
+  vec2 bytes = texelFetch(segmentTexture, clamp(voxel, ivec3(0), gridSize() - ivec3(1)), 0).rg;
+  return int(bytes.r * 255.0 + 0.5) + 256 * int(bytes.g * 255.0 + 0.5);
+}
+void main()
+{
+  ivec3 center = currentVoxel();
+  int ownLabel = segmentLabelAt(center);
+  int firstLabel = ownLabel;
+  bool nearInterface = false;
+  for (int dz = -1; dz <= 1 && !nearInterface; dz++)
   {
-    for (int dy = -1; dy <= 1; dy++)
+    for (int dy = -1; dy <= 1 && !nearInterface; dy++)
     {
-      for (int dx = -1; dx <= 1; dx++)
+      for (int dx = -1; dx <= 1 && !nearInterface; dx++)
       {
-        ivec3 voxel = center + ivec3(dx, dy, dz);
-        vec4 color = labelColorAtGrid(vec3(voxel));
-        if (color.a > 0.0)
+        int label = segmentLabelAt(center + ivec3(dx, dy, dz));
+        if (label == 0)
         {
-          vec3 offset = vec3(voxel) - gridPosition;
-          float weight = exp(-2.0 * dot(offset, offset));
-          sum += weight * color;
-          sumWeights += weight;
+          continue;
+        }
+        if (firstLabel == 0)
+        {
+          firstLabel = label;
+        }
+        else if (label != firstLabel)
+        {
+          nearInterface = true;
         }
       }
     }
   }
-  if (sumWeights > 0.0)
+  if (!nearInterface || ownLabel == 0)
   {
-    return sum / sumWeights;
+    gl_FragData[0] = vec4(0.0, 0.0, 1.0, nearInterface ? 1.0 : 0.0);
+    return;
   }
-  // Downsampled grid: the shown label may not be at the sampled labelmap voxel
-  vec4 blockColor = labelColorInBlock(center);
-  if (blockColor.a > 0.0)
+  // Shares of the own segment and of up to 4 other segments around the voxel
+  float ownShare = 0.0;
+  int otherLabels[4];
+  float otherShares[4];
+  for (int slot = 0; slot < 4; slot++)
   {
-    return blockColor;
+    otherLabels[slot] = 0;
+    otherShares[slot] = 0.0;
   }
-  // Surface over a filled gap: the nearest shown voxels may be farther
+  vec3 sigma = max(smoothingSigma, vec3(1.0e-3));
   for (int dz = -2; dz <= 2; dz++)
   {
     for (int dy = -2; dy <= 2; dy++)
     {
       for (int dx = -2; dx <= 2; dx++)
       {
-        ivec3 voxel = center + ivec3(dx, dy, dz);
-        vec4 color = labelColorAtGrid(vec3(voxel));
-        if (color.a > 0.0)
+        int label = segmentLabelAt(center + ivec3(dx, dy, dz));
+        if (label == 0)
         {
-          vec3 offset = vec3(voxel) - gridPosition;
-          float weight = exp(-0.5 * dot(offset, offset));
-          sum += weight * color;
-          sumWeights += weight;
+          continue;
+        }
+        vec3 offset = vec3(float(dx), float(dy), float(dz)) / sigma;
+        float weight = exp(-0.5 * dot(offset, offset));
+        if (label == ownLabel)
+        {
+          ownShare += weight;
+          continue;
+        }
+        for (int slot = 0; slot < 4; slot++)
+        {
+          if (otherLabels[slot] == label || otherLabels[slot] == 0)
+          {
+            otherLabels[slot] = label;
+            otherShares[slot] += weight;
+            break;
+          }
         }
       }
     }
   }
-  return sumWeights > 0.0 ? sum / sumWeights : vec4(0.0);
+  int otherLabel = 0;
+  float otherShare = -1.0;
+  for (int slot = 0; slot < 4; slot++)
+  {
+    if (otherLabels[slot] > 0 && otherShares[slot] > otherShare)
+    {
+      otherLabel = otherLabels[slot];
+      otherShare = otherShares[slot];
+    }
+  }
+  // (there is always another segment: the voxel is near a surface between segments)
+  float share = ownShare / max(ownShare + max(otherShare, 0.0), 1.0e-6);
+  gl_FragData[0] = vec4(float(otherLabel % 256) / 255.0, float(otherLabel / 256) / 255.0, share, 1.0);
 }
+)";
+
+// Smoothing must not remove thin parts of segments (sheets and lines that are one voxel thick, single voxels): a voxel
+// of a shown segment that got the smaller share is given a share that keeps it in its segment. This is not done for
+// a voxel that sticks out of a thick part of its segment (a neighbor voxel of the segment has a much larger share):
+// that is a step of the staircase, which smoothing is meant to remove.
+// Copies the output of InterfaceFS, with the shares of such voxels changed.
+const char* ThinSegmentFS = R"(
+uniform sampler3D segmentTexture;
+uniform sampler3D shareTexture;
 void main()
 {
-  gl_FragData[0] = segmentColor(vec3(currentVoxel()));
+  ivec3 center = currentVoxel();
+  ivec3 maxVoxel = gridSize() - ivec3(1);
+  vec4 value = texelFetch(shareTexture, center, 0);
+  if (value.a > 0.5 && value.b < 0.5)
+  {
+    vec2 ownBytes = texelFetch(segmentTexture, center, 0).rg;
+    int ownLabel = int(ownBytes.r * 255.0 + 0.5) + 256 * int(ownBytes.g * 255.0 + 0.5);
+    if (ownLabel > 0 && shownLabelAt(center, true) == ownLabel)
+    {
+      bool sticksOut = false;
+      for (int dz = -1; dz <= 1 && !sticksOut; dz++)
+      {
+        for (int dy = -1; dy <= 1 && !sticksOut; dy++)
+        {
+          for (int dx = -1; dx <= 1 && !sticksOut; dx++)
+          {
+            ivec3 neighbor = clamp(center + ivec3(dx, dy, dz), ivec3(0), maxVoxel);
+            vec2 bytes = texelFetch(segmentTexture, neighbor, 0).rg;
+            int label = int(bytes.r * 255.0 + 0.5) + 256 * int(bytes.g * 255.0 + 0.5);
+            sticksOut = label == ownLabel && texelFetch(shareTexture, neighbor, 0).b >= value.b + 0.35;
+          }
+        }
+      }
+      if (!sticksOut)
+      {
+        value.b = 0.75;
+      }
+    }
+  }
+  gl_FragData[0] = value;
+}
+)";
+
+// Blocks of voxels that have a voxel near a surface between segments, in the block or next to it. A ray that is inside
+// the surface leaps over the other blocks. The pass draws the grid of the blocks (gridDimensions is its size).
+const char* InterfaceBlockFS = R"(
+uniform sampler3D interfaceTexture;
+uniform vec3 voxelGridDimensions;
+uniform int blockSize;
+void main()
+{
+  ivec3 firstVoxel = currentVoxel() * blockSize;
+  ivec3 maxVoxel = ivec3(voxelGridDimensions + vec3(0.5)) - ivec3(1);
+  bool found = false;
+  for (int dz = -1; dz <= blockSize && !found; dz++)
+  {
+    for (int dy = -1; dy <= blockSize && !found; dy++)
+    {
+      for (int dx = -1; dx <= blockSize && !found; dx++)
+      {
+        ivec3 voxel = firstVoxel + ivec3(dx, dy, dz);
+        if (any(lessThan(voxel, ivec3(0))) || any(greaterThan(voxel, maxVoxel)))
+        {
+          continue;
+        }
+        found = texelFetch(interfaceTexture, voxel, 0).a > 0.5;
+      }
+    }
+  }
+  gl_FragData[0] = vec4(found ? 1.0 : 0.0, 0.0, 0.0, 1.0);
 }
 )";
 
@@ -503,8 +653,13 @@ const char* SurfaceFS = R"(//VTK::System::Dec
 //VTK::Output::Dec
 in vec2 pixelPositionDC;
 uniform sampler3D distanceTexture;
-uniform sampler3D colorTexture;
+uniform sampler3D segmentTexture;
+uniform sampler3D interfaceTexture;
+uniform sampler3D interfaceBlockTexture;
+uniform sampler2D paletteTexture;
 uniform sampler2D opaqueDepthTexture;
+uniform int paletteSize;
+uniform int blockSize;
 uniform mat4 MCDCMatrix;
 uniform mat4 DCMCMatrix;
 uniform mat4 MCVCMatrix;
@@ -520,6 +675,16 @@ uniform vec3 mcToGridOffset;
 uniform vec3 gridDimensions;
 uniform float mcPerMm;
 uniform float minimumStep;
+// Largest step of a ray inside the surface, where it looks for surfaces between segments
+uniform float insideStep;
+// 1: surfaces between segments (inside the surface) are shown, 0: they cannot be seen (nothing is seen through)
+uniform int showInterfaces;
+// Faces that are composited. 0: all, 1: only opaque ones (opaque pass of a mapper that also has translucent segments),
+// 2: only translucent ones (its translucent pass: the ray stops at the first opaque face, which the opaque pass drew)
+uniform int faceMode;
+// How much farther than the depth of the opaque geometry the surface between a translucent and an opaque segment may
+// be found (the opaque geometry there is the opaque segment itself)
+uniform float interfaceDepthTolerance;
 uniform float ambientIntensity;
 uniform float diffuseIntensity;
 uniform float specularIntensity;
@@ -539,6 +704,7 @@ uniform vec2 viewportOrigin;
 uniform vec2 viewportSize;
 // Size of a pixel of the viewport in pixels of the image that rays are cast for (ImageSampleDistance)
 uniform vec2 fullResolutionScale;
+//SEG::Output::Dec
 //VTK::Light::Dec
 //VTK::DepthPeeling::Dec
 
@@ -552,28 +718,151 @@ float distanceAt(vec3 positionMC)
   return distanceAtGrid(positionMC * mcToGridScale + mcToGridOffset);
 }
 
-// Color and opacity of the segments at a surface point (gridPosition in grid voxels), interpolated from the colors
-// precomputed at the voxels (see ColorFS). Voxels without a color (far from shown segments) are ignored.
-vec4 segmentColor(vec3 gridPosition)
+// Color and opacity of a segment (gray if the segment is not known)
+vec4 labelColor(int label)
 {
-  ivec3 maxVoxel = ivec3(gridDimensions + vec3(0.5)) - ivec3(1);
+  if (label <= 0 || label >= paletteSize)
+  {
+    return vec4(0.5, 0.5, 0.5, 1.0);
+  }
+  return texelFetch(paletteTexture, ivec2(label % 256, label / 256), 0);
+}
+
+// Segments at a position (in grid voxels): each of the 8 voxels around it gives its weight of trilinear interpolation to
+// its own segment and to the other segment near it, in proportion of their shares at the voxel (see InterfaceFS); the
+// share of a segment at the position is the sum of what it got (relative to all segments). The position is in the
+// segment that has the largest share. Labels are never interpolated, so there is always a definite segment at a
+// position, and the surface between two segments (where their shares are equal) is smooth: it passes between the voxels,
+// it does not follow their faces.
+struct SegmentShares
+{
+  // up to 4 segments (label 0: none)
+  int labels[4];
+  float shares[4];
+};
+
+void addShare(inout SegmentShares segments, int label, float amount)
+{
+  for (int slot = 0; slot < 4; slot++)
+  {
+    if (segments.labels[slot] == label || segments.labels[slot] == 0)
+    {
+      segments.labels[slot] = label;
+      segments.shares[slot] += amount;
+      return;
+    }
+  }
+}
+
+SegmentShares segmentSharesAt(vec3 gridPosition)
+{
   vec3 baseVoxel = floor(gridPosition);
   vec3 fraction = gridPosition - baseVoxel;
-  vec4 sum = vec4(0.0);
-  float sumWeights = 0.0;
+  ivec3 maxVoxel = ivec3(gridDimensions + vec3(0.5)) - ivec3(1);
+  SegmentShares segments;
+  for (int slot = 0; slot < 4; slot++)
+  {
+    segments.labels[slot] = 0;
+    segments.shares[slot] = 0.0;
+  }
+  float total = 0.0;
   for (int corner = 0; corner < 8; corner++)
   {
     ivec3 offset = ivec3(corner & 1, (corner >> 1) & 1, corner >> 2);
-    vec4 color = texelFetch(colorTexture, clamp(ivec3(baseVoxel) + offset, ivec3(0), maxVoxel), 0);
-    if (color.a > 0.0)
+    ivec3 voxel = clamp(ivec3(baseVoxel) + offset, ivec3(0), maxVoxel);
+    vec2 ownBytes = texelFetch(segmentTexture, voxel, 0).rg;
+    int ownLabel = int(ownBytes.r * 255.0 + 0.5) + 256 * int(ownBytes.g * 255.0 + 0.5);
+    if (ownLabel == 0)
     {
-      vec3 weights = mix(vec3(1.0) - fraction, fraction, vec3(offset));
-      float weight = max(weights.x * weights.y * weights.z, 1.0e-4);
-      sum += weight * color;
-      sumWeights += weight;
+      continue;
+    }
+    vec3 axisWeights = mix(vec3(1.0) - fraction, fraction, vec3(offset));
+    float weight = max(axisWeights.x * axisWeights.y * axisWeights.z, 1.0e-4);
+    total += weight;
+    vec4 other = texelFetch(interfaceTexture, voxel, 0);
+    int otherLabel = int(other.r * 255.0 + 0.5) + 256 * int(other.g * 255.0 + 0.5);
+    if (otherLabel == 0)
+    {
+      addShare(segments, ownLabel, weight);
+    }
+    else
+    {
+      addShare(segments, ownLabel, weight * other.b);
+      addShare(segments, otherLabel, weight * (1.0 - other.b));
     }
   }
-  return sumWeights > 0.0 ? sum / sumWeights : vec4(0.5, 0.5, 0.5, 1.0);
+  if (total > 0.0)
+  {
+    for (int slot = 0; slot < 4; slot++)
+    {
+      segments.shares[slot] /= total;
+    }
+  }
+  return segments;
+}
+
+// Share of a segment (0 if it is not near)
+float shareOf(SegmentShares segments, int label)
+{
+  for (int slot = 0; slot < 4; slot++)
+  {
+    if (segments.labels[slot] == label)
+    {
+      return label > 0 ? segments.shares[slot] : 0.0;
+    }
+  }
+  return 0.0;
+}
+
+// Segment that has the largest share, not counting one segment (excludedLabel); 0 if there is none
+int largestSegment(SegmentShares segments, int excludedLabel)
+{
+  int label = 0;
+  float share = -1.0;
+  for (int slot = 0; slot < 4; slot++)
+  {
+    if (segments.labels[slot] > 0 && segments.labels[slot] != excludedLabel && segments.shares[slot] > share)
+    {
+      label = segments.labels[slot];
+      share = segments.shares[slot];
+    }
+  }
+  return label;
+}
+
+// Segment that a position is in: the one that has the largest share
+int segmentAt(vec3 gridPosition)
+{
+  return largestSegment(segmentSharesAt(gridPosition), 0);
+}
+
+// Size of a pixel (of the image that rays are cast for) at a point, in voxels of the grid
+float pixelSizeAt(vec3 positionMC)
+{
+  vec4 positionDC = MCDCMatrix * vec4(positionMC, 1.0);
+  positionDC /= positionDC.w;
+  vec4 neighborMC = DCMCMatrix * vec4(positionDC.x + 2.0 / viewportSize.x, positionDC.yzw);
+  return length((neighborMC.xyz / neighborMC.w - positionMC) * mcToGridScale);
+}
+
+// Color and opacity of a face of a segment at a point. Each point has the color of its own segment (colors of
+// neighbor segments are not blended into it), except that the color changes to that of the neighbor segment across one
+// pixel, so that the seam between them is not jagged. The colors are weighted by the opacities of the segments (a
+// nearly transparent segment hardly changes the color of the edge of an opaque one); the opacity is that of the segment.
+vec4 faceColor(vec3 positionMC, int label, SegmentShares segments)
+{
+  vec4 color = labelColor(label);
+  int neighbor = largestSegment(segments, label);
+  if (label > 0 && neighbor > 0)
+  {
+    // the difference of the shares of the two segments changes by about one across a voxel
+    float difference = shareOf(segments, label) - shareOf(segments, neighbor);
+    float weight = clamp(0.5 + 0.5 * difference / max(pixelSizeAt(positionMC), 1.0e-3), 0.0, 1.0);
+    vec4 neighborColor = labelColor(neighbor);
+    float neighborWeight = (1.0 - weight) * neighborColor.a;
+    color.rgb = mix(color.rgb, neighborColor.rgb, neighborWeight / max(weight * color.a + neighborWeight, 1.0e-6));
+  }
+  return color;
 }
 
 // Lighting (same model as VTK's polygonal mappers)
@@ -594,6 +883,65 @@ float firstDepth = -1.0;
 vec3 firstPositionVC = vec3(0.0);
 vec3 firstNormalVC = vec3(0.0);
 
+// Segment that the ray is in (0: none, or not known)
+int rayLabel = 0;
+// The rest of the ray is hidden: by opaque geometry, or (faceMode 2) by an opaque face of a segment
+bool rayStopped = false;
+// Where the ray reaches the opaque geometry (faceMode 2; otherwise the ray ends there)
+float tOpaqueGeometry = 1.0e30;
+
+bool rayFinished()
+{
+  return rayStopped || accumulatedColor.a > 0.99;
+}
+
+// Whether a face of this opacity is composited at t (see faceMode). Stops the ray if the face is hidden by opaque
+// geometry (farther than that by more than the tolerance), or it is an opaque face that the opaque pass drew.
+bool acceptFace(float alpha, float t, float tolerance)
+{
+  if (alpha <= 0.0)
+  {
+    return false;
+  }
+  if (t > tOpaqueGeometry + tolerance)
+  {
+    rayStopped = true;
+    return false;
+  }
+  bool opaqueFace = alpha > 0.999;
+  if (faceMode == 1)
+  {
+    return opaqueFace;
+  }
+  if (faceMode == 2 && opaqueFace)
+  {
+    rayStopped = true;
+    return false;
+  }
+  return true;
+}
+
+// The first faces along the ray are also kept one by one (premultiplied color and depth; the last one has all the
+// rest), so that they can be composited in depth order with the faces that other mappers have along the ray
+vec4 faceColors[3];
+float faceDepths[3];
+int numberOfFaces = 0;
+
+void addFace(vec3 positionMC, vec4 premultipliedColor)
+{
+  vec4 positionDC = MCDCMatrix * vec4(positionMC, 1.0);
+  float depth = clamp(0.5 * positionDC.z / positionDC.w + 0.5, 0.0, 1.0);
+  if (numberOfFaces > 0 && (numberOfFaces == 3 || depth <= faceDepths[numberOfFaces - 1]))
+  {
+    // faces at the same point (the two faces of a surface between segments) are kept together
+    faceColors[numberOfFaces - 1] += (1.0 - faceColors[numberOfFaces - 1].a) * premultipliedColor;
+    return;
+  }
+  faceColors[numberOfFaces] = premultipliedColor;
+  faceDepths[numberOfFaces] = depth;
+  numberOfFaces++;
+}
+
 // Composite a surface point front to back. gradientMC is the gradient of a function that increases outwards.
 void compositeSurface(vec3 positionMC, vec3 gradientMC, vec4 baseColor)
 {
@@ -611,6 +959,7 @@ void compositeSurface(vec3 positionMC, vec3 gradientMC, vec4 baseColor)
   }
   vec3 color = clamp(computeLighting(baseColor.rgb, normalVC, viewDirectionVC), 0.0, 1.0);
   accumulatedColor += (1.0 - accumulatedColor.a) * vec4(color * alpha, alpha);
+  addFace(positionMC, vec4(color * alpha, alpha));
   if (firstDepth < 0.0)
   {
     vec4 positionDC = MCDCMatrix * vec4(positionMC, 1.0);
@@ -619,11 +968,23 @@ void compositeSurface(vec3 positionMC, vec3 gradientMC, vec4 baseColor)
     firstNormalVC = normalVC;
   }
 }
-
-// Composite the surface of the segments (zero level set of the distance field) at a point
-void compositeSegmentSurface(vec3 positionMC, vec3 rayDirection)
+)"
+                        R"(
+// Composite the face of a segment where the ray crosses the surface of the segments (zero level set of the distance
+// field), into or out of the segment. If label is 0 then the face is of the segment that the point is in.
+// Returns the label of the segment.
+int compositeSurfaceFace(vec3 positionMC, vec3 rayDirection, int label, float t)
 {
   vec3 gridPosition = positionMC * mcToGridScale + mcToGridOffset;
+  SegmentShares segments = segmentSharesAt(gridPosition);
+  if (label == 0)
+  {
+    label = largestSegment(segments, 0);
+  }
+  if (!acceptFace(labelColor(label).a * opacity, t, 0.0))
+  {
+    return label;
+  }
   // Half-voxel differences: structures may be only one voxel thick
   vec3 gradientGrid = vec3(
     distanceAtGrid(gridPosition + vec3(0.5, 0.0, 0.0)) - distanceAtGrid(gridPosition - vec3(0.5, 0.0, 0.0)),
@@ -633,14 +994,70 @@ void compositeSegmentSurface(vec3 positionMC, vec3 rayDirection)
   {
     gradientGrid = -rayDirection * mcToGridScale;
   }
-  vec4 color = segmentColor(gridPosition);
+  vec4 color = faceColor(positionMC, label, segments);
   compositeSurface(positionMC, gradientGrid * mcToGridScale, vec4(color.rgb, color.a * opacity));
+  return label;
+}
+
+// By how much the share of a segment is larger than that of another one at a position: 0 on the surface between them
+float shareDifferenceAt(vec3 gridPosition, int label, int otherLabel)
+{
+  SegmentShares segments = segmentSharesAt(gridPosition);
+  return shareOf(segments, label) - shareOf(segments, otherLabel);
+}
+
+// Whether any face of the surface between two segments may be composited (see faceMode)
+bool interfaceShown(int fromLabel, int toLabel)
+{
+  return faceMode != 1 || labelColor(fromLabel).a * opacity > 0.999 || labelColor(toLabel).a * opacity > 0.999;
+}
+
+// Composite the surface between two segments, where the ray leaves one and enters the other inside the surface: the
+// face of the segment that it leaves, then the face of the segment that it enters (as two closed surfaces that touch
+// each other would be seen).
+void compositeInterface(vec3 positionMC, vec3 rayDirection, int fromLabel, int toLabel, float t)
+{
+  float fromAlpha = labelColor(fromLabel).a * opacity;
+  float toAlpha = labelColor(toLabel).a * opacity;
+  // The face of an opaque segment is what the depth of the opaque geometry is from (it was drawn in the opaque pass):
+  // the face of the translucent segment in front of it is at the same place, it must not be hidden by it
+  float tolerance = (faceMode == 2 && toAlpha > 0.999) ? interfaceDepthTolerance : 0.0;
+  bool fromAccepted = acceptFace(fromAlpha, t, tolerance);
+  bool toAccepted = !rayStopped && acceptFace(toAlpha, t, tolerance);
+  if (!fromAccepted && !toAccepted)
+  {
+    return;
+  }
+  // The normal is the gradient of the difference of the shares of the two segments (from 4 points around the position,
+  // at the vertices of a tetrahedron)
+  vec3 gridPosition = positionMC * mcToGridScale + mcToGridOffset;
+  const float h = 0.7;
+  vec3 gradientGrid = vec3(1.0, -1.0, -1.0) * shareDifferenceAt(gridPosition + h * vec3(1.0, -1.0, -1.0), toLabel, fromLabel)
+                      + vec3(-1.0, -1.0, 1.0) * shareDifferenceAt(gridPosition + h * vec3(-1.0, -1.0, 1.0), toLabel, fromLabel)
+                      + vec3(-1.0, 1.0, -1.0) * shareDifferenceAt(gridPosition + h * vec3(-1.0, 1.0, -1.0), toLabel, fromLabel)
+                      + vec3(1.0, 1.0, 1.0) * shareDifferenceAt(gridPosition + h * vec3(1.0, 1.0, 1.0), toLabel, fromLabel);
+  if (length(gradientGrid) < 1.0e-4)
+  {
+    gradientGrid = -rayDirection * mcToGridScale;
+  }
+  vec3 gradientMC = gradientGrid * mcToGridScale;
+  if (fromAccepted)
+  {
+    // If this is the first face along the ray then its depth is that of the fragment: in front of an opaque segment
+    // it is moved towards the eye, so that the depth test against the face of the opaque segment does not hide it
+    compositeSurface(positionMC - tolerance * rayDirection, gradientMC, vec4(labelColor(fromLabel).rgb, fromAlpha));
+  }
+  if (toAccepted)
+  {
+    compositeSurface(positionMC, gradientMC, vec4(labelColor(toLabel).rgb, toAlpha));
+  }
 }
 
 // Composite a point of uniform color (not lit) front to back
 void compositeFlat(vec3 positionMC, vec4 color)
 {
   accumulatedColor += (1.0 - accumulatedColor.a) * vec4(color.rgb * color.a, color.a);
+  addFace(positionMC, vec4(color.rgb * color.a, color.a));
   if (firstDepth < 0.0)
   {
     vec4 positionDC = MCDCMatrix * vec4(positionMC, 1.0);
@@ -653,7 +1070,7 @@ void compositeFlat(vec3 positionMC, vec4 color)
 
 // Composite the outline of the segments on a clipping plane: the points of the plane that are closer to the surface of
 // the segments (measured in the plane) than half of the outline width. Returns true if the point is on the outline.
-bool compositeOutline(vec3 positionMC, vec4 plane)
+bool compositeOutline(vec3 positionMC, vec4 plane, float t)
 {
   // Size of a pixel at the point, in millimeters (view coordinates are in millimeters)
   vec4 positionDC = MCDCMatrix * vec4(positionMC, 1.0);
@@ -677,53 +1094,74 @@ bool compositeOutline(vec3 positionMC, vec4 plane)
   {
     return false;
   }
-  compositeFlat(positionMC, vec4(outlineColor, opacity));
+  if (acceptFace(opacity, t, 0.0))
+  {
+    compositeFlat(positionMC, vec4(outlineColor, opacity));
+  }
   return true;
 }
 
-// Composite the cap of the segments where a clipping plane cuts them
-void compositeCap(vec3 positionMC, vec4 plane)
+// Composite the cap of a segment where a clipping plane cuts it
+void compositeCap(vec3 positionMC, vec4 plane, int label, float t)
 {
-  vec3 gridPosition = positionMC * mcToGridScale + mcToGridOffset;
-  vec4 color = segmentColor(gridPosition);
-  compositeSurface(positionMC, plane.xyz, vec4(color.rgb, color.a * opacity * capOpacity));
+  float alpha = labelColor(label).a * opacity * capOpacity;
+  if (!acceptFace(alpha, t, 0.0))
+  {
+    return;
+  }
+  SegmentShares segments = segmentSharesAt(positionMC * mcToGridScale + mcToGridOffset);
+  compositeSurface(positionMC, plane.xyz, vec4(faceColor(positionMC, label, segments).rgb, alpha));
 }
 
 )"
-                        R"(// Composite the segments along the ray between tFrom and tTo (sphere tracing). fromPlane and toPlane are the clipping
-// planes that cut the ray there (-1 if none), where the cut is capped and outlined.
+                        R"(// Composite the segments along the ray between tFrom and tTo. fromPlane and toPlane are the clipping planes that cut
+// the ray there (-1 if none), where the cut is capped and outlined. The ray is sphere traced. Inside of the surface, if
+// surfaces between segments are shown, it follows which segment it is in: it leaps over the blocks of voxels that are not
+// near a surface between segments, and advances in steps of less than a voxel in the other blocks.
 void compositeKeptPart(vec3 rayDirection, float tFrom, float tTo, int fromPlane, int toPlane)
 {
-  if (tFrom >= tTo || accumulatedColor.a > 0.99)
+  if (tFrom >= tTo || rayFinished())
   {
     return;
   }
   float t = tFrom;
-  float previousDistance = distanceAt(rayOriginMC + t * rayDirection);
-  bool onStartOutline = fromPlane >= 0 && clippingOutline == 1 && compositeOutline(rayOriginMC + t * rayDirection, clippingPlanesMC[fromPlane]);
+  vec3 positionMC = rayOriginMC + t * rayDirection;
+  float previousDistance = distanceAt(positionMC);
+  rayLabel = previousDistance <= 0.0 ? segmentAt(positionMC * mcToGridScale + mcToGridOffset) : 0;
+  bool onStartOutline = fromPlane >= 0 && clippingOutline == 1 && compositeOutline(positionMC, clippingPlanesMC[fromPlane], t);
   if (!onStartOutline && previousDistance <= 0.0 && fromPlane >= 0 && capClippedSurface == 1)
   {
-    compositeCap(rayOriginMC + t * rayDirection, clippingPlanesMC[fromPlane]);
+    compositeCap(positionMC, clippingPlanesMC[fromPlane], rayLabel, t);
   }
+  // Largest step from the current point inside the surface
+  float insideStepLimit = 0.5 * insideStep;
+  vec3 gridDirection = rayDirection * mcToGridScale;
   for (int i = 0; i < 4096; i++)
   {
-    if (t >= tTo || accumulatedColor.a > 0.99)
+    if (t >= tTo || rayFinished())
     {
       break;
     }
     float previousT = t;
-    t = min(t + max(abs(previousDistance) * mcPerMm * 0.9, minimumStep), tTo);
-    float currentDistance = distanceAt(rayOriginMC + t * rayDirection);
-    if ((previousDistance > 0.0) != (currentDistance > 0.0))
+    bool inside = previousDistance <= 0.0;
+    float stepLength = max(abs(previousDistance) * mcPerMm * 0.9, minimumStep);
+    if (inside && showInterfaces == 1)
     {
-      // Refine the crossing by bisection
+      stepLength = min(stepLength, insideStepLimit);
+    }
+    insideStepLimit = 0.5 * insideStep;
+    t = min(t + stepLength, tTo);
+    positionMC = rayOriginMC + t * rayDirection;
+    float currentDistance = distanceAt(positionMC);
+    if ((currentDistance <= 0.0) != inside)
+    {
+      // The ray crosses the surface: refine the crossing by bisection
       float tA = previousT;
       float tB = t;
-      bool outsideA = previousDistance > 0.0;
       for (int j = 0; j < 8; j++)
       {
         float tMiddle = 0.5 * (tA + tB);
-        if ((distanceAt(rayOriginMC + tMiddle * rayDirection) > 0.0) == outsideA)
+        if ((distanceAt(rayOriginMC + tMiddle * rayDirection) <= 0.0) == inside)
         {
           tA = tMiddle;
         }
@@ -732,19 +1170,95 @@ void compositeKeptPart(vec3 rayDirection, float tFrom, float tTo, int fromPlane,
           tB = tMiddle;
         }
       }
-      compositeSegmentSurface(rayOriginMC + 0.5 * (tA + tB) * rayDirection, rayDirection);
+      float tCrossing = 0.5 * (tA + tB);
+      vec3 crossingMC = rayOriginMC + tCrossing * rayDirection;
+      if (inside)
+      {
+        // out of the segment that the ray is in (if the ray followed that)
+        compositeSurfaceFace(crossingMC, rayDirection, showInterfaces == 1 ? rayLabel : 0, tCrossing);
+        rayLabel = 0;
+      }
+      else
+      {
+        rayLabel = compositeSurfaceFace(crossingMC, rayDirection, 0, tCrossing);
+      }
+    }
+    else if (inside && showInterfaces == 1)
+    {
+      vec3 gridPosition = positionMC * mcToGridScale + mcToGridOffset;
+      ivec3 nearestVoxel = clamp(ivec3(floor(gridPosition + vec3(0.5))), ivec3(0), ivec3(gridDimensions + vec3(0.5)) - ivec3(1));
+      ivec3 block = nearestVoxel / blockSize;
+      int label = rayLabel;
+      // by how much the share of the segment that the ray is in is larger than that of the segment at the position
+      float shareDifference = 0.0;
+      if (texelFetch(interfaceBlockTexture, block, 0).r < 0.5)
+      {
+        // No surface between segments in the block, or within a voxel of it: the next step may leave the block
+        vec3 blockMinimum = vec3(block * blockSize) - vec3(0.5);
+        vec3 blockExit = mix(blockMinimum, blockMinimum + vec3(float(blockSize)), greaterThan(gridDirection, vec3(0.0)));
+        vec3 tExit = (blockExit - gridPosition) / gridDirection;
+        insideStepLimit = max(min(tExit.x, min(tExit.y, tExit.z)), 0.0) + 0.05 * insideStep;
+      }
+      else if (texelFetch(interfaceTexture, nearestVoxel, 0).a > 0.5)
+      {
+        // near a surface between segments the steps are short, so that thin segments are not stepped over
+        SegmentShares segments = segmentSharesAt(gridPosition);
+        label = largestSegment(segments, 0);
+        shareDifference = shareOf(segments, rayLabel) - shareOf(segments, label);
+      }
+      else
+      {
+        insideStepLimit = insideStep;
+      }
+      if (label != rayLabel && label > 0)
+      {
+        if (rayLabel > 0 && interfaceShown(rayLabel, label))
+        {
+          // The ray crosses the surface between two segments, where the difference of their shares is 0. The shares
+          // change smoothly along the ray: the crossing is found by linear interpolation, twice.
+          float tA = previousT;
+          float tB = t;
+          float differenceA = shareDifferenceAt((rayOriginMC + tA * rayDirection) * mcToGridScale + mcToGridOffset, rayLabel, label);
+          float differenceB = min(shareDifference, 0.0);
+          float tInterface = tA;
+          if (differenceA > 0.0)
+          {
+            tInterface = tA + (tB - tA) * differenceA / (differenceA - differenceB);
+            float difference = shareDifferenceAt((rayOriginMC + tInterface * rayDirection) * mcToGridScale + mcToGridOffset, rayLabel, label);
+            if (difference > 0.0)
+            {
+              tA = tInterface;
+              differenceA = difference;
+            }
+            else
+            {
+              tB = tInterface;
+              differenceB = difference;
+            }
+            tInterface = tA + (tB - tA) * differenceA / (differenceA - differenceB);
+          }
+          compositeInterface(rayOriginMC + tInterface * rayDirection, rayDirection, rayLabel, label, tInterface);
+        }
+        rayLabel = label;
+      }
     }
     previousDistance = currentDistance;
   }
-  bool onEndOutline = toPlane >= 0 && clippingOutline == 1 && accumulatedColor.a <= 0.99
-                      && compositeOutline(rayOriginMC + tTo * rayDirection, clippingPlanesMC[toPlane]);
-  if (!onEndOutline && previousDistance <= 0.0 && toPlane >= 0 && capClippedSurface == 1 && accumulatedColor.a <= 0.99)
+  if (rayFinished() || toPlane < 0)
   {
-    compositeCap(rayOriginMC + tTo * rayDirection, clippingPlanesMC[toPlane]);
+    return;
+  }
+  vec3 endMC = rayOriginMC + tTo * rayDirection;
+  bool onEndOutline = clippingOutline == 1 && compositeOutline(endMC, clippingPlanesMC[toPlane], tTo);
+  if (!onEndOutline && previousDistance <= 0.0 && capClippedSurface == 1 && !rayFinished())
+  {
+    int label = (showInterfaces == 1 && rayLabel > 0) ? rayLabel : segmentAt(endMC * mcToGridScale + mcToGridOffset);
+    compositeCap(endMC, clippingPlanesMC[toPlane], label, tTo);
   }
 }
 
-void main()
+// Composite the surfaces along the ray of the pixel
+void castRay()
 {
   vec4 nearMC = DCMCMatrix * vec4(pixelPositionDC, -1.0, 1.0);
   vec4 farMC = DCMCMatrix * vec4(pixelPositionDC, 1.0, 1.0);
@@ -761,7 +1275,7 @@ void main()
   // The part of the ray in the box (not behind the eye)
   if (tNear >= tFar)
   {
-    discard;
+    return;
   }
   float tRayStart = tNear;
   if (parallelProjection == 0)
@@ -779,12 +1293,22 @@ void main()
     {
       vec4 opaquePositionMC = DCMCMatrix * vec4(2.0 * pixel / viewportSize - 1.0, 2.0 * opaqueDepth - 1.0, 1.0);
       float tOpaque = dot(opaquePositionMC.xyz / opaquePositionMC.w - rayOriginMC, rayDirection);
-      tRayEnd = min(tRayEnd, tOpaque);
+      if (faceMode == 2)
+      {
+        // The opaque geometry may be an opaque segment of this mapper: the ray goes on until it finds its face
+        // (see compositeInterface), faces that are farther than the opaque geometry are not composited
+        tOpaqueGeometry = tOpaque;
+        tRayEnd = min(tRayEnd, tOpaque + interfaceDepthTolerance + 2.0 * insideStep);
+      }
+      else
+      {
+        tRayEnd = min(tRayEnd, tOpaque);
+      }
     }
   }
   if (tRayStart >= tRayEnd)
   {
-    discard;
+    return;
   }
 
   if (keepWhereAnyPlaneKeeps == 0 || numberOfClippingPlanes == 0)
@@ -803,7 +1327,7 @@ void main()
       {
         if (value < 0.0)
         {
-          discard;
+          return;
         }
         continue;
       }
@@ -862,16 +1386,21 @@ void main()
       compositeKeptPart(rayDirection, tClipEnd, tRayEnd, clipEndPlane, -1);
     }
   }
-  if (accumulatedColor.a <= 0.0)
-  {
-    discard;
-  }
+}
+
+void main()
+{
+  castRay();
   //SEG::Output::Impl
 }
 )";
 
 // Output of the ray casting shader into the viewport, where the render passes (depth peeling, ambient occlusion) take it
-const char* SurfaceOutputImpl = R"(gl_FragDepth = firstDepth;
+const char* SurfaceOutputImpl = R"(if (accumulatedColor.a <= 0.0)
+  {
+    discard;
+  }
+  gl_FragDepth = firstDepth;
   //VTK::DepthPeeling::PreColor
   gl_FragData[0] = vec4(accumulatedColor.rgb / accumulatedColor.a, accumulatedColor.a);
   //VTK::SSAO::Impl
@@ -881,10 +1410,122 @@ const char* SurfaceOutputImpl = R"(gl_FragDepth = firstDepth;
 // that it can be interpolated), depth (24 bits in RGB) and normal of the frontmost surface point. Only 8-bit color
 // buffers are used: they are what every graphics card can render into (several 32-bit float ones together are not, on
 // some mobile GPUs), and positions are computed from the depth.
-const char* LowResolutionOutputImpl = R"(gl_FragData[0] = accumulatedColor;
+const char* LowResolutionOutputImpl = R"(if (accumulatedColor.a <= 0.0)
+  {
+    discard;
+  }
+  gl_FragData[0] = accumulatedColor;
   highp uint depthBits = uint(clamp(firstDepth, 0.0, 1.0) * 16777215.0 + 0.5);
   gl_FragData[1] = vec4(vec3(uvec3(depthBits >> 16u, depthBits >> 8u, depthBits) & uvec3(255u)) / 255.0, 1.0);
   gl_FragData[2] = vec4(0.5 * firstNormalVC + vec3(0.5), 1.0);)";
+
+// Output of the ray casting shader into the joint image of the translucent surfaces of several mappers (see
+// TranslucentGroup). The image has the same color, depth and normal as the image of a lower resolution (buffers 0-2),
+// and the first three faces along the ray one by one: premultiplied colors (buffers 3-5) and depths (buffers 1, 6, 7);
+// the third one has all the faces that are farther, composited. The faces that the image already has from other mappers
+// (jointInput) are merged with the faces of this mapper in depth order, so that it does not matter in which order
+// the mappers render.
+const int NumberOfJointImageBuffers = 8;
+const char* JointOutputDec = R"(uniform int jointInput;
+uniform sampler2D jointColorTexture0;
+uniform sampler2D jointColorTexture1;
+uniform sampler2D jointColorTexture2;
+uniform sampler2D jointDepthTexture0;
+uniform sampler2D jointDepthTexture1;
+uniform sampler2D jointDepthTexture2;
+uniform sampler2D jointNormalTexture;
+
+vec4 encodeDepth(float depth)
+{
+  highp uint depthBits = uint(clamp(depth, 0.0, 1.0) * 16777215.0 + 0.5);
+  return vec4(vec3(uvec3(depthBits >> 16u, depthBits >> 8u, depthBits) & uvec3(255u)) / 255.0, 1.0);
+}
+
+float decodeDepth(vec3 encodedDepth)
+{
+  highp uvec3 depthBytes = uvec3(encodedDepth * 255.0 + vec3(0.5));
+  return float((depthBytes.r << 16u) | (depthBytes.g << 8u) | depthBytes.b) / 16777215.0;
+}
+)";
+const char* JointOutputImpl = R"(vec4 otherColors[3];
+  float otherDepths[3];
+  int numberOfOtherFaces = 0;
+  vec3 otherNormalVC = vec3(0.0, 0.0, 1.0);
+  if (jointInput == 1)
+  {
+    ivec2 texel = ivec2(gl_FragCoord.xy);
+    otherColors[0] = texelFetch(jointColorTexture0, texel, 0);
+    otherColors[1] = texelFetch(jointColorTexture1, texel, 0);
+    otherColors[2] = texelFetch(jointColorTexture2, texel, 0);
+    otherDepths[0] = decodeDepth(texelFetch(jointDepthTexture0, texel, 0).rgb);
+    otherDepths[1] = decodeDepth(texelFetch(jointDepthTexture1, texel, 0).rgb);
+    otherDepths[2] = decodeDepth(texelFetch(jointDepthTexture2, texel, 0).rgb);
+    for (int i = 0; i < 3; i++)
+    {
+      if (otherColors[i].a > 0.0)
+      {
+        numberOfOtherFaces = i + 1;
+      }
+    }
+    otherNormalVC = 2.0 * texelFetch(jointNormalTexture, texel, 0).xyz - vec3(1.0);
+  }
+  if (numberOfFaces + numberOfOtherFaces == 0)
+  {
+    discard;
+  }
+  vec4 mergedColors[3];
+  float mergedDepths[3];
+  for (int i = 0; i < 3; i++)
+  {
+    mergedColors[i] = vec4(0.0);
+    mergedDepths[i] = 1.0;
+  }
+  int numberOfMergedFaces = 0;
+  int ownFace = 0;
+  int otherFace = 0;
+  bool firstIsOwn = numberOfFaces > 0 && (numberOfOtherFaces == 0 || faceDepths[0] <= otherDepths[0]);
+  for (int i = 0; i < 6; i++)
+  {
+    if (ownFace >= numberOfFaces && otherFace >= numberOfOtherFaces)
+    {
+      break;
+    }
+    vec4 color;
+    float depth;
+    if (ownFace < numberOfFaces && (otherFace >= numberOfOtherFaces || faceDepths[ownFace] <= otherDepths[otherFace]))
+    {
+      color = faceColors[ownFace];
+      depth = faceDepths[ownFace];
+      ownFace++;
+    }
+    else
+    {
+      color = otherColors[otherFace];
+      depth = otherDepths[otherFace];
+      otherFace++;
+    }
+    if (numberOfMergedFaces < 3)
+    {
+      mergedColors[numberOfMergedFaces] = color;
+      mergedDepths[numberOfMergedFaces] = depth;
+      numberOfMergedFaces++;
+    }
+    else
+    {
+      mergedColors[2] += (1.0 - mergedColors[2].a) * color;
+    }
+  }
+  vec4 jointColor = mergedColors[0];
+  jointColor += (1.0 - jointColor.a) * mergedColors[1];
+  jointColor += (1.0 - jointColor.a) * mergedColors[2];
+  gl_FragData[0] = jointColor;
+  gl_FragData[1] = encodeDepth(mergedDepths[0]);
+  gl_FragData[2] = vec4(0.5 * (firstIsOwn ? firstNormalVC : otherNormalVC) + vec3(0.5), 1.0);
+  gl_FragData[3] = mergedColors[0];
+  gl_FragData[4] = mergedColors[1];
+  gl_FragData[5] = mergedColors[2];
+  gl_FragData[6] = encodeDepth(mergedDepths[1]);
+  gl_FragData[7] = encodeDepth(mergedDepths[2]);)";
 
 // Scales the image of a lower resolution up to the viewport: color is interpolated, the normal is that of the frontmost
 // of the nearest image pixels that have a surface, and the position (and depth) is where the ray of the viewport pixel
@@ -990,12 +1631,16 @@ void ApplyRenderPasses(const std::vector<vtkOpenGLRenderPass*>& renderPasses,
 }
 
 //----------------------------------------------------------------------------
-// Make the color buffers 0..count-1 of the bound framebuffer drawn into. vtkOpenGLState caches the draw buffers, but
+// Make the color buffers 0..count-1 (up to NumberOfJointImageBuffers) of the bound framebuffer drawn into. vtkOpenGLState caches the draw buffers, but
 // updates only the first one when a framebuffer is bound: the others may be those of the previously bound framebuffer,
 // and the call that switches them on would be skipped. So glDrawBuffers is called here in any case.
 void ActivateDrawBuffers(vtkOpenGLState* ostate, unsigned int count)
 {
-  unsigned int buffers[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+  unsigned int buffers[NumberOfJointImageBuffers];
+  for (int i = 0; i < NumberOfJointImageBuffers; ++i)
+  {
+    buffers[i] = GL_COLOR_ATTACHMENT0 + i;
+  }
   ostate->vtkglDrawBuffers(count, buffers);
   glDrawBuffers(static_cast<GLsizei>(count), buffers);
 }
@@ -1089,8 +1734,8 @@ struct LabelExtents
 };
 
 //----------------------------------------------------------------------------
-// Labelmaps are often shown by several mappers (opaque segments in one, each translucent segment in its own),
-// they share the extents of the labels, computed once after each modification of the labelmap.
+// A labelmap may be shown by several mappers (for example in several views): they share the extents of the labels,
+// computed once after each modification of the labelmap.
 const LabelExtents* GetLabelExtents(vtkImageData* image)
 {
   static std::vector<LabelExtents> cache;
@@ -1151,6 +1796,186 @@ void CopyLabelsAs(vtkImageData* image, const int extent[6], bool asFloat, std::v
   }
 }
 
+//----------------------------------------------------------------------------
+// Image that the translucent surfaces of several mappers are composited into (see JointOutputImpl)
+struct JointImage
+{
+  vtkSmartPointer<vtkOpenGLFramebufferObject> Framebuffer;
+  vtkSmartPointer<vtkTextureObject> Textures[NumberOfJointImageBuffers];
+};
+
+//----------------------------------------------------------------------------
+// The mappers that render translucent surfaces in a renderer. Each mapper composites the faces of its segments along
+// the rays in depth order, but the renderer does not do this for the surfaces of several mappers (segments of a
+// segmentation that overlap are in several labelmaps, each rendered by a mapper): without depth peeling (which render
+// passes such as ambient shadows do not use) the surface of each mapper would be drawn over those of the previous ones
+// wherever they are, and with depth peeling they would be ordered by their frontmost faces only. Therefore the mapper
+// that is the first to render translucent surfaces in a frame casts the rays of all the mappers into a joint image,
+// where their faces are merged in depth order, and it draws the image; the others then do not draw.
+struct TranslucentGroup
+{
+  vtkNew<vtkCallbackCommand> Callback;
+  /// Depth peeling renders the translucent pass several times in a frame, with the same result each time: rays are
+  /// cast only the first time. Frames are counted by observing the renderer.
+  vtkTypeUInt64 Frame{ 1 };
+  /// Frame in which the mappers of the joint image were looked for
+  vtkTypeUInt64 DecidedFrame{ 0 };
+  /// Frame that the joint image is of (0 if none), what the rays were cast with, the mappers that the image has the
+  /// surfaces of, and the one that draws it
+  vtkTypeUInt64 ImageFrame{ 0 };
+  int ImageSize[2] = { 0, 0 };
+  double ImageMatrix[16] = { 0.0 };
+  std::set<vtkSegmentationLabelmapSurfaceMapper*> Mappers;
+  vtkSegmentationLabelmapSurfaceMapper* Leader{ nullptr };
+  /// Each mapper reads the faces of the previous ones from one image and writes the merged faces into the other one
+  JointImage Images[2];
+  int Result{ 0 };
+  vtkWeakPointer<vtkOpenGLRenderWindow> Context;
+
+  void ForgetImage()
+  {
+    this->DecidedFrame = 0;
+    this->ImageFrame = 0;
+    this->Mappers.clear();
+    this->Leader = nullptr;
+  }
+
+  void ReleaseImages(vtkWindow* window)
+  {
+    for (JointImage& image : this->Images)
+    {
+      for (vtkSmartPointer<vtkTextureObject>& texture : image.Textures)
+      {
+        if (texture)
+        {
+          texture->ReleaseGraphicsResources(window);
+        }
+        texture = nullptr;
+      }
+      if (image.Framebuffer)
+      {
+        image.Framebuffer->ReleaseGraphicsResources(window);
+      }
+      image.Framebuffer = nullptr;
+    }
+    this->Context = nullptr;
+    this->ForgetImage();
+  }
+};
+
+//----------------------------------------------------------------------------
+// Groups by renderer. The map is never deleted, so that it does not matter when static objects are destroyed; a group
+// is deleted when its renderer is.
+std::map<vtkObject*, std::unique_ptr<TranslucentGroup>>& TranslucentGroups()
+{
+  static auto* groups = new std::map<vtkObject*, std::unique_ptr<TranslucentGroup>>;
+  return *groups;
+}
+
+//----------------------------------------------------------------------------
+void OnTranslucentGroupRendererEvent(vtkObject* caller, unsigned long eid, void* clientData, void* vtkNotUsed(callData))
+{
+  if (eid == vtkCommand::DeleteEvent)
+  {
+    TranslucentGroups().erase(caller);
+  }
+  else
+  {
+    static_cast<TranslucentGroup*>(clientData)->Frame++;
+  }
+}
+
+//----------------------------------------------------------------------------
+TranslucentGroup* GetTranslucentGroup(vtkRenderer* ren)
+{
+  std::unique_ptr<TranslucentGroup>& group = TranslucentGroups()[ren];
+  if (!group)
+  {
+    group = std::make_unique<TranslucentGroup>();
+    group->Callback->SetClientData(group.get());
+    group->Callback->SetCallback(OnTranslucentGroupRendererEvent);
+    ren->AddObserver(vtkCommand::StartEvent, group->Callback);
+    ren->AddObserver(vtkCommand::DeleteEvent, group->Callback);
+  }
+  return group.get();
+}
+
+//----------------------------------------------------------------------------
+// A mapper is deleted or releases its graphics resources (those of a window, if it is specified)
+void RemoveFromTranslucentGroups(vtkSegmentationLabelmapSurfaceMapper* mapper, vtkWindow* window)
+{
+  for (auto& rendererAndGroup : TranslucentGroups())
+  {
+    TranslucentGroup* group = rendererAndGroup.second.get();
+    if (group->Leader == mapper || group->Mappers.count(mapper) > 0)
+    {
+      group->ForgetImage();
+    }
+    if (window && group->Context == window)
+    {
+      group->ReleaseImages(window);
+    }
+  }
+}
+
+//----------------------------------------------------------------------------
+// Make the joint images of a group the specified size. Returns false if they are not available.
+bool ReadyJointImages(TranslucentGroup* group, vtkOpenGLRenderWindow* renWin, const int size[2])
+{
+  GLint maximumDrawBuffers = 0;
+  GLint maximumColorAttachments = 0;
+  glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maximumDrawBuffers);
+  glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maximumColorAttachments);
+  if (std::min(maximumDrawBuffers, maximumColorAttachments) < NumberOfJointImageBuffers)
+  {
+    return false;
+  }
+  if (group->Context != renWin)
+  {
+    group->ReleaseImages(group->Context);
+    group->Context = renWin;
+  }
+  for (JointImage& image : group->Images)
+  {
+    if (!image.Framebuffer)
+    {
+      for (int i = 0; i < NumberOfJointImageBuffers; ++i)
+      {
+        vtkSmartPointer<vtkTextureObject> texture = vtkSmartPointer<vtkTextureObject>::New();
+        texture->SetContext(renWin);
+        texture->SetWrapS(vtkTextureObject::ClampToEdge);
+        texture->SetWrapT(vtkTextureObject::ClampToEdge);
+        // as the image of a lower resolution: the color is interpolated when it is scaled up
+        texture->SetMinificationFilter(i == 0 ? vtkTextureObject::Linear : vtkTextureObject::Nearest);
+        texture->SetMagnificationFilter(i == 0 ? vtkTextureObject::Linear : vtkTextureObject::Nearest);
+        if (!texture->Allocate2D(size[0], size[1], 4, VTK_UNSIGNED_CHAR))
+        {
+          group->ReleaseImages(renWin);
+          return false;
+        }
+        image.Textures[i] = texture;
+      }
+      image.Framebuffer = vtkSmartPointer<vtkOpenGLFramebufferObject>::New();
+      image.Framebuffer->SetContext(renWin);
+      renWin->GetState()->PushDrawFramebufferBinding();
+      image.Framebuffer->Bind(GL_DRAW_FRAMEBUFFER);
+      for (int i = 0; i < NumberOfJointImageBuffers; ++i)
+      {
+        image.Framebuffer->AddColorAttachment(i, image.Textures[i]);
+      }
+      renWin->GetState()->PopDrawFramebufferBinding();
+    }
+    for (vtkSmartPointer<vtkTextureObject>& texture : image.Textures)
+    {
+      if (static_cast<int>(texture->GetWidth()) != size[0] || static_cast<int>(texture->GetHeight()) != size[1])
+      {
+        texture->Resize(size[0], size[1]);
+      }
+    }
+  }
+  return true;
+}
+
 } // namespace
 
 //----------------------------------------------------------------------------
@@ -1164,34 +1989,67 @@ public:
 
   bool PrepareLabelmap();
   bool UploadTextures(vtkOpenGLRenderWindow* renWin);
+  /// Update everything that rendering in the window needs (labels, distance field, segments). Returns false if there
+  /// is nothing to render.
+  bool PrepareForRender(vtkOpenGLRenderWindow* renWin);
   /// Compute the distance field, in the changed region (in grid coordinates) or everywhere (if changedRegion is nullptr).
   bool ComputeDistanceField(vtkOpenGLRenderWindow* renWin, const int* changedRegion);
   void RenderSurface(vtkOpenGLRenderer* ren, vtkActor* actor);
+  /// Cast the rays: into the viewport, through the render passes, or (if lowResolution is true) into the image of
+  /// the lower resolution, or into a joint image (jointOutput; merged with the faces in jointInput, if it is
+  /// specified). translucentPass tells if the translucent pass is rendered. Returns false on failure.
+  bool CastRays(vtkOpenGLRenderer* ren,
+                vtkActor* actor,
+                const std::vector<vtkOpenGLRenderPass*>& renderPasses,
+                bool lowResolution,
+                const int lowResolutionSize[2],
+                const int viewport[4],
+                bool translucentPass,
+                JointImage* jointOutput = nullptr,
+                JointImage* jointInput = nullptr);
+  /// Cast the rays of all the mappers that render translucent surfaces in the renderer into the joint image of the
+  /// group. Returns false if there are no other such mappers than this one, or the joint image is not available.
+  bool CastJointRays(vtkOpenGLRenderer* ren, vtkActor* actor, TranslucentGroup* group, const int size[2], const int viewport[4]);
   void ReleaseGraphicsResources(vtkWindow* window);
 
   bool ReadyQuad(vtkOpenGLRenderWindow* renWin, vtkOpenGLQuadHelper*& quad, const std::string& fragmentShader);
   void SetGridUniforms(vtkShaderProgram* program);
   void SetInsideUniforms(vtkShaderProgram* program);
   bool DrawSlices(vtkOpenGLQuadHelper* quad, vtkTextureObject* target, const int region[6]);
-  /// Compute the colors of the segments at the voxels of the grid, in a region (in grid coordinates) or everywhere
-  /// (if region is nullptr).
-  bool ComputeColors(vtkOpenGLRenderWindow* renWin, const int* region);
+  /// Compute the segment at each voxel of the grid, and which voxels are near a surface between segments, in a region
+  /// (in grid coordinates) or everywhere (if region is nullptr).
+  bool ComputeSegments(vtkOpenGLRenderWindow* renWin, const int* region);
   /// Ready the program of the ray casting shader with the specified output code (and render passes applied to it, if
   /// it is rendered into the viewport).
   vtkShaderProgram* ReadySurfaceProgram(vtkOpenGLRenderer* ren,
                                         vtkActor* actor,
                                         const std::vector<vtkOpenGLRenderPass*>& renderPasses,
                                         bool lowResolution,
+                                        bool joint,
                                         vtkShaderProgram*& cachedProgram,
                                         std::string& cachedKey);
   /// Make the image of the lower resolution (and the framebuffer to render into it) the specified size.
   bool ReadyLowResolutionFramebuffer(vtkOpenGLRenderWindow* renWin, const int size[2]);
-  vtkSmartPointer<vtkTextureObject> CreateTexture(vtkOpenGLRenderWindow* renWin, unsigned int internalFormat, int components, int vtkType, bool linear);
+  /// Create a 3D texture of the size of the grid (or of the specified size)
+  vtkSmartPointer<vtkTextureObject> CreateTexture(vtkOpenGLRenderWindow* renWin,
+                                                  unsigned int internalFormat,
+                                                  int components,
+                                                  int vtkType,
+                                                  bool linear,
+                                                  const int* dimensions = nullptr);
 
   vtkSegmentationLabelmapSurfaceMapper* External;
 
   bool CaptureOpaqueDepth(vtkOpenGLRenderer* ren);
   std::set<int> GetShownLabels() const;
+  /// Opacity of a label as it is in the palette (8 bits), so that a label is opaque for the mapper exactly when it is
+  /// opaque for the shader. Shown labels are never fully transparent.
+  static unsigned char PaletteOpacity(double opacity)
+  {
+    return opacity > 0.0 ? std::max<unsigned char>(static_cast<unsigned char>(std::clamp(opacity, 0.0, 1.0) * 255.0 + 0.5), 1) : 0;
+  }
+  /// Whether any of the shown labels is opaque (or translucent, if opaque is false)
+  bool HasShownLabels(bool opaque) const;
 
   vtkSmartPointer<vtkOrientedImageData> Labelmap;
   std::map<int, std::array<double, 4>> LabelColors;
@@ -1249,9 +2107,17 @@ public:
   vtkOpenGLQuadHelper* CombineQuad{ nullptr };
   vtkOpenGLQuadHelper* MaskQuad{ nullptr };
 
-  vtkOpenGLQuadHelper* ColorQuad{ nullptr };
-  vtkSmartPointer<vtkTextureObject> ColorTexture;
-  bool ColorsNeedUpdate{ true };
+  // Segment of each voxel of the grid (label in two bytes); the voxels that are near a surface between segments, with
+  // the other segment there and the share of the own segment
+  vtkOpenGLQuadHelper* SegmentQuad{ nullptr };
+  vtkOpenGLQuadHelper* InterfaceQuad{ nullptr };
+  vtkOpenGLQuadHelper* ThinSegmentQuad{ nullptr };
+  vtkOpenGLQuadHelper* InterfaceBlockQuad{ nullptr };
+  vtkSmartPointer<vtkTextureObject> SegmentTexture;
+  vtkSmartPointer<vtkTextureObject> InterfaceTexture;
+  // Blocks of voxels (InterfaceBlockSize) that have voxels near a surface between segments
+  vtkSmartPointer<vtkTextureObject> InterfaceBlockTexture;
+  bool SegmentsNeedUpdate{ true };
 
   vtkShaderProgram* SurfaceProgram{ nullptr };
   std::string SurfaceProgramKey;
@@ -1260,10 +2126,20 @@ public:
   // Rendering at a lower resolution (ImageSampleDistance > 1): color, depth, normal
   vtkShaderProgram* LowResolutionProgram{ nullptr };
   std::string LowResolutionProgramKey;
+  vtkShaderProgram* JointProgram{ nullptr };
+  std::string JointProgramKey;
   vtkShaderProgram* CompositeProgram{ nullptr };
   std::string CompositeProgramKey;
   vtkSmartPointer<vtkOpenGLFramebufferObject> LowResolutionFramebuffer;
   vtkSmartPointer<vtkTextureObject> LowResolutionTextures[3];
+
+  // Depth peeling renders the translucent pass several times in a frame, with the same result each time: rays are cast
+  // only the first time, into the image that is also used for rendering at a lower resolution, and the image is drawn
+  // through the render passes each time (\sa TranslucentGroup, which counts the frames).
+  /// Frame that the image contains the translucent pass of (0 if none), and what the rays were cast with
+  vtkTypeUInt64 RayImageFrame{ 0 };
+  int RayImageSize[2] = { 0, 0 };
+  double RayImageMatrix[16] = { 0.0 };
 };
 
 //----------------------------------------------------------------------------
@@ -1278,6 +2154,19 @@ std::set<int> vtkSegmentationLabelmapSurfaceMapper::vtkInternal::GetShownLabels(
     }
   }
   return labels;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::HasShownLabels(bool opaque) const
+{
+  for (const auto& labelColor : this->LabelColors)
+  {
+    if (labelColor.first > 0 && labelColor.second[3] > 0.0 && (PaletteOpacity(labelColor.second[3]) == 255) == opaque)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 //----------------------------------------------------------------------------
@@ -1529,8 +2418,13 @@ vtkSmartPointer<vtkTextureObject> vtkSegmentationLabelmapSurfaceMapper::vtkInter
                                                                                                    unsigned int internalFormat,
                                                                                                    int components,
                                                                                                    int vtkType,
-                                                                                                   bool linear)
+                                                                                                   bool linear,
+                                                                                                   const int* dimensions /*=nullptr*/)
 {
+  if (!dimensions)
+  {
+    dimensions = this->GridDimensions;
+  }
   vtkSmartPointer<vtkTextureObject> texture = vtkSmartPointer<vtkTextureObject>::New();
   texture->SetContext(renWin);
   texture->SetInternalFormat(internalFormat);
@@ -1539,7 +2433,7 @@ vtkSmartPointer<vtkTextureObject> vtkSegmentationLabelmapSurfaceMapper::vtkInter
   texture->SetWrapR(vtkTextureObject::ClampToEdge);
   texture->SetMinificationFilter(linear ? vtkTextureObject::Linear : vtkTextureObject::Nearest);
   texture->SetMagnificationFilter(linear ? vtkTextureObject::Linear : vtkTextureObject::Nearest);
-  if (!texture->Allocate3D(this->GridDimensions[0], this->GridDimensions[1], this->GridDimensions[2], components, vtkType))
+  if (!texture->Allocate3D(dimensions[0], dimensions[1], dimensions[2], components, vtkType))
   {
     return nullptr;
   }
@@ -1572,7 +2466,8 @@ bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::UploadTextures(vtkOpenGL
 
   if (!this->PaletteTexture || this->UploadedLabelColors != this->LabelColors)
   {
-    // Shown labels change the distance field, colors and opacities only change the palette
+    // Shown labels change the distance field and the segments of the voxels, colors and opacities only change the
+    // palette
     std::set<int> uploadedShownLabels;
     for (const auto& labelColor : this->UploadedLabelColors)
     {
@@ -1596,15 +2491,11 @@ bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::UploadTextures(vtkOpenGL
         continue;
       }
       unsigned char* entry = palette.data() + static_cast<size_t>(labelColor.first) * 4;
-      for (int component = 0; component < 4; ++component)
+      for (int component = 0; component < 3; ++component)
       {
         entry[component] = static_cast<unsigned char>(std::clamp(labelColor.second[component], 0.0, 1.0) * 255.0 + 0.5);
       }
-      if (labelColor.second[3] > 0.0)
-      {
-        // shown labels are never fully transparent in the palette
-        entry[3] = std::max(entry[3], static_cast<unsigned char>(1));
-      }
+      entry[3] = PaletteOpacity(labelColor.second[3]);
     }
     this->PaletteTexture = vtkSmartPointer<vtkTextureObject>::New();
     this->PaletteTexture->SetContext(renWin);
@@ -1618,7 +2509,6 @@ bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::UploadTextures(vtkOpenGL
     }
     this->PaletteSize = paletteWidth * paletteHeight;
     this->UploadedLabelColors = this->LabelColors;
-    this->ColorsNeedUpdate = true;
   }
   return true;
 }
@@ -1968,7 +2858,7 @@ bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ComputeDistanceField(vtk
 
   if (success)
   {
-    success = this->ComputeColors(renWin, fullUpdate ? nullptr : innerRegion);
+    success = this->ComputeSegments(renWin, fullUpdate ? nullptr : innerRegion);
   }
   if (success)
   {
@@ -1980,29 +2870,57 @@ bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ComputeDistanceField(vtk
 }
 
 //----------------------------------------------------------------------------
-bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ComputeColors(vtkOpenGLRenderWindow* renWin, const int* region)
+bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ComputeSegments(vtkOpenGLRenderWindow* renWin, const int* region)
 {
-  bool sameGrid = (this->ColorTexture != nullptr);
+  int blockDimensions[3];
+  for (int axis = 0; axis < 3; ++axis)
+  {
+    blockDimensions[axis] = (this->GridDimensions[axis] + InterfaceBlockSize - 1) / InterfaceBlockSize;
+  }
+  bool sameGrid = (this->SegmentTexture != nullptr && this->InterfaceTexture != nullptr && this->InterfaceBlockTexture != nullptr);
   for (int axis = 0; axis < 3 && sameGrid; ++axis)
   {
-    unsigned int dimension = (axis == 0 ? this->ColorTexture->GetWidth() : (axis == 1 ? this->ColorTexture->GetHeight() : this->ColorTexture->GetDepth()));
+    vtkTextureObject* texture = this->SegmentTexture;
+    unsigned int dimension = (axis == 0 ? texture->GetWidth() : (axis == 1 ? texture->GetHeight() : texture->GetDepth()));
     sameGrid = (static_cast<int>(dimension) == this->GridDimensions[axis]);
   }
   if (!sameGrid)
   {
-    if (this->ColorTexture)
+    for (vtkTextureObject* texture : { this->SegmentTexture.GetPointer(), this->InterfaceTexture.GetPointer(), this->InterfaceBlockTexture.GetPointer() })
     {
-      this->ColorTexture->ReleaseGraphicsResources(renWin);
+      if (texture)
+      {
+        texture->ReleaseGraphicsResources(renWin);
+      }
     }
-    this->ColorTexture = this->CreateTexture(renWin, GL_RGBA8, 4, VTK_UNSIGNED_CHAR, false);
-    if (!this->ColorTexture)
+    this->SegmentTexture = this->CreateTexture(renWin, GL_RG8, 2, VTK_UNSIGNED_CHAR, false);
+    this->InterfaceTexture = this->CreateTexture(renWin, GL_RGBA8, 4, VTK_UNSIGNED_CHAR, false);
+    this->InterfaceBlockTexture = this->CreateTexture(renWin, GL_R8, 1, VTK_UNSIGNED_CHAR, false, blockDimensions);
+    if (!this->SegmentTexture || !this->InterfaceTexture || !this->InterfaceBlockTexture)
     {
-      vtkErrorWithObjectMacro(this->External, "ComputeColors: failed to allocate texture");
+      vtkErrorWithObjectMacro(this->External, "ComputeSegments: failed to allocate textures");
       return false;
     }
     region = nullptr;
   }
   int wholeGrid[6] = { 0, this->GridDimensions[0] - 1, 0, this->GridDimensions[1] - 1, 0, this->GridDimensions[2] - 1 };
+  if (!region)
+  {
+    region = wholeGrid;
+  }
+  // Shares of the segments before thin segments are restored: needed one voxel beyond the region
+  int shareRegion[6];
+  for (int axis = 0; axis < 3; ++axis)
+  {
+    shareRegion[axis * 2] = std::max(region[axis * 2] - 1, 0);
+    shareRegion[axis * 2 + 1] = std::min(region[axis * 2 + 1] + 1, this->GridDimensions[axis] - 1);
+  }
+  vtkSmartPointer<vtkTextureObject> shareTexture = this->CreateTexture(renWin, GL_RGBA8, 4, VTK_UNSIGNED_CHAR, false);
+  if (!shareTexture)
+  {
+    vtkErrorWithObjectMacro(this->External, "ComputeSegments: failed to allocate textures");
+    return false;
+  }
 
   vtkOpenGLState* ostate = renWin->GetState();
   vtkOpenGLState::ScopedglViewport savedViewport(ostate);
@@ -2022,23 +2940,95 @@ bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ComputeColors(vtkOpenGLR
   this->Framebuffer->SaveCurrentBindingsAndBuffers();
   this->Framebuffer->Bind();
   this->Framebuffer->ActivateDrawBuffers(1);
-  bool success = this->ReadyQuad(renWin, this->ColorQuad, std::string(SliceCommonFS) + LabelFS + ColorFS);
+  // Segment of each voxel. A label changes the segments of voxels up to two voxels away, the shares of segments at
+  // voxels two voxels farther, and which voxels are of thin segments one voxel farther (without smoothing, only whether
+  // voxels one voxel farther are near a surface between segments): the region is larger than that (see the margin of
+  // the inner region in ComputeDistanceField).
+  bool success = this->ReadyQuad(renWin, this->SegmentQuad, std::string(SliceCommonFS) + LabelFS + ShownLabelFS + SegmentFS);
   if (success)
   {
-    vtkShaderProgram* program = this->ColorQuad->Program;
+    vtkShaderProgram* program = this->SegmentQuad->Program;
     this->LabelTexture->Activate();
     this->PaletteTexture->Activate();
     this->SetGridUniforms(program);
     this->SetInsideUniforms(program);
-    success = this->DrawSlices(this->ColorQuad, this->ColorTexture, region ? region : wholeGrid);
+    SetUniformMatrix3x3(program, "gridToPhysical", this->GridToPhysical);
+    success = this->DrawSlices(this->SegmentQuad, this->SegmentTexture, region);
     this->LabelTexture->Deactivate();
     this->PaletteTexture->Deactivate();
   }
+  // Voxels near surfaces between segments, and the shares of the segments there. Same smoothing as that of the distance
+  // field (see ComputeDistanceField), up to a standard deviation of one voxel.
+  if (success && (success = this->ReadyQuad(renWin, this->InterfaceQuad, std::string(SliceCommonFS) + LabelFS + ShownLabelFS + InterfaceFS)))
+  {
+    vtkShaderProgram* program = this->InterfaceQuad->Program;
+    this->LabelTexture->Activate();
+    this->PaletteTexture->Activate();
+    this->SegmentTexture->Activate();
+    this->SetGridUniforms(program);
+    this->SetInsideUniforms(program);
+    program->SetUniformi("segmentTexture", this->SegmentTexture->GetTextureUnit());
+    double voxelSizes[3] = { 0.0, 0.0, 0.0 };
+    for (int axis = 0; axis < 3; ++axis)
+    {
+      double column[3] = { this->GridToPhysical[0][axis], this->GridToPhysical[1][axis], this->GridToPhysical[2][axis] };
+      voxelSizes[axis] = std::max(vtkMath::Norm(column), 1e-6);
+    }
+    double sigmaMm = SmoothingSigmaPerFactor * this->External->SmoothingFactor * std::max({ voxelSizes[0], voxelSizes[1], voxelSizes[2] });
+    float smoothingSigma[3];
+    for (int axis = 0; axis < 3; ++axis)
+    {
+      smoothingSigma[axis] = static_cast<float>(std::min(sigmaMm / voxelSizes[axis], 1.0));
+    }
+    program->SetUniform3f("smoothingSigma", smoothingSigma);
+    success = this->DrawSlices(this->InterfaceQuad, shareTexture, shareRegion);
+    this->LabelTexture->Deactivate();
+    this->PaletteTexture->Deactivate();
+    this->SegmentTexture->Deactivate();
+  }
+  // Thin segments, which smoothing would remove
+  if (success && (success = this->ReadyQuad(renWin, this->ThinSegmentQuad, std::string(SliceCommonFS) + LabelFS + ShownLabelFS + ThinSegmentFS)))
+  {
+    vtkShaderProgram* program = this->ThinSegmentQuad->Program;
+    this->LabelTexture->Activate();
+    this->PaletteTexture->Activate();
+    this->SegmentTexture->Activate();
+    shareTexture->Activate();
+    this->SetGridUniforms(program);
+    this->SetInsideUniforms(program);
+    program->SetUniformi("segmentTexture", this->SegmentTexture->GetTextureUnit());
+    program->SetUniformi("shareTexture", shareTexture->GetTextureUnit());
+    success = this->DrawSlices(this->ThinSegmentQuad, this->InterfaceTexture, region);
+    this->LabelTexture->Deactivate();
+    this->PaletteTexture->Deactivate();
+    this->SegmentTexture->Deactivate();
+    shareTexture->Deactivate();
+  }
+  // Blocks that have voxels near surfaces between segments (in the block, or next to it)
+  if (success && (success = this->ReadyQuad(renWin, this->InterfaceBlockQuad, std::string(SliceCommonFS) + InterfaceBlockFS)))
+  {
+    vtkShaderProgram* program = this->InterfaceBlockQuad->Program;
+    int blockRegion[6];
+    for (int axis = 0; axis < 3; ++axis)
+    {
+      blockRegion[axis * 2] = std::max(region[axis * 2] - 1, 0) / InterfaceBlockSize;
+      blockRegion[axis * 2 + 1] = std::min(region[axis * 2 + 1] + 1, this->GridDimensions[axis] - 1) / InterfaceBlockSize;
+    }
+    this->InterfaceTexture->Activate();
+    ostate->vtkglViewport(0, 0, blockDimensions[0], blockDimensions[1]);
+    SetUniformVector3(program, "gridDimensions", blockDimensions);
+    SetUniformVector3(program, "voxelGridDimensions", this->GridDimensions);
+    program->SetUniformi("blockSize", InterfaceBlockSize);
+    program->SetUniformi("interfaceTexture", this->InterfaceTexture->GetTextureUnit());
+    success = this->DrawSlices(this->InterfaceBlockQuad, this->InterfaceBlockTexture, blockRegion);
+    this->InterfaceTexture->Deactivate();
+  }
   glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 0, 0, 0);
   this->Framebuffer->RestorePreviousBindingsAndBuffers();
+  shareTexture->ReleaseGraphicsResources(renWin);
   if (success)
   {
-    this->ColorsNeedUpdate = false;
+    this->SegmentsNeedUpdate = false;
   }
   return success;
 }
@@ -2150,6 +3140,7 @@ vtkShaderProgram* vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ReadySurfac
                                                                                          vtkActor* actor,
                                                                                          const std::vector<vtkOpenGLRenderPass*>& renderPasses,
                                                                                          bool lowResolution,
+                                                                                         bool joint,
                                                                                          vtkShaderProgram*& cachedProgram,
                                                                                          std::string& cachedKey)
 {
@@ -2195,7 +3186,9 @@ vtkShaderProgram* vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ReadySurfac
     std::string vertexShader = SurfaceVS;
     std::string geometryShader;
     std::string fragmentShader = SurfaceFS;
-    vtkShaderProgram::Substitute(fragmentShader, "//SEG::Output::Impl", lowResolution ? LowResolutionOutputImpl : SurfaceOutputImpl);
+    vtkShaderProgram::Substitute(fragmentShader, "//SEG::Output::Dec", joint ? JointOutputDec : "");
+    const char* outputImplementation = joint ? JointOutputImpl : (lowResolution ? LowResolutionOutputImpl : SurfaceOutputImpl);
+    vtkShaderProgram::Substitute(fragmentShader, "//SEG::Output::Impl", outputImplementation);
     vtkShaderProgram::Substitute(fragmentShader, "//VTK::Light::Dec", lightingComplexity > 0 ? ren->GetLightingUniforms() : "");
     vtkShaderProgram::Substitute(fragmentShader, "//VTK::Light::Impl", lightingImplementation.str());
     if (!lowResolution)
@@ -2213,50 +3206,28 @@ vtkShaderProgram* vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ReadySurfac
 }
 
 //----------------------------------------------------------------------------
-void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLRenderer* ren, vtkActor* actor)
+bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::CastRays(vtkOpenGLRenderer* ren,
+                                                                 vtkActor* actor,
+                                                                 const std::vector<vtkOpenGLRenderPass*>& renderPasses,
+                                                                 bool lowResolution,
+                                                                 const int lowResolutionSize[2],
+                                                                 const int viewport[4],
+                                                                 bool translucentPass,
+                                                                 JointImage* jointOutput /*=nullptr*/,
+                                                                 JointImage* jointInput /*=nullptr*/)
 {
   vtkOpenGLRenderWindow* renWin = static_cast<vtkOpenGLRenderWindow*>(ren->GetRenderWindow());
-  vtkTextureObject* distanceTexture = this->DistanceTexture;
-  if (!distanceTexture)
-  {
-    return;
-  }
-
-  // Render passes (depth peeling, order independent translucency) modify the shader
-  std::vector<vtkOpenGLRenderPass*> renderPasses;
-  vtkInformation* info = actor->GetPropertyKeys();
-  if (info && info->Has(vtkOpenGLRenderPass::RenderPasses()))
-  {
-    int numberOfRenderPasses = info->Length(vtkOpenGLRenderPass::RenderPasses());
-    for (int i = 0; i < numberOfRenderPasses; ++i)
-    {
-      renderPasses.push_back(static_cast<vtkOpenGLRenderPass*>(info->Get(vtkOpenGLRenderPass::RenderPasses(), i)));
-    }
-  }
-
-  // Image sample distance: rays are cast for an image of a lower resolution, which is scaled up to the viewport
   vtkOpenGLState* ostate = renWin->GetState();
-  int viewport[4] = { 0, 0, 1, 1 };
-  ostate->vtkglGetIntegerv(GL_VIEWPORT, viewport);
-  int lowResolutionSize[2] = { viewport[2], viewport[3] };
-  for (int i = 0; i < 2; ++i)
-  {
-    lowResolutionSize[i] = std::max(1, static_cast<int>(std::ceil(viewport[2 + i] / this->External->ImageSampleDistance)));
-  }
-  bool lowResolution = (lowResolutionSize[0] < viewport[2] || lowResolutionSize[1] < viewport[3]);
-  if (lowResolution && !this->ReadyLowResolutionFramebuffer(renWin, lowResolutionSize))
-  {
-    lowResolution = false;
-  }
-
-  vtkShaderProgram*& cachedProgram = lowResolution ? this->LowResolutionProgram : this->SurfaceProgram;
-  std::string& cachedKey = lowResolution ? this->LowResolutionProgramKey : this->SurfaceProgramKey;
-  vtkShaderProgram* program = this->ReadySurfaceProgram(ren, actor, renderPasses, lowResolution, cachedProgram, cachedKey);
+  vtkTextureObject* distanceTexture = this->DistanceTexture;
+  bool joint = (jointOutput != nullptr);
+  vtkShaderProgram*& cachedProgram = joint ? this->JointProgram : (lowResolution ? this->LowResolutionProgram : this->SurfaceProgram);
+  std::string& cachedKey = joint ? this->JointProgramKey : (lowResolution ? this->LowResolutionProgramKey : this->SurfaceProgramKey);
+  vtkShaderProgram* program = this->ReadySurfaceProgram(ren, actor, renderPasses, lowResolution, joint, cachedProgram, cachedKey);
   if (!program)
   {
-    vtkErrorWithObjectMacro(this->External, "RenderSurface: failed to compile shader");
+    vtkErrorWithObjectMacro(this->External, "CastRays: failed to compile shader");
     this->Failed = true;
-    return;
+    return false;
   }
   int lightingComplexity = ren->GetLightingComplexity();
 
@@ -2325,6 +3296,8 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
   }
   program->SetUniformf("mcPerMm", static_cast<float>(1.0 / std::max(maximumVoxelSize, 1e-6)));
   program->SetUniformf("minimumStep", static_cast<float>(0.2 * minimumDownsampling));
+  // Inside the surface, steps are shorter than a voxel of the grid along any axis
+  program->SetUniformf("insideStep", static_cast<float>(0.8 * minimumDownsampling));
 
   vtkProperty* property = actor->GetProperty();
   program->SetUniformf("ambientIntensity", static_cast<float>(property->GetAmbient()));
@@ -2383,14 +3356,30 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
   program->SetUniform3f("outlineColor", outlineColor);
   program->SetUniformf("outlineWidth", static_cast<float>(this->External->OutlineWidth));
 
+  // Opaque and translucent segments: if the mapper has both then it is rendered in the opaque pass and in the
+  // translucent pass, with the opaque and the translucent faces of the segments, respectively.
+  bool bothPasses = actor->HasOpaqueGeometry() && actor->HasTranslucentPolygonalGeometry();
+  program->SetUniformi("faceMode", bothPasses ? (translucentPass ? 2 : 1) : 0);
+  // Surfaces between segments are inside the surface: they are only seen if something is seen through
+  bool clippedWithoutOpaqueCap = numberOfClippingPlanes > 0 && (!this->External->CapClippedSurface || this->External->CapOpacity < 1.0);
+  bool seenThrough = property->GetOpacity() < 1.0 || this->HasShownLabels(false) || clippedWithoutOpaqueCap;
+  program->SetUniformi("showInterfaces", (seenThrough && this->GetShownLabels().size() > 1) ? 1 : 0);
+
   distanceTexture->Activate();
-  this->ColorTexture->Activate();
+  this->SegmentTexture->Activate();
+  this->InterfaceTexture->Activate();
+  this->InterfaceBlockTexture->Activate();
   this->PaletteTexture->Activate();
   program->SetUniformi("distanceTexture", distanceTexture->GetTextureUnit());
-  program->SetUniformi("colorTexture", this->ColorTexture->GetTextureUnit());
+  program->SetUniformi("segmentTexture", this->SegmentTexture->GetTextureUnit());
+  program->SetUniformi("interfaceTexture", this->InterfaceTexture->GetTextureUnit());
+  program->SetUniformi("interfaceBlockTexture", this->InterfaceBlockTexture->GetTextureUnit());
+  program->SetUniformi("blockSize", InterfaceBlockSize);
+  program->SetUniformi("paletteTexture", this->PaletteTexture->GetTextureUnit());
+  program->SetUniformi("paletteSize", this->PaletteSize);
 
   // Translucent surfaces: the depth test does not hide surfaces behind opaque geometry, rays stop there instead
-  bool stopAtOpaqueDepth = actor->IsRenderingTranslucentPolygonalGeometry() && this->CaptureOpaqueDepth(ren);
+  bool stopAtOpaqueDepth = translucentPass && this->CaptureOpaqueDepth(ren);
   program->SetUniformi("stopAtOpaqueDepth", stopAtOpaqueDepth ? 1 : 0);
   // Viewport (or the image of a lower resolution): for reading the opaque depth and for the size of pixels (clipping outline)
   float viewportOrigin[2] = { static_cast<float>(viewport[0]), static_cast<float>(viewport[1]) };
@@ -2401,6 +3390,8 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
   program->SetUniform2f("viewportOrigin", lowResolution ? rayImageOrigin : viewportOrigin);
   program->SetUniform2f("viewportSize", lowResolution ? rayImageSize : viewportSize);
   program->SetUniform2f("fullResolutionScale", fullResolutionScale);
+  // Half of a voxel; more in an image of a lower resolution, where the depth of the opaque geometry is less accurate
+  program->SetUniformf("interfaceDepthTolerance", static_cast<float>(0.5 * minimumDownsampling * std::max(fullResolutionScale[0], fullResolutionScale[1])));
   if (stopAtOpaqueDepth)
   {
     this->OpaqueDepthTexture->Activate();
@@ -2410,6 +3401,25 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
   {
     // all samplers must refer to a texture of the right type, even if they are not used
     program->SetUniformi("opaqueDepthTexture", this->PaletteTexture->GetTextureUnit());
+  }
+  // Faces that the joint image already has from other mappers
+  const char* jointTextureNames[7] = { "jointColorTexture0", "jointColorTexture1", "jointColorTexture2", "jointDepthTexture0",
+                                       "jointDepthTexture1", "jointDepthTexture2", "jointNormalTexture" };
+  const int jointTextureBuffers[7] = { 3, 4, 5, 1, 6, 7, 2 };
+  if (joint)
+  {
+    program->SetUniformi("jointInput", jointInput ? 1 : 0);
+    for (int i = 0; i < 7; ++i)
+    {
+      int textureUnit = this->PaletteTexture->GetTextureUnit();
+      if (jointInput)
+      {
+        vtkTextureObject* texture = jointInput->Textures[jointTextureBuffers[i]];
+        texture->Activate();
+        textureUnit = texture->GetTextureUnit();
+      }
+      program->SetUniformi(jointTextureNames[i], textureUnit);
+    }
   }
 
   vtkOpenGLState::ScopedglEnableDisable savedCullFace(ostate, GL_CULL_FACE);
@@ -2431,9 +3441,10 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
     vtkOpenGLState::ScopedglEnableDisable savedDepthTest(ostate, GL_DEPTH_TEST);
     vtkOpenGLState::ScopedglEnableDisable savedBlend(ostate, GL_BLEND);
     vtkOpenGLState::ScopedglEnableDisable savedScissorTest(ostate, GL_SCISSOR_TEST);
-    this->LowResolutionFramebuffer->SaveCurrentBindingsAndBuffers();
-    this->LowResolutionFramebuffer->Bind();
-    ActivateDrawBuffers(ostate, 3);
+    vtkOpenGLFramebufferObject* framebuffer = joint ? jointOutput->Framebuffer : this->LowResolutionFramebuffer;
+    framebuffer->SaveCurrentBindingsAndBuffers();
+    framebuffer->Bind();
+    ActivateDrawBuffers(ostate, joint ? NumberOfJointImageBuffers : 3);
     ostate->vtkglDisable(GL_DEPTH_TEST);
     ostate->vtkglDisable(GL_BLEND);
     ostate->vtkglDisable(GL_SCISSOR_TEST);
@@ -2444,21 +3455,231 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
     this->SurfaceVAO->Bind();
     glDrawArrays(GL_TRIANGLES, 0, 3);
     this->SurfaceVAO->Release();
-    this->LowResolutionFramebuffer->RestorePreviousBindingsAndBuffers();
+    framebuffer->RestorePreviousBindingsAndBuffers();
   }
   vtkOpenGLStaticCheckErrorMacro("failed after rendering segmentation surface");
 
   distanceTexture->Deactivate();
-  this->ColorTexture->Deactivate();
+  this->SegmentTexture->Deactivate();
+  this->InterfaceTexture->Deactivate();
+  this->InterfaceBlockTexture->Deactivate();
   this->PaletteTexture->Deactivate();
   if (stopAtOpaqueDepth)
   {
     this->OpaqueDepthTexture->Deactivate();
   }
-  if (!lowResolution)
+  if (jointInput)
+  {
+    for (int i = 0; i < 7; ++i)
+    {
+      jointInput->Textures[jointTextureBuffers[i]]->Deactivate();
+    }
+  }
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::CastJointRays(vtkOpenGLRenderer* ren, //
+                                                                      vtkActor* actor,
+                                                                      TranslucentGroup* group,
+                                                                      const int size[2],
+                                                                      const int viewport[4])
+{
+  vtkOpenGLRenderWindow* renWin = static_cast<vtkOpenGLRenderWindow*>(ren->GetRenderWindow());
+  // The visible actors of the renderer that have translucent surfaces rendered by such a mapper
+  std::vector<std::pair<vtkSegmentationLabelmapSurfaceMapper*, vtkActor*>> members;
+  members.emplace_back(this->External, actor);
+  vtkPropCollection* props = ren->GetViewProps();
+  vtkCollectionSimpleIterator propIterator;
+  props->InitTraversal(propIterator);
+  while (vtkProp* prop = props->GetNextProp(propIterator))
+  {
+    vtkActor* otherActor = vtkActor::SafeDownCast(prop);
+    if (!otherActor || otherActor == actor || !otherActor->GetVisibility())
+    {
+      continue;
+    }
+    vtkSegmentationLabelmapSurfaceMapper* otherMapper = vtkSegmentationLabelmapSurfaceMapper::SafeDownCast(otherActor->GetMapper());
+    if (!otherMapper || otherMapper == this->External || !otherActor->HasTranslucentPolygonalGeometry())
+    {
+      continue;
+    }
+    // it may not have been rendered in the frame yet
+    if (otherMapper->Internal->PrepareForRender(renWin))
+    {
+      members.emplace_back(otherMapper, otherActor);
+    }
+  }
+  if (members.size() < 2 || !ReadyJointImages(group, renWin, size))
+  {
+    return false;
+  }
+  for (size_t i = 0; i < members.size(); ++i)
+  {
+    JointImage* output = &group->Images[i % 2];
+    JointImage* input = i > 0 ? &group->Images[(i - 1) % 2] : nullptr;
+    if (!members[i].first->Internal->CastRays(ren, members[i].second, std::vector<vtkOpenGLRenderPass*>(), true, size, viewport, true, output, input))
+    {
+      group->Mappers.clear();
+      return false;
+    }
+    group->Mappers.insert(members[i].first);
+  }
+  group->Result = static_cast<int>((members.size() - 1) % 2);
+  return true;
+}
+
+//----------------------------------------------------------------------------
+bool vtkSegmentationLabelmapSurfaceMapper::vtkInternal::PrepareForRender(vtkOpenGLRenderWindow* renWin)
+{
+  if (this->Context != renWin)
+  {
+    if (vtkOpenGLRenderWindow* previousContext = this->Context)
+    {
+      // The resources belong to the context of the previous window: it must be current while they are released
+      // (WebGL refuses to delete objects of another context)
+      previousContext->MakeCurrent();
+      this->ReleaseGraphicsResources(previousContext);
+      renWin->MakeCurrent();
+    }
+    this->Context = renWin;
+    this->Failed = false;
+  }
+  if (this->Failed || !this->PrepareLabelmap())
+  {
+    return false;
+  }
+  if (!this->UploadTextures(renWin))
+  {
+    this->Failed = true;
+    return false;
+  }
+  bool fullUpdate = this->DistanceFieldNeedsUpdate || this->ComputedSmoothingFactor != this->External->SmoothingFactor;
+  if (fullUpdate || this->ChangedRegionValid)
+  {
+    if (!this->ComputeDistanceField(renWin, fullUpdate ? nullptr : this->ChangedRegion))
+    {
+      this->Failed = true;
+      return false;
+    }
+    this->DistanceFieldNeedsUpdate = false;
+    this->ChangedRegionValid = false;
+  }
+  if (this->SegmentsNeedUpdate && !this->ComputeSegments(renWin, nullptr))
+  {
+    this->Failed = true;
+    return false;
+  }
+  return this->DistanceTexture && this->SegmentTexture && this->InterfaceTexture && this->InterfaceBlockTexture;
+}
+
+//----------------------------------------------------------------------------
+void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLRenderer* ren, vtkActor* actor)
+{
+  vtkOpenGLRenderWindow* renWin = static_cast<vtkOpenGLRenderWindow*>(ren->GetRenderWindow());
+  if (!this->DistanceTexture || !this->SegmentTexture || !this->InterfaceTexture || !this->InterfaceBlockTexture)
   {
     return;
   }
+
+  // Render passes (depth peeling, order independent translucency) modify the shader
+  std::vector<vtkOpenGLRenderPass*> renderPasses;
+  vtkInformation* info = actor->GetPropertyKeys();
+  if (info && info->Has(vtkOpenGLRenderPass::RenderPasses()))
+  {
+    int numberOfRenderPasses = info->Length(vtkOpenGLRenderPass::RenderPasses());
+    for (int i = 0; i < numberOfRenderPasses; ++i)
+    {
+      renderPasses.push_back(static_cast<vtkOpenGLRenderPass*>(info->Get(vtkOpenGLRenderPass::RenderPasses(), i)));
+    }
+  }
+
+  // Image sample distance: rays are cast for an image of a lower resolution, which is scaled up to the viewport
+  vtkOpenGLState* ostate = renWin->GetState();
+  int viewport[4] = { 0, 0, 1, 1 };
+  ostate->vtkglGetIntegerv(GL_VIEWPORT, viewport);
+  int lowResolutionSize[2] = { viewport[2], viewport[3] };
+  for (int i = 0; i < 2; ++i)
+  {
+    lowResolutionSize[i] = std::max(1, static_cast<int>(std::ceil(viewport[2 + i] / this->External->ImageSampleDistance)));
+  }
+  // The translucent pass is also rendered through the image (of the size of the viewport, if the resolution is not
+  // lower), so that rays are cast only once in a frame, however many times depth peeling renders the pass
+  bool translucentPass = actor->IsRenderingTranslucentPolygonalGeometry();
+  bool lowResolution = translucentPass || lowResolutionSize[0] < viewport[2] || lowResolutionSize[1] < viewport[3];
+  if (lowResolution && !this->ReadyLowResolutionFramebuffer(renWin, lowResolutionSize))
+  {
+    lowResolution = false;
+  }
+
+  // What the rays of the image were cast with: the frame, the size, and the transform from model to display coordinates
+  vtkCamera* camera = ren->GetActiveCamera();
+  vtkMatrix4x4* cameraMatrix = camera->GetCompositeProjectionTransformMatrix(ren->GetTiledAspectRatio(), -1, 1);
+  vtkNew<vtkMatrix4x4> rayMatrix;
+  actor->GetMatrix(rayMatrix);
+  vtkMatrix4x4::Multiply4x4(cameraMatrix, rayMatrix, rayMatrix);
+
+  // Translucent surfaces of several mappers are composited together, in a joint image that the first one of them draws
+  TranslucentGroup* group = (lowResolution && translucentPass) ? GetTranslucentGroup(ren) : nullptr;
+  vtkSmartPointer<vtkTextureObject>* imageTextures = this->LowResolutionTextures;
+  bool jointImage = false;
+  if (group)
+  {
+    bool valid = group->ImageFrame == group->Frame && std::equal(lowResolutionSize, lowResolutionSize + 2, group->ImageSize)
+                 && std::equal(group->ImageMatrix, group->ImageMatrix + 16, cameraMatrix->GetData());
+    if (!valid && group->DecidedFrame != group->Frame)
+    {
+      group->ForgetImage();
+      group->DecidedFrame = group->Frame;
+      valid = this->CastJointRays(ren, actor, group, lowResolutionSize, viewport);
+      if (valid)
+      {
+        group->ImageFrame = group->Frame;
+        std::copy_n(lowResolutionSize, 2, group->ImageSize);
+        std::copy_n(cameraMatrix->GetData(), 16, group->ImageMatrix);
+        group->Leader = this->External;
+      }
+    }
+    if (valid && group->Mappers.count(this->External) > 0)
+    {
+      if (group->Leader != this->External)
+      {
+        // the mapper that cast the rays draws the image
+        return;
+      }
+      jointImage = true;
+      imageTextures = group->Images[group->Result].Textures;
+    }
+  }
+  if (!jointImage)
+  {
+    bool reuseImage = group && this->RayImageFrame == group->Frame //
+                      && std::equal(lowResolutionSize, lowResolutionSize + 2, this->RayImageSize)
+                      && std::equal(this->RayImageMatrix, this->RayImageMatrix + 16, rayMatrix->GetData());
+    if (!reuseImage)
+    {
+      this->RayImageFrame = 0;
+      if (this->Failed || !this->CastRays(ren, actor, renderPasses, lowResolution, lowResolutionSize, viewport, translucentPass))
+      {
+        return;
+      }
+      if (group)
+      {
+        this->RayImageFrame = group->Frame;
+        std::copy_n(lowResolutionSize, 2, this->RayImageSize);
+        std::copy_n(rayMatrix->GetData(), 16, this->RayImageMatrix);
+      }
+    }
+    if (!lowResolution)
+    {
+      return;
+    }
+  }
+  float viewportOrigin[2] = { static_cast<float>(viewport[0]), static_cast<float>(viewport[1]) };
+  float viewportSize[2] = { static_cast<float>(viewport[2]), static_cast<float>(viewport[3]) };
+  float rayImageSize[2] = { static_cast<float>(lowResolutionSize[0]), static_cast<float>(lowResolutionSize[1]) };
+  vtkOpenGLState::ScopedglEnableDisable savedCullFace(ostate, GL_CULL_FACE);
+  ostate->vtkglDisable(GL_CULL_FACE);
 
   // The image is scaled up to the viewport, through the render passes
   std::ostringstream compositeKey;
@@ -2489,8 +3710,8 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
   const char* textureNames[3] = { "lowResolutionColorTexture", "lowResolutionDepthTexture", "lowResolutionNormalTexture" };
   for (int i = 0; i < 3; ++i)
   {
-    this->LowResolutionTextures[i]->Activate();
-    composite->SetUniformi(textureNames[i], this->LowResolutionTextures[i]->GetTextureUnit());
+    imageTextures[i]->Activate();
+    composite->SetUniformi(textureNames[i], imageTextures[i]->GetTextureUnit());
   }
   composite->SetUniform2f("viewportOrigin", viewportOrigin);
   composite->SetUniform2f("viewportSize", viewportSize);
@@ -2508,7 +3729,7 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
   vtkOpenGLStaticCheckErrorMacro("failed after scaling up segmentation surface");
   for (int i = 0; i < 3; ++i)
   {
-    this->LowResolutionTextures[i]->Deactivate();
+    imageTextures[i]->Deactivate();
   }
 }
 
@@ -2516,7 +3737,8 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::RenderSurface(vtkOpenGLR
 void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ReleaseGraphicsResources(vtkWindow* window)
 {
   vtkOpenGLQuadHelper** quads[] = {
-    &this->SeedQuad, &this->JumpFloodQuad, &this->FinalizeQuad, &this->SmoothQuad, &this->CombineQuad, &this->MaskQuad, &this->ColorQuad,
+    &this->SeedQuad, &this->JumpFloodQuad, &this->FinalizeQuad,  &this->SmoothQuad,      &this->CombineQuad,
+    &this->MaskQuad, &this->SegmentQuad,   &this->InterfaceQuad, &this->ThinSegmentQuad, &this->InterfaceBlockQuad,
   };
   for (vtkOpenGLQuadHelper** quad : quads)
   {
@@ -2526,7 +3748,9 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ReleaseGraphicsResources
   for (vtkTextureObject* texture : { this->LabelTexture.GetPointer(),
                                      this->PaletteTexture.GetPointer(),
                                      this->DistanceTexture.GetPointer(),
-                                     this->ColorTexture.GetPointer(),
+                                     this->SegmentTexture.GetPointer(),
+                                     this->InterfaceTexture.GetPointer(),
+                                     this->InterfaceBlockTexture.GetPointer(),
                                      this->LowResolutionTextures[0].GetPointer(),
                                      this->LowResolutionTextures[1].GetPointer(),
                                      this->LowResolutionTextures[2].GetPointer(),
@@ -2554,8 +3778,10 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ReleaseGraphicsResources
   {
     this->LowResolutionTextures[i] = nullptr;
   }
-  this->ColorTexture = nullptr;
-  this->ColorsNeedUpdate = true;
+  this->SegmentTexture = nullptr;
+  this->InterfaceTexture = nullptr;
+  this->InterfaceBlockTexture = nullptr;
+  this->SegmentsNeedUpdate = true;
   this->LabelTexture = nullptr;
   this->PaletteTexture = nullptr;
   this->DistanceTexture = nullptr;
@@ -2566,9 +3792,13 @@ void vtkSegmentationLabelmapSurfaceMapper::vtkInternal::ReleaseGraphicsResources
   this->SurfaceProgramKey.clear();
   this->LowResolutionProgram = nullptr;
   this->LowResolutionProgramKey.clear();
+  this->JointProgram = nullptr;
+  this->JointProgramKey.clear();
   this->CompositeProgram = nullptr;
   this->CompositeProgramKey.clear();
   this->DistanceFieldNeedsUpdate = true;
+  this->RayImageFrame = 0;
+  RemoveFromTranslucentGroups(this->External, window);
   this->Context = nullptr;
 }
 
@@ -2586,7 +3816,9 @@ vtkSegmentationLabelmapSurfaceMapper::~vtkSegmentationLabelmapSurfaceMapper()
 {
   // Graphics resources are released by ReleaseGraphicsResources (called when the actor is removed from the renderer)
   vtkInternal* d = this->Internal;
-  vtkOpenGLQuadHelper* quads[] = { d->SeedQuad, d->JumpFloodQuad, d->FinalizeQuad, d->SmoothQuad, d->CombineQuad, d->MaskQuad, d->ColorQuad };
+  RemoveFromTranslucentGroups(this, nullptr);
+  vtkOpenGLQuadHelper* quads[] = { d->SeedQuad, d->JumpFloodQuad, d->FinalizeQuad,  d->SmoothQuad,      d->CombineQuad,
+                                   d->MaskQuad, d->SegmentQuad,   d->InterfaceQuad, d->ThinSegmentQuad, d->InterfaceBlockQuad };
   for (vtkOpenGLQuadHelper* quad : quads)
   {
     delete quad;
@@ -2639,6 +3871,12 @@ vtkOrientedImageData* vtkSegmentationLabelmapSurfaceMapper::GetLabelmap()
 //----------------------------------------------------------------------------
 void vtkSegmentationLabelmapSurfaceMapper::SetLabelColor(int labelValue, double r, double g, double b, double opacity /*=1.0*/)
 {
+  if (labelValue > 65535)
+  {
+    // the segment of a voxel is stored in two bytes on the GPU
+    vtkErrorMacro("SetLabelColor: label value " << labelValue << " cannot be shown, the largest supported label value is 65535");
+    return;
+  }
   std::array<double, 4> color = { r, g, b, opacity };
   auto it = this->Internal->LabelColors.find(labelValue);
   if (it != this->Internal->LabelColors.end() && it->second == color)
@@ -2981,6 +4219,20 @@ int vtkSegmentationLabelmapSurfaceMapper::GetShownLabelAtPosition(const double i
 }
 
 //----------------------------------------------------------------------------
+bool vtkSegmentationLabelmapSurfaceMapper::HasOpaqueGeometry()
+{
+  // Both this and HasTranslucentPolygonalGeometry are true if there are opaque and translucent segments: the actor
+  // then renders the mapper in the opaque pass and in the translucent pass
+  return this->Internal->HasShownLabels(true) || !this->Internal->HasShownLabels(false);
+}
+
+//----------------------------------------------------------------------------
+bool vtkSegmentationLabelmapSurfaceMapper::HasTranslucentPolygonalGeometry()
+{
+  return this->Internal->HasShownLabels(false);
+}
+
+//----------------------------------------------------------------------------
 void vtkSegmentationLabelmapSurfaceMapper::RemoveAllLabelColors()
 {
   if (this->Internal->LabelColors.empty())
@@ -3009,46 +4261,8 @@ void vtkSegmentationLabelmapSurfaceMapper::Render(vtkRenderer* renderer, vtkActo
     return;
   }
   vtkOpenGLRenderWindow* renWin = vtkOpenGLRenderWindow::SafeDownCast(ren->GetRenderWindow());
-  if (!renWin)
+  if (!renWin || !this->Internal->PrepareForRender(renWin))
   {
-    return;
-  }
-  if (this->Internal->Context != renWin)
-  {
-    if (vtkOpenGLRenderWindow* previousContext = this->Internal->Context)
-    {
-      // The resources belong to the context of the previous window: it must be current while they are released
-      // (WebGL refuses to delete objects of another context)
-      previousContext->MakeCurrent();
-      this->Internal->ReleaseGraphicsResources(previousContext);
-      renWin->MakeCurrent();
-    }
-    this->Internal->Context = renWin;
-    this->Internal->Failed = false;
-  }
-  if (this->Internal->Failed || !this->Internal->PrepareLabelmap())
-  {
-    return;
-  }
-  if (!this->Internal->UploadTextures(renWin))
-  {
-    this->Internal->Failed = true;
-    return;
-  }
-  bool fullUpdate = this->Internal->DistanceFieldNeedsUpdate || this->Internal->ComputedSmoothingFactor != this->SmoothingFactor;
-  if (fullUpdate || this->Internal->ChangedRegionValid)
-  {
-    if (!this->Internal->ComputeDistanceField(renWin, fullUpdate ? nullptr : this->Internal->ChangedRegion))
-    {
-      this->Internal->Failed = true;
-      return;
-    }
-    this->Internal->DistanceFieldNeedsUpdate = false;
-    this->Internal->ChangedRegionValid = false;
-  }
-  if (this->Internal->ColorsNeedUpdate && !this->Internal->ComputeColors(renWin, nullptr))
-  {
-    this->Internal->Failed = true;
     return;
   }
   this->Internal->RenderSurface(ren, actor);
