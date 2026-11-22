@@ -126,11 +126,11 @@ Release's version does not identify it.
 
 Where Slicer goes. The value means something different on Windows:
 
-|                         | Linux                                 | macOS                       | Windows                                  |
-| ----------------------- | ------------------------------------- | --------------------------- | ---------------------------------------- |
-| The value names         | the folder that holds the versions    | the folder for `Slicer.app` | the installation folder itself           |
-| Default                 | `~/.local/opt`                        | `~/Applications`            | `%LOCALAPPDATA%\NA-MIC\Slicer <version>` |
-| Slicer is installed to  | `<dir>/Slicer-<version>-linux-<arch>` | `<dir>/Slicer.app`          | `<dir>`                                  |
+|                         | Linux                                 | macOS                       | Windows                                         |
+| ----------------------- | ------------------------------------- | --------------------------- | ----------------------------------------------- |
+| The value names         | the folder that holds the versions    | the folder for `Slicer.app` | the installation folder itself                  |
+| Default                 | `~/.local/opt`                        | `~/Applications`            | `%LOCALAPPDATA%\slicer.org\3D Slicer <version>` |
+| Slicer is installed to  | `<dir>/Slicer-<version>-linux-<arch>` | `<dir>/Slicer.app`          | `<dir>`                                         |
 
 - The folder must be writable without root or Administrator rights: the
   installers never ask for either. macOS checks this before downloading; Linux

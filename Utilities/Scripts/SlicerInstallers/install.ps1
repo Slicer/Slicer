@@ -38,7 +38,7 @@
                              channels, so SLICER_RELEASE_TYPE is ignored;
                              cannot be combined with SLICER_VERSION
         SLICER_INSTALL_DIR   install directory (default: the installer's default,
-                             %LOCALAPPDATA%\NA-MIC). Use an ASCII-only path.
+                             %LOCALAPPDATA%\slicer.org). Use an ASCII-only path.
         SLICER_IF_EXISTING   what to do when that version is already installed:
                              prompt (default) | abort | reinstall | uninstall
         SLICER_NONINTERACTIVE  set (to any value) to never prompt, for automations
@@ -524,13 +524,21 @@ function Get-InstalledSlicer {
 # The directory a given version occupies, found by looking where the installer
 # puts things. Backs up the registry, which may omit InstallLocation.
 #
+# The installer puts each version under %LOCALAPPDATA%\<organization name>,
+# which is "slicer.org" since Slicer 5.4 and was "NA-MIC" before.
+#
 # The name must *end* with the version, never merely contain it: while 5.12.0 is
 # unreleased its nightlies are named "Slicer 5.12.0-2026-01-01", and those are a
 # different build that we must not offer to overwrite.
 function Find-SlicerInstallDir {
     param([string]$Version)
     if (-not $Version) { return '' }
-    foreach ($root in @((Join-Path $env:LOCALAPPDATA 'NA-MIC'), (Join-Path ${env:ProgramFiles} 'NA-MIC'))) {
+    $roots = @(
+        (Join-Path $env:LOCALAPPDATA 'slicer.org'),
+        (Join-Path $env:LOCALAPPDATA 'NA-MIC'),
+        (Join-Path ${env:ProgramFiles} 'NA-MIC')
+    )
+    foreach ($root in $roots) {
         if ($root -and (Test-Path $root)) {
             $dir = Get-ChildItem -Path $root -Directory -ErrorAction SilentlyContinue |
                    Where-Object { $_.Name -like "*$Version" } | Select-Object -First 1
@@ -1459,11 +1467,11 @@ try {
         throw "Installer exited with code $($proc.ExitCode)."
     }
 
-    # Locate the installed launcher so we can tell the user where it went.
-    $searchRoots = @()
-    if ($targetDir) { $searchRoots += $targetDir }
-    $searchRoots += (Join-Path $env:LOCALAPPDATA 'NA-MIC')
-    $searchRoots += (Join-Path ${env:ProgramFiles} 'NA-MIC')
+    # Locate the installed launcher so we can tell the user where it went: in the
+    # directory we asked for, or else in the one this version occupies. Not just
+    # anywhere under the install root, where versions live side by side and the
+    # first Slicer.exe found can belong to another one.
+    $searchRoots = @(if ($targetDir) { $targetDir } else { Find-SlicerInstallDir -Version $version })
 
     $exe = $null
     foreach ($root in $searchRoots) {

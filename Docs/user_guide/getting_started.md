@@ -197,7 +197,7 @@ powershell -c "irm https://download.slicer.org/install.ps1 | iex"
 
 - Linux: Slicer is installed into `~/.local/opt`, a `Slicer` launcher is linked into `~/.local/bin`, and a desktop menu entry is created.
 - macOS: `Slicer.app` is copied into `~/Applications`.
-- Windows: Slicer's regular installer runs silently, and installs into `%LOCALAPPDATA%\NA-MIC\Slicer <version>`.
+- Windows: Slicer's regular installer runs silently, and installs into `%LOCALAPPDATA%\slicer.org\3D Slicer <version>`.
 - If that version is already installed, the command asks whether to abort, reinstall it, install a second copy elsewhere, or uninstall it.
 
 When it finishes, the command prints the `bin` folder inside the installation, which holds a few optional helper scripts:
