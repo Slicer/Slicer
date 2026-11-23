@@ -6,8 +6,12 @@ This stub library provides a minimal implementation of the GSSAPI symbol `GSS_C_
 
 The stub is built only when:
 
-* Slicer is **not using a system Qt** (`Slicer_USE_SYSTEM_QT` is OFF), and
+* Slicer is **not using a system Qt** (`Slicer_USE_SYSTEM_QT` is OFF),
+* Slicer is built with **Qt 5** (`Slicer_REQUIRED_QT_VERSION` is less than 6), and
 * The `Qt5::Network` target reports the `gssapi` feature as enabled.
+
+The stub is not used with Qt 6: `libQt6Network.so` is linked with `BIND_NOW` and requires GSSAPI
+functions such as `gss_import_name` at startup, which the stub does not provide.
 
 The resulting `libgssapi_krb5.so.2` is installed to the runtime library directory to satisfy the dynamic linker at application startup.
 
