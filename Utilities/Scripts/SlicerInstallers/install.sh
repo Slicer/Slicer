@@ -2031,7 +2031,7 @@ install_macos() {
 
   appname="$(basename "$app")"
   dest="$DEST/$appname"
-  log "Installing $appname to $DEST…"
+  log "Installing $appname to ${DEST}…"
   rm -rf "$dest" || err "Could not remove the existing $dest. Remove it manually and re-run."
   cp -R "$app" "$DEST/"
 
