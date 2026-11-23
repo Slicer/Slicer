@@ -838,7 +838,11 @@ endif()
 # to satisfy GSSAPI symbol requirements in Qt5Network (see below).
 #
 # By default, the option is automatically set to ON only on Linux when
-# Slicer is **not using a system Qt**.
+# Slicer is **not using a system Qt** and is built with **Qt 5**.
+#
+# The stub is not usable with Qt 6: Qt6Network is linked with BIND_NOW and
+# requires GSSAPI functions (e.g. `gss_import_name`) at startup, so the stub
+# would hide the system Kerberos library and make the application fail to start.
 #
 # You may override the default by configuring with:
 #   -DSlicer_BUILD_KRB5_GSSAPI_STUB:BOOL=ON or OFF
@@ -848,10 +852,14 @@ if(DEFINED Slicer_BUILD_KRB5_GSSAPI_STUB)
     message(WARNING "Unsetting Slicer_BUILD_KRB5_GSSAPI_STUB because Slicer_USE_SYSTEM_QT is 'ON'")
     unset(Slicer_BUILD_KRB5_GSSAPI_STUB CACHE)
   endif()
+  if(Slicer_REQUIRED_QT_VERSION VERSION_GREATER_EQUAL "6" AND Slicer_BUILD_KRB5_GSSAPI_STUB)
+    message(WARNING "Unsetting Slicer_BUILD_KRB5_GSSAPI_STUB because it is only supported with Qt 5")
+    unset(Slicer_BUILD_KRB5_GSSAPI_STUB CACHE)
+  endif()
 endif()
 
 if(NOT DEFINED Slicer_BUILD_KRB5_GSSAPI_STUB)
-  if(UNIX AND NOT APPLE AND NOT Slicer_USE_SYSTEM_QT)
+  if(UNIX AND NOT APPLE AND NOT Slicer_USE_SYSTEM_QT AND Slicer_REQUIRED_QT_VERSION VERSION_LESS "6")
     set(Slicer_BUILD_KRB5_GSSAPI_STUB ON)
   else()
     set(Slicer_BUILD_KRB5_GSSAPI_STUB OFF)
