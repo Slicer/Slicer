@@ -7,7 +7,6 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}/QTCore
   )
 
-add_subdirectory(Logic)
 add_subdirectory(QTCore)
 add_subdirectory(QTGUI)
 add_subdirectory(QTCLI)

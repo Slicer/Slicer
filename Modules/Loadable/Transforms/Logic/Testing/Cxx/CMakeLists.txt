@@ -1,4 +1,4 @@
-set(KIT ${PROJECT_NAME})
+set(KIT SlicerTransformsModuleLogic)
 
 set(DATA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Data)
 set(TEMP "${CMAKE_BINARY_DIR}/Testing/Temporary")
@@ -14,6 +14,8 @@ set(KIT_TEST_SRCS
 #-----------------------------------------------------------------------------
 slicerMacroConfigureModuleCxxTestDriver(
   NAME ${KIT}
+  LINK_TARGET Slicer::TransformsModuleLogic
+  TARGET_LIBRARIES Slicer::TransformsModuleLogic
   SOURCES ${KIT_TEST_SRCS}
   WITH_VTK_DEBUG_LEAKS_CHECK
   WITH_VTK_ERROR_OUTPUT_CHECK

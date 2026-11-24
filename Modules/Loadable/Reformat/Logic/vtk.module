@@ -1,0 +1,9 @@
+NAME
+  Slicer::ReformatModuleLogic
+LIBRARY_NAME
+  vtkSlicerReformatModuleLogic
+DEPENDS
+  Slicer::MRMLLogic
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerReformatModuleLogic"

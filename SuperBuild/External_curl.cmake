@@ -131,6 +131,7 @@ if((NOT DEFINED CURL_INCLUDE_DIR
 
   set(CURL_INCLUDE_DIR "${EP_INSTALL_DIR}/include")
   set(CURL_LIBRARY "${EP_INSTALL_DIR}/lib/libcurl${curl_IMPORT_SUFFIX}")
+  set(CURL_DIR "${EP_INSTALL_DIR}/lib/cmake/CURL")
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
@@ -140,6 +141,7 @@ mark_as_superbuild(
   VARS
     CURL_INCLUDE_DIR:PATH
     CURL_LIBRARY:FILEPATH
+    CURL_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
 

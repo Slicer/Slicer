@@ -1,6 +1,6 @@
 set(INPUT ${CMAKE_CURRENT_SOURCE_DIR}/../Data/Input)
 
-set(KIT ${PROJECT_NAME})
+set(KIT SlicerBaseLogic)
 
 set(CMAKE_TESTDRIVER_BEFORE_TESTMAIN "DEBUG_LEAKS_ENABLE_EXIT_ERROR();" )
 set(KIT_TEST_SRCS
@@ -14,7 +14,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   )
 
 ctk_add_executable_utf8(${KIT}CxxTests ${Tests})
-target_link_libraries(${KIT}CxxTests ${KIT})
+target_link_libraries(${KIT}CxxTests PRIVATE Slicer::BaseLogic)
 set_target_properties(${KIT}CxxTests PROPERTIES LABELS ${KIT})
 set_target_properties(${KIT}CxxTests PROPERTIES FOLDER "Core-Base")
 

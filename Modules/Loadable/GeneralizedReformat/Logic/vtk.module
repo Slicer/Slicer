@@ -1,0 +1,11 @@
+NAME
+  Slicer::GeneralizedReformatModuleLogic
+LIBRARY_NAME
+  vtkSlicerGeneralizedReformatModuleLogic
+DEPENDS
+  Slicer::GeneralizedReformatModuleMRML
+  Slicer::MarkupsModuleMRML
+  Slicer::MRMLCLI
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerGeneralizedReformatModuleLogic"

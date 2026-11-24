@@ -1,31 +1,13 @@
-project(vtkSlicer${MODULE_NAME}ModuleMRML)
+set(classes vtkMRMLSequenceBrowserNode)
 
-set(KIT ${PROJECT_NAME})
+slicer_generate_module_wrapper(
+  HEADER_NAME "vtkSlicerSequencesModuleMRMLExport.h"
+  OUTPUT_VAR wrapper_header_file
+)
 
-set(${KIT}_EXPORT_DIRECTIVE "VTK_SLICER_${MODULE_NAME_UPPER}_MODULE_MRML_EXPORT")
-
-include_directories(BEFORE ${vtkTeem_INCLUDE_DIRS})
-
-set(${KIT}_INCLUDE_DIRECTORIES
-  ${Slicer_Base_INCLUDE_DIRS}
-  )
-
-set(${KIT}_SRCS
-  vtkMRMLSequenceBrowserNode.cxx
-  vtkMRMLSequenceBrowserNode.h
-  )
-
-set(${KIT}_TARGET_LIBRARIES
-  ${ITK_LIBRARIES}
-  ${MRML_LIBRARIES}
-  SlicerBaseLogic
-  )
-
-#-----------------------------------------------------------------------------
-SlicerMacroBuildModuleMRML(
-  NAME ${KIT}
-  EXPORT_DIRECTIVE ${${KIT}_EXPORT_DIRECTIVE}
-  INCLUDE_DIRECTORIES ${${KIT}_INCLUDE_DIRECTORIES}
-  SRCS ${${KIT}_SRCS}
-  TARGET_LIBRARIES ${${KIT}_TARGET_LIBRARIES}
-  )
+vtk_module_add_module(Slicer::SequencesModuleMRML
+  EXPORT_MACRO_PREFIX VTK_SLICER_SEQUENCES_MODULE_MRML
+  CLASSES ${classes}
+  HEADERS ${wrapper_header_file}
+  EXCLUDE_HEADER_TEST
+)

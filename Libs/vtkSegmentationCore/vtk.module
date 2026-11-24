@@ -1,0 +1,22 @@
+NAME
+  Slicer::SegmentationCore
+LIBRARY_NAME
+  vtkSegmentationCore
+DEPENDS
+  VTK::CommonComputationalGeometry
+  VTK::CommonCore
+  VTK::CommonDataModel
+  VTK::CommonExecutionModel
+  VTK::CommonSystem
+  VTK::FiltersExtraction
+  VTK::FiltersHybrid
+  VTK::FiltersModeling
+  VTK::FiltersSources
+  VTK::ImagingStatistics
+  VTK::ImagingStencil
+  VTK::IOCore
+  VTK::InfovisCore
+PRIVATE_DEPENDS
+  VTK::CommonMath
+DESCRIPTION
+  "vtkSegmentationCore"

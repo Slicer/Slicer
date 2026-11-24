@@ -5,7 +5,6 @@ set(MODULE_NAME TemplateKey)
 string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER)
 
 #-----------------------------------------------------------------------------
-add_subdirectory(Logic)
 add_subdirectory(Widgets)
 
 #-----------------------------------------------------------------------------

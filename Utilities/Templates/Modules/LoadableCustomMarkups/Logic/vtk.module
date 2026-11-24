@@ -1,0 +1,11 @@
+NAME
+  Slicer::TemplateKeyModuleLogic
+LIBRARY_NAME
+  vtkSlicerTemplateKeyModuleLogic
+DEPENDS
+  Slicer::TemplateKeyModuleMRML
+  Slicer::TemplateKeyModuleVTKWidgets
+  Slicer::MarkupsModuleLogic
+  Slicer::MarkupsModuleVTKWidgets
+DESCRIPTION
+  "vtkSlicerTemplateKeyModuleLogic"

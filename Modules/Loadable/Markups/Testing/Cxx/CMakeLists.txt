@@ -39,13 +39,6 @@ endif()
 set(KIT_TEST_INCLUDE_DIRS
   )
 
-if(_build_scene_views_module)
-  list(APPEND KIT_TEST_INCLUDE_DIRS
-    ${vtkSlicerSceneViewsModuleLogic_SOURCE_DIR}
-    ${vtkSlicerSceneViewsModuleLogic_BINARY_DIR}
-    )
-endif()
-
 #-----------------------------------------------------------------------------
 set(KIT_TEST_TARGET_LIBRARIES
   vtkSlicerAnnotationsModuleLogic

@@ -106,6 +106,8 @@ macro(SlicerMacroBuildModuleQtLibrary)
   # --------------------------------------------------------------------------
   include_directories(
     ${${MODULEQTLIBRARY_NAME}_INCLUDE_DIRS}
+    ${Slicer_Libs_INCLUDE_DIRS}
+    ${Slicer_Base_INCLUDE_DIRS}
     ${MODULEQTLIBRARY_INCLUDE_DIRECTORIES}
     )
 
@@ -195,6 +197,8 @@ macro(SlicerMacroBuildModuleQtLibrary)
   target_link_libraries(${lib_name}
     ${MODULEQTLIBRARY_TARGET_LIBRARIES}
     )
+
+  slicer_module_autoinit(TARGETS ${lib_name} MODULES ${MODULEQTLIBRARY_TARGET_LIBRARIES})
 
   # Apply user-defined properties to the library target.
   if(Slicer_LIBRARY_PROPERTIES)

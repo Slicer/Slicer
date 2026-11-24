@@ -1,0 +1,9 @@
+NAME
+  Slicer::TextsModuleLogic
+LIBRARY_NAME
+  vtkSlicerTextsModuleLogic
+DEPENDS
+  Slicer::MRMLLogic
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerTextsModuleLogic"

@@ -1,0 +1,9 @@
+NAME
+  Slicer::CamerasModuleLogic
+LIBRARY_NAME
+  vtkSlicerCamerasModuleLogic
+DEPENDS
+  Slicer::MRMLLogic
+  Slicer::BaseLogic
+DESCRIPTION
+  "vtkSlicerCamerasModuleLogic"
