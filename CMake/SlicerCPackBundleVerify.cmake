@@ -100,6 +100,7 @@ endif()
 file(GLOB app_candidates
   "${Slicer_INSTALL_DIR}/*.app"
   "${Slicer_INSTALL_DIR}/*/*.app"
+  "${Slicer_INSTALL_DIR}/*/pkg/Applications/*.app"
   )
 list(REMOVE_DUPLICATES app_candidates)
 

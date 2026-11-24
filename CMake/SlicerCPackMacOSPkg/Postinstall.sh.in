@@ -1,0 +1,12 @@
+@_slicer_pkg_preinstall_script@
+case "${3:-}" in
+  /*) target=${3%/} ;;
+  *) echo "Invalid installation volume." >&2; exit 1 ;;
+esac
+applications="$target/Applications"
+app="$applications"/@_slicer_pkg_app_name@
+if [ -L "$applications" ] || [ -L "$app" ] || [ ! -d "$app" ]; then
+  echo "Expected an application bundle in the installation volume." >&2
+  exit 1
+fi
+/usr/sbin/chown -R -P -x -n "$user_id" "$app"

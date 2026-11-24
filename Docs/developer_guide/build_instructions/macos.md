@@ -120,6 +120,34 @@ cd Slicer-build
 make package
 ```
 
+The default package is a drag-and-drop DMG. To build a macOS Installer PKG
+instead, configure the superbuild with:
+
+```console
+cmake -DCPACK_GENERATOR:STRING=productbuild /path/to/source/code/of/Slicer
+```
+
+Then build and run `make package` in `Slicer-build` as above. CPack's
+`productbuild` generator creates the PKG. The installer displays
+the main application's license before installing its versioned app bundle in
+`/Applications`. Custom applications use their own application display name,
+bundle identifier, and `LICENSE_FILE` from their application properties. The
+license must be a `.txt`, `.rtf`, or `.html` file. Administrative authorization
+may be required. Like a Slicer app copied from the DMG, the installed bundle
+is owned by the active desktop user, allowing that user to install extensions
+and Python packages inside it. The installer requires a logged-in desktop user
+and is not intended for unattended or remote installations without one; the
+active desktop user at completion receives ownership. Installing through
+automated management tools does not necessarily present the license page.
+
+On macOS, configure one package generator at a time: `DragNDrop` (the default)
+or `productbuild`.
+
+The package is unsigned by default, so it is intended for local testing, not
+distribution. See [Signing Application Packages](https://github.com/Slicer/Slicer/wiki/Signing-Application-Packages)
+for the release signing process. Run `make packageverify` after packaging to
+check the staged app's dependencies.
+
 ### Debugging the build process
 
 When using the `-j` option, the build will continue past the source of the first error. If the build fails and you don't see what failed, rebuild without the `-j` option. Or, to speed up this process build first with the `-j` and `-k` options and then run plain make. The `-k` option will make the build keep going so that any code that can be compiled independent of the error will be completed and the second make will reach the error condition more efficiently. To debug the error you can pipe the output of the make command to an external log file like this:

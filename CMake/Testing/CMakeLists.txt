@@ -51,3 +51,15 @@ if(UNIX)
     PASS_REGULAR_EXPRESSION "SUCCESS"
     )
 endif()
+
+if(APPLE)
+  get_filename_component(cmake_directory "${CMAKE_COMMAND}" DIRECTORY)
+  add_test(
+    NAME cmake_slicer_macos_pkg_test
+    COMMAND python3 "${Slicer_SOURCE_DIR}/Utilities/Scripts/test_slicer_macos_pkg.py"
+    )
+  set_tests_properties(cmake_slicer_macos_pkg_test PROPERTIES
+    LABELS CMake
+    ENVIRONMENT "PATH=${cmake_directory}:$ENV{PATH}"
+    )
+endif()
