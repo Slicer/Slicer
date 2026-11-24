@@ -413,6 +413,13 @@ slicer_add_python_unittest(
   TESTNAME_PREFIX nomainwindow_
   )
 
+# The libraries are built in ../LegacyModuleMacros
+slicer_add_python_unittest(
+  SCRIPT ${Slicer_SOURCE_DIR}/Base/Python/slicer/tests/test_slicer_legacy_module_macros.py
+  SLICER_ARGS --no-main-window --disable-modules
+  TESTNAME_PREFIX nomainwindow_
+  )
+
 # Test multi-shell DWI I/O
 slicer_add_python_test(
   SCRIPT DWMRIMultishellIOTests.py

@@ -140,6 +140,15 @@ function(slicer_vtk_module_build)
     endif()
     # Provide legacy CMake variables removed in the transition.
     _slicer_define_compatibility_variable_for_module("${module}" "${lib_name}")
+    # The hierarchy file of the module's wrapping, where the legacy wrapping macro
+    # (vtkMacroKitPythonWrap, used by extensions) looks for the hierarchy files of the libraries a
+    # library depends on. Without it, an extension's classes derived from Slicer's are wrapped without
+    # knowing their base classes.
+    _vtk_module_get_module_property("${module}" PROPERTY "hierarchy" VARIABLE hierarchy_file)
+    if(hierarchy_file)
+      set(${lib_name}_WRAP_HIERARCHY_FILE "${hierarchy_file}" CACHE INTERNAL "${lib_name} wrap hierarchy file" FORCE)
+      set_property(GLOBAL APPEND PROPERTY SLICER_WRAP_HIERARCHY_TARGETS ${lib_name})
+    endif()
   endforeach()
 
   # For each modules, creates a compatibility python module in the legacy location

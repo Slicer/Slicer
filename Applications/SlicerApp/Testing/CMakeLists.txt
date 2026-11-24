@@ -1,4 +1,6 @@
 add_subdirectory(Cpp)
 if(Slicer_USE_PYTHONQT)
+  # Module libraries built as extensions build theirs (test_slicer_legacy_module_macros.py)
+  add_subdirectory(LegacyModuleMacros)
   add_subdirectory(Python)
 endif()
