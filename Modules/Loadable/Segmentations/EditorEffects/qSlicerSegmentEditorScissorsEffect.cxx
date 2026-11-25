@@ -52,7 +52,6 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper2D.h>
-#include <vtkPolyDataNormals.h>
 #include <vtkPolyDataToImageStencil.h>
 #include <vtkProperty2D.h>
 #include <vtkRenderer.h>
@@ -216,7 +215,6 @@ public:
 
   vtkSmartPointer<vtkPoints> PaintCoordinates_View;
 
-  vtkSmartPointer<vtkPolyDataNormals> BrushPolyDataNormals;
   vtkSmartPointer<vtkTransformPolyDataFilter> WorldToModifierLabelmapIjkTransformer;
   // transforms from polydata source to modifierLabelmap's IJK coordinate system (brush origin in IJK origin)
   vtkSmartPointer<vtkTransform> WorldToModifierLabelmapIjkTransform;
@@ -256,14 +254,9 @@ qSlicerSegmentEditorScissorsEffectPrivate::qSlicerSegmentEditorScissorsEffectPri
   this->CircleNumberOfPoints = 36;
   this->PaintCoordinates_View = vtkSmartPointer<vtkPoints>::New();
 
-  this->BrushPolyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
-  this->BrushPolyDataNormals->AutoOrientNormalsOn();
-  this->BrushPolyDataNormals->SplittingOff();
-
   this->WorldToModifierLabelmapIjkTransformer = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   this->WorldToModifierLabelmapIjkTransform = vtkSmartPointer<vtkTransform>::New();
   this->WorldToModifierLabelmapIjkTransformer->SetTransform(this->WorldToModifierLabelmapIjkTransform);
-  this->WorldToModifierLabelmapIjkTransformer->SetInputConnection(this->BrushPolyDataNormals->GetOutputPort());
   this->BrushPolyDataToStencil = vtkSmartPointer<vtkPolyDataToImageStencil>::New();
   this->BrushPolyDataToStencil->SetOutputSpacing(1.0, 1.0, 1.0);
   this->BrushPolyDataToStencil->SetInputConnection(this->WorldToModifierLabelmapIjkTransformer->GetOutputPort());
@@ -853,7 +846,7 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
     vtkNew<vtkAppendPolyData> append;
     append->AddInputData(closedSurfacePolyData.GetPointer());
     append->AddInputData(additionalBrushRegion);
-    this->BrushPolyDataNormals->SetInputConnection(append->GetOutputPort());
+    this->WorldToModifierLabelmapIjkTransformer->SetInputConnection(append->GetOutputPort());
 
     // TODO: temporary code, only for debugging
     // This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
@@ -862,7 +855,7 @@ bool qSlicerSegmentEditorScissorsEffectPrivate::updateBrushModel(qMRMLWidget* vi
   }
   else
   {
-    this->BrushPolyDataNormals->SetInputData(closedSurfacePolyData.GetPointer());
+    this->WorldToModifierLabelmapIjkTransformer->SetInputData(closedSurfacePolyData.GetPointer());
 
     // TODO: temporary code, only for debugging
     // This will be removed once investigation of https://github.com/Slicer/Slicer/issues/6705 is completed.
