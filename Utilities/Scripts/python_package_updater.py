@@ -123,7 +123,6 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
         else:
             desired_version = current_version
 
-        filenames = []
         hashes = []
         desired_version_files = data["releases"].get(desired_version, [])
         for release_file in desired_version_files:
@@ -136,7 +135,6 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
             if not filename.endswith(("py3-none-any.whl", "64.whl", "universal2.whl")):  # win_amd64.whl, aarch64.whl, x86_64.whl
                 continue  # Only want 64-bit wheels
             wheel_hash = release_file["digests"]["sha256"]
-            filenames.append(" " * indentation + f"#  - {filename}")
             hashes.append(f"--hash=sha256:{wheel_hash}")
         if not hashes:
             print(f"ERROR UPDATING '{package_name}': Unable to find latest version for specified python version." +
@@ -144,15 +142,7 @@ def update_external_project_python_packages(packages_to_update, directory, cpyth
             continue
         simple_package_version = " " * indentation + f"{package_name}=={desired_version} "
         hashes_joiner_text = " \\\n" + " " * len(simple_package_version)  # new line for each additional hash and with indentation to line up vertically
-        all_hashes = simple_package_version + hashes_joiner_text.join(hashes)
-
-        # Only include filenames if there are multiple wheels for a given package
-        if len(filenames) > 1:
-            filenames.insert(0, " " * indentation + "# Hashes correspond to the following packages:")
-            all_filenames = "\n".join(filenames)
-            text = all_filenames + "\n" + all_hashes
-        else:
-            text = all_hashes
+        text = simple_package_version + hashes_joiner_text.join(hashes)
 
         print(text)  # Show progress in terminal
         lines_to_write[package_name] = f"{text}\n"
