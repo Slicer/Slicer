@@ -16,19 +16,24 @@
 #include "vtkMRMLScene.h"
 
 // VTK includes
+#include <vtkMath.h>
 #include <vtkNew.h>
+#include <vtkPointLocator.h>
 #include <vtkPoints.h>
+#include <vtkPolyData.h>
 
 // STD includes
 #include <iostream>
 
 //----------------------------------------------------------------------------
 int TestGetClosestPointPositionAlongCurveWorld();
+int TestGetClosestPointPositionAlongCurveWithLocator();
 
 //----------------------------------------------------------------------------
 int vtkMRMLMarkupsCurveNodeTest1(int, char*[])
 {
   CHECK_EXIT_SUCCESS(TestGetClosestPointPositionAlongCurveWorld());
+  CHECK_EXIT_SUCCESS(TestGetClosestPointPositionAlongCurveWithLocator());
   return EXIT_SUCCESS;
 }
 
@@ -71,6 +76,43 @@ int TestGetClosestPointPositionAlongCurveWorld()
       CHECK_DOUBLE_TOLERANCE(closestPosPrefilled[i], curvePoint[i], 1e-6);
       CHECK_DOUBLE_TOLERANCE(closestPosNoLocator[i], curvePoint[i], 1e-6);
     }
+  }
+
+  return EXIT_SUCCESS;
+}
+
+//----------------------------------------------------------------------------
+int TestGetClosestPointPositionAlongCurveWithLocator()
+{
+  // Polyline passing near the origin, with the closest curve point far from the input position.
+  vtkNew<vtkPoints> points;
+  points->InsertNextPoint(-10.0, 1.0, 0.0);
+  points->InsertNextPoint(10.0, 1.0, 0.0);
+  points->InsertNextPoint(30.0, 1.0, 0.0);
+  vtkNew<vtkPolyData> polyData;
+  polyData->SetPoints(points);
+  vtkNew<vtkPointLocator> pointLocator;
+  pointLocator->SetDataSet(polyData);
+  pointLocator->BuildLocator();
+
+  // The closest position is on the first line segment, between curve points 0 and 1.
+  // The output buffer is zero-initialized, as in vtkSlicerCurveWidget. Before the fix,
+  // the distance to the closest curve point was computed from this buffer (0.25 instead
+  // of about 91.25), so the closer position on the line segment was rejected and
+  // curve point 1 (9.55 away) was returned instead.
+  const double pos[3] = { 0.5, 0.0, 0.0 };
+  const double expectedClosestPos[3] = { 0.5, 1.0, 0.0 };
+
+  double closestPosWithLocator[3] = { 0.0, 0.0, 0.0 };
+  CHECK_INT(vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(points, pos, closestPosWithLocator, pointLocator), 0);
+
+  double closestPosWithoutLocator[3] = { 0.0, 0.0, 0.0 };
+  CHECK_INT(vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(points, pos, closestPosWithoutLocator), 0);
+
+  for (int i = 0; i < 3; ++i)
+  {
+    CHECK_DOUBLE_TOLERANCE(closestPosWithLocator[i], expectedClosestPos[i], 1e-6);
+    CHECK_DOUBLE_TOLERANCE(closestPosWithoutLocator[i], expectedClosestPos[i], 1e-6);
   }
 
   return EXIT_SUCCESS;
