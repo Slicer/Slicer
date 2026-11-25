@@ -1,7 +1,7 @@
   # [simpleitk]
-  simpleitk==2.5.5 --hash=sha256:e831d15f5ea5b0e02ed3a6ac5f2dd34ba0a0eeaa4ebacfb1d970999836b19ee0 \
-                   --hash=sha256:ee87416622cec6ed6b96747a0648c82c6e88f10b6553668ce90736f09ab5a994 \
-                   --hash=sha256:847f42057d7bf01b5721b107dd3e00d4ee8d514f6f1ff85794ffedacaf4afc53 \
-                   --hash=sha256:8ace5e392be00d5bec28c87ef1d73016f8ebe671dafffe9e9d045f20b0968033 \
-                   --hash=sha256:a5fcfcfe9242d3d509b254b3213ca0f5db2c15903f2fc375d9ac5d38e57d415d
+  simpleitk==2.5.8 --hash=sha256:73d6dc23a1489d9eba383849dc6dfa7685162ca6f63cb48fb5f76485ddbd8ca1 \
+                   --hash=sha256:87d3f09c4da6fd0cd99609a2a00844d8d2b57b3c1514adb6c1a0300bfb0fa744 \
+                   --hash=sha256:4e04eaa8d910d9f2374767635c3571f3b0f9732c413110fffa81efc5f9d738a5 \
+                   --hash=sha256:4c6e27e172daf8c4075b62c01c1b25e0fc69ef35a3453f23db031ab321a20cef \
+                   --hash=sha256:7b439436a05e16c032812e11bad31215cd84fc7957ad20ad66f056f069683c9f
   # [/simpleitk]

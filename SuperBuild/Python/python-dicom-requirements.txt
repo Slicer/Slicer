@@ -93,17 +93,20 @@
   retrying==1.4.2 --hash=sha256:bbc004aeb542a74f3569aeddf42a2516efefcdaff90df0eb38fbfbf19f179f59
   # [/retrying]
   # [dicomweb-client]
-  dicomweb-client==0.61.0 --hash=sha256:dc3385f5dbbeb167c521d04a70eac8bf219c4302c14574af05b5bc577a7e22c5
+  dicomweb-client==0.61.2 --hash=sha256:3bc436065c8c5df78b7af50fd760172ebf1fc708c8a53cf02cc56b1e95a673fe
   # [/dicomweb-client]
   # [dcmqi]
-  dcmqi==0.4.0 --hash=sha256:2138fc78e79c28449348572eb7ff0483f98f6a71c821814ca3cf28e3357ad848 \
-               --hash=sha256:60f6a9e4d4828c5399e932f44b500e4619becbe27dd4e4574cc94a802cbdcd00 \
-               --hash=sha256:1721bf1308fa416b00d3f9895c99b2376524a9982a408f15cf281ceef159df5b \
-               --hash=sha256:c3cc2c32f196e96017e08b27550c4b05ac84fde411ef743f882eb8e00ab5709a
+  dcmqi==1.5.7 --hash=sha256:b98385eddf4c99e02c84b52554210344df487a1193a7ca7899f4a6e0711b2a9e \
+               --hash=sha256:8de88257494cac086efdf54b68cef87ef73ac0c608fe7f6125ea4e90f8ffe64f \
+               --hash=sha256:587c896658f08ef0acb83e5a4a05e0b336f4c4dd6f24651ca976d6c4c5c697d9 \
+               --hash=sha256:663fe0c496e34e266faa7231da3f30ad0ab2cfa5a81613bf4e5d346b9c65f7da \
+               --hash=sha256:b104aad7721b01529ab682be3b44487ac2d51750b18b9d9bdc86eadc6ece8735
   # [/dcmqi]
+  # [packaging]
+  packaging==26.4 --hash=sha256:81383611a09c1bc0b08b76e0fd5829d7c6824c65b27a6aee339da133f4233ea2
+  # [/packaging]
   # [highdicom]
-  # Pure-Python package for creating/reading complex DICOM objects (SR, SEG, PM, etc.)
-  highdicom==0.27.0 --hash=sha256:90a14ef75f67b7df2c3fd83df9c0bddd787dfdfab2b08c8c68828207389aed3f
+  highdicom==0.29.0 --hash=sha256:67c9dd217b75c122518b5995e1dcbb537386181d5538a399be4422c173ed0c28
   # [/highdicom]
   # [pyjpegls]
   # JPEG-LS codec used by highdicom for DICOM image compression.
