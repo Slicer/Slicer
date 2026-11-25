@@ -21,6 +21,7 @@
 // Qt includes
 #include <QDebug>
 #include <QMainWindow>
+#include <QPushButton>
 
 // CTK includes
 #include "ctkMessageBox.h"
@@ -67,22 +68,23 @@ bool qSlicerWebPythonProxyPrivate::isPythonEvaluationAllowed()
   }
 
   ctkMessageBox* confirmationBox = new ctkMessageBox(qSlicerApplication::application()->mainWindow());
-  confirmationBox->setAttribute(Qt::WA_DeleteOnClose);
   confirmationBox->setWindowTitle(qSlicerWebPythonProxy::tr("Allow Python execution?"));
   confirmationBox->setText(qSlicerWebPythonProxy::tr("Allow the web page to execute code using Slicer's python?"));
 
-  confirmationBox->addButton(qSlicerWebPythonProxy::tr("Allow"), QMessageBox::AcceptRole);
+  QPushButton* allowButton = confirmationBox->addButton(qSlicerWebPythonProxy::tr("Allow"), QMessageBox::AcceptRole);
   confirmationBox->addButton(qSlicerWebPythonProxy::tr("Reject"), QMessageBox::RejectRole);
 
   confirmationBox->setDontShowAgainVisible(true);
   confirmationBox->setDontShowAgainSettingsKey("WebEngine/AllowPythonExecution");
   confirmationBox->setIcon(QMessageBox::Question);
-  int resultCode = confirmationBox->exec();
+  // The return value of exec() cannot be used, because custom buttons are used
+  confirmationBox->exec();
 
-  if (resultCode == QMessageBox::AcceptRole)
+  if (confirmationBox->clickedButton() == allowButton)
   {
     this->PythonEvaluationAllowed = true;
   }
+  confirmationBox->deleteLater();
 #endif
   return this->PythonEvaluationAllowed;
 }

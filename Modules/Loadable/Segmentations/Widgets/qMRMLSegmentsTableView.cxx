@@ -72,6 +72,7 @@
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QMouseEvent>
+#include <QPushButton>
 #include <QSettings>
 #include <QStringList>
 #include <QTimer>
@@ -1534,11 +1535,13 @@ void qMRMLSegmentsTableView::clearSelectedSegments()
   }
 
   QMessageBox messageBox;
-  messageBox.addButton(tr("Clear"), QMessageBox::ButtonRole::AcceptRole);
+  QPushButton* clearButton = messageBox.addButton(tr("Clear"), QMessageBox::ButtonRole::AcceptRole);
   QPushButton* cancelButton = messageBox.addButton(tr("Cancel"), QMessageBox::ButtonRole::RejectRole);
   messageBox.setDefaultButton(cancelButton);
   messageBox.setText(tr("Are you sure you want to clear the contents of the selected segments?"));
-  if (messageBox.exec() == QMessageBox::ButtonRole::RejectRole)
+  // The return value of exec() cannot be used, because custom buttons are used
+  messageBox.exec();
+  if (messageBox.clickedButton() != clearButton)
   {
     return;
   }
