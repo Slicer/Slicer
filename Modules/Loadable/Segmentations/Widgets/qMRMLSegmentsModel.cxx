@@ -869,21 +869,46 @@ void qMRMLSegmentsModel::reorderItems()
     return;
   }
 
-  this->layoutAboutToBeChanged();
+  // Store the new segment index of each row in IndexRole. Rows of segments that
+  // are not in the segmentation are kept at the end, in their current order.
+  const int numberOfSegments = segmentation->GetNumberOfSegments();
+  bool orderChanged = false;
   bool wasBlocking = this->blockSignals(true);
-  for (int i = 0; i < segmentation->GetNumberOfSegments(); ++i)
+  for (int row = 0; row < this->rowCount(); ++row)
   {
-    std::string segmentID = segmentation->GetNthSegmentID(i);
-    QModelIndex index = this->indexFromSegmentID(segmentID.c_str());
-    if (index.row() == i)
+    QString segmentID = this->segmentIDFromIndex(this->index(row, 0));
+    int segmentIndex = segmentation->GetSegmentIndex(segmentID.toStdString());
+    if (segmentIndex < 0)
     {
-      continue;
+      segmentIndex = numberOfSegments + row;
     }
-    QList<QStandardItem*> items = this->takeRow(index.row());
-    this->insertRow(i, items);
+    if (segmentIndex != row)
+    {
+      orderChanged = true;
+    }
+    for (int column = 0; column < this->columnCount(); ++column)
+    {
+      QStandardItem* item = this->item(row, column);
+      if (item)
+      {
+        item->setData(segmentIndex, IndexRole);
+      }
+    }
   }
   this->blockSignals(wasBlocking);
-  this->layoutChanged();
+  if (!orderChanged)
+  {
+    return;
+  }
+
+  // Move the rows by sorting them by segment index. Unlike removing and inserting
+  // rows (takeRow/insertRow), sorting moves persistent model indexes along with
+  // their rows, so selection and index widgets (visibility, color and status
+  // buttons of qMRMLSegmentsTableView) remain associated with their segment.
+  const int previousSortRole = this->sortRole();
+  this->setSortRole(IndexRole);
+  this->sort(0, Qt::AscendingOrder);
+  this->setSortRole(previousSortRole);
 }
 
 //------------------------------------------------------------------------------

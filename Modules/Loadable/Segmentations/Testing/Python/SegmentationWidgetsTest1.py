@@ -126,6 +126,39 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
         self.inputSegmentationNode.SetSegmentListFilterEnabled(False)
         self.inputSegmentationNode.SetSegmentListFilterOptions("")
 
+        # Reordering segments must keep the visibility, color and status buttons of every row
+        # associated with their segment (see issue #9540)
+        slicer.app.processEvents()
+        tableWidget = segmentsTableView.tableWidget()
+        tableModel = tableWidget.model()
+
+        def indexWidgetsPerSegment():
+            widgets = {}
+            for row in range(tableModel.rowCount()):
+                segmentID = segmentsTableView.displayedSegmentIDs()[row]
+                widgets[segmentID] = [
+                    tableWidget.indexWidget(tableModel.index(row, column))
+                    for column in range(tableModel.columnCount())
+                    if tableWidget.indexWidget(tableModel.index(row, column)) is not None
+                ]
+            return widgets
+
+        widgetsBeforeReorder = indexWidgetsPerSegment()
+        self.assertEqual(sorted(widgetsBeforeReorder.keys()), sorted([firstSegmentID, secondSegmentID, thirdSegmentID]))
+        self.assertTrue(all(len(widgets) > 0 for widgets in widgetsBeforeReorder.values()))
+
+        # Move the first segment to the end
+        self.inputSegmentationNode.GetSegmentation().SetSegmentIndex(firstSegmentID, 2)
+        slicer.app.processEvents()
+        self.assertEqual(list(segmentsTableView.displayedSegmentIDs()), [secondSegmentID, thirdSegmentID, firstSegmentID])
+        self.assertEqual(indexWidgetsPerSegment(), widgetsBeforeReorder)
+
+        # Move it back to the beginning
+        self.inputSegmentationNode.GetSegmentation().SetSegmentIndex(firstSegmentID, 0)
+        slicer.app.processEvents()
+        self.assertEqual(list(segmentsTableView.displayedSegmentIDs()), [firstSegmentID, secondSegmentID, thirdSegmentID])
+        self.assertEqual(indexWidgetsPerSegment(), widgetsBeforeReorder)
+
     # ------------------------------------------------------------------------------
     def compareOutputGeometry(self, orientedImageData, spacing, origin, directions):
         if orientedImageData is None:
