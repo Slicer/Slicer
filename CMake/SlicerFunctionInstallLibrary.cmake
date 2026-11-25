@@ -214,3 +214,70 @@ endforeach()
     endif()
   endif()
 endfunction()
+
+
+#
+# slicerRemoveInstalledLibraryRPath(
+#   FILES files...
+#   COMPONENT <component>
+#   )
+#
+#
+# Remove the RPATH/RUNPATH entry from ELF libraries or executables after they
+# are installed.
+#
+# Files copied from a build tree using install(FILES|PROGRAMS|DIRECTORY) keep
+# the RPATH/RUNPATH set by the linker, which references the build tree. Unlike
+# install(TARGETS), these signatures do not rewrite it, which leaks build machine
+# paths into the package.
+#
+#
+#  FILES ......: Relative paths to the libraries or executables in the install tree.
+#
+#  COMPONENT ..: Usually Runtime or RuntimeLibraries
+#
+# Notes:
+# * Calling this function on Apple or Windows has no effect.
+#
+
+function(slicerRemoveInstalledLibraryRPath)
+  set(options
+    )
+  set(oneValueArgs
+    COMPONENT
+    )
+  set(multiValueArgs
+    FILES
+    )
+  cmake_parse_arguments(_slicerRemoveInstalledLibraryRPath
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN}
+    )
+  if(_slicerRemoveInstalledLibraryRPath_UNPARSED_ARGUMENTS)
+    message(FATAL_ERROR "Unknown keywords given to slicerRemoveInstalledLibraryRPath(): \"${_slicerRemoveInstalledLibraryRPath_UNPARSED_ARGUMENTS}\"")
+  endif()
+
+  # Sanity checks
+  set(expected_defined_vars
+    FILES
+    COMPONENT
+    )
+  foreach(var ${expected_defined_vars})
+    if(NOT DEFINED _slicerRemoveInstalledLibraryRPath_${var})
+      message(FATAL_ERROR "${var} is mandatory")
+    endif()
+  endforeach()
+
+  if(UNIX AND NOT APPLE)
+    set(dollar "$")
+    foreach(file IN LISTS _slicerRemoveInstalledLibraryRPath_FILES)
+      install(
+        CODE "message(STATUS \"Removing RPATH: ${dollar}ENV{DESTDIR}${dollar}{CMAKE_INSTALL_PREFIX}/${file}\")
+  file(RPATH_REMOVE FILE \"${dollar}ENV{DESTDIR}${dollar}{CMAKE_INSTALL_PREFIX}/${file}\")"
+        COMPONENT ${_slicerRemoveInstalledLibraryRPath_COMPONENT}
+        )
+    endforeach()
+  endif()
+endfunction()

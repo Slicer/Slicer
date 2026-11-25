@@ -16,6 +16,12 @@ foreach(dcmtk_App ${DCMTK_Apps})
     FILES "${Slicer_INSTALL_BIN_DIR}/${dcmtk_App}"
     COMPONENT Runtime
     )
+  # Executables are copied from the DCMTK build tree, remove the RUNPATH
+  # referencing it (see #9351).
+  slicerRemoveInstalledLibraryRPath(
+    FILES "${Slicer_INSTALL_BIN_DIR}/${dcmtk_App}"
+    COMPONENT Runtime
+    )
   if(APPLE)
     # Fixes Slicer issue #3827
     set(dollar "$")
