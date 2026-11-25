@@ -38,6 +38,7 @@ create_test_sourcelist(Tests ${KIT}CxxTests.cxx
   vtkMRMLLayoutNodeTest1.cxx
   vtkMRMLLinearTransformNodeEventsTest.cxx
   vtkMRMLLinearTransformNodeTest1.cxx
+  vtkMRMLMarkupsCurveNodeTest1.cxx
   vtkMRMLMarkupsPlaneDisplayNodeTest1.cxx
   vtkMRMLModelDisplayNodeTest1.cxx
   vtkMRMLModelHierarchyNodeTest1.cxx
@@ -164,6 +165,7 @@ simple_test( vtkMRMLJsonWriterTest1 )
 simple_test( vtkMRMLLabelMapVolumeDisplayNodeTest1 )
 simple_test( vtkMRMLLayoutNodeTest1 )
 simple_test( vtkMRMLLinearTransformNodeTest1 )
+simple_test( vtkMRMLMarkupsCurveNodeTest1 )
 simple_test( vtkMRMLMarkupsPlaneDisplayNodeTest1 )
 simple_test( vtkMRMLModelDisplayNodeTest1 )
 simple_test( vtkMRMLModelHierarchyNodeTest1 )
