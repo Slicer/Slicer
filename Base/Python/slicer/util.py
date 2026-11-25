@@ -2510,7 +2510,6 @@ def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, re
       Voxels values are deep-copied, therefore if the numpy array is modified after calling this method, segmentation node will not change.
     """
 
-    # Export segment as vtkImageData (via temporary labelmap volume node)
     import slicer
     import vtk
 
@@ -2520,9 +2519,14 @@ def updateSegmentBinaryLabelmapFromArray(narray, segmentationNode, segmentId, re
         if not referenceVolumeNode:
             raise RuntimeError("No reference volume is found in the input segmentationNode, therefore a valid referenceVolumeNode input is required.")
 
-    # Update segment in segmentation
-    labelmapVolumeNode = slicer.modules.volumes.logic().CreateAndAddLabelVolume(referenceVolumeNode, "__temp__")
+    # The array supplies all voxels, so only copy geometry from the reference volume.
+    labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLabelMapVolumeNode", "__temp__")
     try:
+        ijkToRasMatrix = vtk.vtkMatrix4x4()
+        referenceVolumeNode.GetIJKToRASMatrix(ijkToRasMatrix)
+        labelmapVolumeNode.SetIJKToRASMatrix(ijkToRasMatrix)
+        labelmapVolumeNode.SetAndObserveTransformNodeID(referenceVolumeNode.GetTransformNodeID())
+
         if narray.min() >= 0 and narray.max() <= 1:
             # input array seems to be valid, use it as is (faster)
             updateVolumeFromArray(labelmapVolumeNode, narray)
