@@ -3172,17 +3172,76 @@ def updateVolumeFromITKImage(volumeNode, itkImage, deepCopy=True):
 
 
 class VTKObservationMixin:
+    """Mixin class for adding and removing observers of VTK objects.
+
+    Observed VTK objects are only weakly referenced, therefore observing an object does not prevent it
+    from being deleted. Observations of deleted objects are automatically forgotten.
+
+    Observations are identified by the underlying VTK object (not the Python wrapper object), so an observer
+    can be removed even if no reference to the observed object was kept in Python.
+    """
+
     def __init__(self):
         super().__init__()
 
         self.__observations = {}
-        # {obj: {event: {method: (group, tag, priority)}}}
+        # {objectKey: (getObject, {event: {method: (group, tag, priority)}})}
+
+    @staticmethod
+    def __objectKey(obj):
+        """Return the key identifying an observed object.
+
+        For VTK objects, the key is the address of the VTK object, which is the same for all Python wrappers of
+        the object. Other objects are identified by the Python object.
+        """
+        objectKey = getattr(obj, "__this__", None)
+        return obj if objectKey is None else objectKey
+
+    @staticmethod
+    def __objectGetter(obj):
+        """Return a function that returns the observed object.
+
+        VTK objects are only weakly referenced: the function returns None after the object is deleted.
+        """
+        if getattr(obj, "__this__", None) is None:
+            return lambda: obj
+        import vtk
+
+        weakReference = vtk.vtkWeakReference()
+        weakReference.Set(obj)
+        return weakReference.Get
+
+    def __objectEvents(self, obj, create=False):
+        """Return the observed events of an object, or None if the object is not observed."""
+        objectKey = self.__objectKey(obj)
+        observation = self.__observations.get(objectKey)
+        if observation is not None and observation[0]() is None:
+            # The observed object has been deleted and a new object has been created at the same address
+            del self.__observations[objectKey]
+            observation = None
+        if observation is None:
+            if not create:
+                return None
+            observation = (self.__objectGetter(obj), {})
+            self.__observations[objectKey] = observation
+        return observation[1]
+
+    def __observedObjects(self):
+        """Return list of (object, events) of observed objects and forget observations of deleted objects."""
+        observedObjects = []
+        for objectKey, (getObject, events) in list(self.__observations.items()):
+            obj = getObject()
+            if obj is None:
+                del self.__observations[objectKey]
+                continue
+            observedObjects.append((obj, events))
+        return observedObjects
 
     @property
     def Observations(self):
         return [
             (obj, event, method, group, tag, priority)
-            for obj, events in self.__observations.items()
+            for obj, events in self.__observedObjects()
             for event, methods in events.items()
             for method, (group, tag, priority) in methods.items()
         ]
@@ -3193,7 +3252,7 @@ class VTKObservationMixin:
                 obj.RemoveObserver(tag)
             self.__observations.clear()
         else:
-            for obj, events in self.__observations.items():
+            for obj, events in self.__observedObjects():
                 for e, methods in events.items():
                     if method in methods:
                         _g, t, _p = methods.pop(method)
@@ -3202,7 +3261,7 @@ class VTKObservationMixin:
     def addObserver(self, obj, event, method, group="none", priority=0.0):
         from warnings import warn
 
-        events = self.__observations.setdefault(obj, {})
+        events = self.__objectEvents(obj, create=True)
         methods = events.setdefault(event, {})
 
         if method in methods:
@@ -3215,8 +3274,10 @@ class VTKObservationMixin:
     def removeObserver(self, obj, event, method):
         from warnings import warn
 
+        events = self.__objectEvents(obj)
         try:
-            events = self.__observations[obj]
+            if events is None:
+                raise KeyError(obj)
             methods = events[event]
             _group, tag, _priority = methods.pop(method)
             obj.RemoveObserver(tag)
@@ -3224,8 +3285,10 @@ class VTKObservationMixin:
             warn("does not have observer")
 
     def getObserver(self, obj, event, method, default=None):
+        events = self.__objectEvents(obj)
+        if events is None:
+            return default
         try:
-            events = self.__observations[obj]
             methods = events[event]
             group, tag, priority = methods[method]
             return group, tag, priority
@@ -3236,7 +3299,7 @@ class VTKObservationMixin:
         return self.getObserver(obj, event, method) is not None
 
     def observer(self, event, method, default=None):
-        for obj, events in self.__observations.items():
+        for obj, events in self.__observedObjects():
             if self.hasObserver(obj, event, method):
                 return obj
 
