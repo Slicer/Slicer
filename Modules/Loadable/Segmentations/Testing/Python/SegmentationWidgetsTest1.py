@@ -27,6 +27,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
         self.TestSection_02_qMRMLSegmentsTableView()
         self.TestSection_03_qMRMLSegmentationGeometryWidget()
         self.TestSection_04_qMRMLSegmentEditorWidget()
+        self.TestSection_05_qMRMLSegmentsTableViewScrollToSelection()
 
         logging.info("Test finished")
 
@@ -428,3 +429,33 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
         segmentEditorWidget.selectNextSegment()
         self.assertEqual(self.segmentEditorNode.GetSelectedSegmentID(), firstSegmentID)
         slicer.util.delayDisplay("Wrap around segments")
+
+    # ------------------------------------------------------------------------------
+    def TestSection_05_qMRMLSegmentsTableViewScrollToSelection(self):
+        logging.info("Test section 5: qMRMLSegmentsTableView scroll to selection")
+
+        # Selecting a segment that is not visible in the table must scroll the table to show it (see issue #9562)
+        manySegmentsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
+        manySegmentsNode.CreateDefaultDisplayNodes()
+        for segmentIndex in range(40):
+            manySegmentsNode.GetSegmentation().AddEmptySegment("", f"segment_{segmentIndex}")
+
+        segmentsTableView = slicer.qMRMLSegmentsTableView()
+        segmentsTableView.setMRMLScene(slicer.mrmlScene)
+        segmentsTableView.setSegmentationNode(manySegmentsNode)
+        tableWidget = segmentsTableView.tableWidget()
+        tableWidget.setFixedHeight(150)
+        segmentsTableView.show()
+        slicer.app.processEvents()
+
+        lastSegmentID = manySegmentsNode.GetSegmentation().GetNthSegmentID(39)
+        lastSegmentIndex = segmentsTableView.sortFilterProxyModel().indexFromSegmentID(lastSegmentID)
+        self.assertFalse(tableWidget.viewport().rect.contains(tableWidget.visualRect(lastSegmentIndex)))
+
+        segmentsTableView.setSelectedSegmentIDs([lastSegmentID])
+        slicer.app.processEvents()
+        self.assertTrue(tableWidget.viewport().rect.contains(tableWidget.visualRect(lastSegmentIndex)))
+        slicer.util.delayDisplay("Scrolled to selected segment")
+
+        segmentsTableView.setSegmentationNode(None)
+        slicer.mrmlScene.RemoveNode(manySegmentsNode)
