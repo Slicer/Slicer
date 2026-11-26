@@ -132,6 +132,7 @@ QString qSlicerSubjectHierarchyScriptedPlugin::pythonSource() const
 bool qSlicerSubjectHierarchyScriptedPlugin::setPythonSource(const QString filePath)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
 
   if (!Py_IsInitialized())
   {
@@ -234,6 +235,8 @@ void qSlicerSubjectHierarchyScriptedPlugin::setName(QString name)
 double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(vtkIdType itemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->CanOwnSubjectHierarchyItemMethod, arguments);
@@ -258,6 +261,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canOwnSubjectHierarchyItem(vtkIdTy
 const QString qSlicerSubjectHierarchyScriptedPlugin::roleForPlugin() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* result = d->PythonCppAPI.callMethod(d->RoleForPluginMethod);
   if (!result)
   {
@@ -280,6 +285,8 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::roleForPlugin() const
 const QString qSlicerSubjectHierarchyScriptedPlugin::helpText() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* result = d->PythonCppAPI.callMethod(d->HelpTextMethod);
   if (!result)
   {
@@ -302,6 +309,8 @@ const QString qSlicerSubjectHierarchyScriptedPlugin::helpText() const
 QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(vtkIdType itemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->IconMethod, arguments);
@@ -325,6 +334,7 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::icon(vtkIdType itemID)
 QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLong(visible));
   PyObject* result = d->PythonCppAPI.callMethod(d->VisibilityIconMethod, arguments);
@@ -348,6 +358,8 @@ QIcon qSlicerSubjectHierarchyScriptedPlugin::visibilityIcon(int visible)
 void qSlicerSubjectHierarchyScriptedPlugin::editProperties(vtkIdType itemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->EditPropertiesMethod, arguments);
@@ -363,6 +375,8 @@ void qSlicerSubjectHierarchyScriptedPlugin::editProperties(vtkIdType itemID)
 QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* result = d->PythonCppAPI.callMethod(d->ItemContextMenuActionsMethod);
   if (!result)
   {
@@ -390,6 +404,8 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::itemContextMenuActions() 
 QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* result = d->PythonCppAPI.callMethod(d->ViewContextMenuActionsMethod);
   if (!result)
   {
@@ -417,6 +433,8 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::viewContextMenuActions() 
 QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions() const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* result = d->PythonCppAPI.callMethod(d->SceneContextMenuActionsMethod);
   if (!result)
   {
@@ -444,6 +462,8 @@ QList<QAction*> qSlicerSubjectHierarchyScriptedPlugin::sceneContextMenuActions()
 void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(vtkIdType itemID)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->ShowContextMenuActionsForItemMethod, arguments);
@@ -459,6 +479,8 @@ void qSlicerSubjectHierarchyScriptedPlugin::showContextMenuActionsForItem(vtkIdT
 void qSlicerSubjectHierarchyScriptedPlugin::showViewContextMenuActionsForItem(vtkIdType itemID, QVariantMap eventData)
 {
   Q_D(qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PythonQtConv::QVariantMapToPyObject(eventData));
@@ -475,6 +497,8 @@ void qSlicerSubjectHierarchyScriptedPlugin::showViewContextMenuActionsForItem(vt
 double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(vtkMRMLNode* node, vtkIdType parentItemID /*=vtkMRMLSubjectHierarchyNode::INVALID_ITEM_ID*/) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, vtkPythonUtil::GetObjectFromPointer(node));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
@@ -500,6 +524,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canAddNodeToSubjectHierarchy(vtkMR
 double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
@@ -525,6 +551,8 @@ double qSlicerSubjectHierarchyScriptedPlugin::canReparentItemInsideSubjectHierar
 bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(vtkIdType itemID, vtkIdType parentItemID)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLongLong(parentItemID));
@@ -550,6 +578,8 @@ bool qSlicerSubjectHierarchyScriptedPlugin::reparentItemInsideSubjectHierarchy(v
 QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(vtkIdType itemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->DisplayedItemNameMethod, arguments);
@@ -574,6 +604,8 @@ QString qSlicerSubjectHierarchyScriptedPlugin::displayedItemName(vtkIdType itemI
 QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkIdType itemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->TooltipMethod, arguments);
@@ -598,6 +630,8 @@ QString qSlicerSubjectHierarchyScriptedPlugin::tooltip(vtkIdType itemID) const
 void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(vtkIdType itemID, int visible)
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(2);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyTuple_SET_ITEM(arguments, 1, PyLong_FromLong(visible));
@@ -614,6 +648,8 @@ void qSlicerSubjectHierarchyScriptedPlugin::setDisplayVisibility(vtkIdType itemI
 int qSlicerSubjectHierarchyScriptedPlugin::getDisplayVisibility(vtkIdType itemID) const
 {
   Q_D(const qSlicerSubjectHierarchyScriptedPlugin);
+  PYTHONQT_GIL_SCOPE;
+
   PyObject* arguments = PyTuple_New(1);
   PyTuple_SET_ITEM(arguments, 0, PyLong_FromLongLong(itemID));
   PyObject* result = d->PythonCppAPI.callMethod(d->GetDisplayVisibilityMethod, arguments);
