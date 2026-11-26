@@ -293,8 +293,7 @@ RUN curl -fsSL https://download.slicer.org/install.sh \
 
 ## Helper scripts
 
-The scripts the installer leaves in Slicer's `bin` folder read some of the same
-variables:
+The helper scripts in Slicer's `bin` folder read some of the same variables:
 
 | Script | `SLICER_QUIET` | `NO_COLOR` | `SLICER_NONINTERACTIVE` |
 | ------ | -------------- | ---------- | ----------------------- |
