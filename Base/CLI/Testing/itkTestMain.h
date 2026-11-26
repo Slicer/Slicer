@@ -135,9 +135,11 @@ int main(int ac, char* av[])
   // for the affected tests rather than chase benign exceptions into third-party
   // numerics.
   //
-  // The opt-out is currently scoped to macOS (if(APPLE) in the test
-  // CMakeLists.txt), so Linux and Windows keep real FE_INVALID/FE_DIVBYZERO
-  // coverage for these tests.
+  // The opt-out is scoped per test and platform in the test CMakeLists.txt
+  // (macOS for ModelMaker; macOS and Windows for MergeModels, where a
+  // transient FE_INVALID inside vtkCommon aborts the test with
+  // STATUS_FLOAT_INVALID_OPERATION), so other platforms keep real
+  // FE_INVALID/FE_DIVBYZERO coverage for these tests.
   // ---------------------------------------------------------------------------
 #ifndef SLICER_CLI_TEST_DISABLE_FLOATING_POINT_EXCEPTIONS
   itk::FloatingPointExceptions::Enable();
