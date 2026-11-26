@@ -1495,11 +1495,7 @@ void qMRMLSegmentEditorWidget::onAddSegment()
   std::string newSegmentID = d->Logic->AddEmptySegment(d->SegmentsTableView->textFilter().toStdString(), status);
   if (!newSegmentID.empty())
   {
-    QModelIndex index = d->SegmentsTableView->sortFilterProxyModel()->indexFromSegmentID(QString::fromStdString(newSegmentID));
-    if (index.isValid())
-    {
-      d->SegmentsTableView->tableWidget()->scrollTo(index);
-    }
+    d->SegmentsTableView->scrollToSegment(QString::fromStdString(newSegmentID));
   }
 }
 
@@ -2877,6 +2873,7 @@ void qMRMLSegmentEditorWidget::selectSegmentAtOffset(int offset)
     }
   }
   this->setCurrentSegmentID(selectedSegmentID.toStdString().c_str());
+  d->SegmentsTableView->scrollToSegment(selectedSegmentID);
 }
 
 //---------------------------------------------------------------------------

@@ -1088,7 +1088,6 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
   }
 
   bool validSelection = false;
-  QModelIndex firstSelectedIndex;
   MRMLNodeModifyBlocker blocker(d->SegmentationNode);
   // First segment selection should also clear other selections
   QItemSelectionModel::SelectionFlag itemSelectionFlag = QItemSelectionModel::ClearAndSelect;
@@ -1098,10 +1097,6 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
     if (!index.isValid())
     {
       continue;
-    }
-    if (!validSelection)
-    {
-      firstSelectedIndex = index;
     }
     validSelection = true;
     QItemSelectionModel::QItemSelectionModel::SelectionFlags flags = QFlags<QItemSelectionModel::SelectionFlag>();
@@ -1116,13 +1111,21 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
   {
     // The list of segment IDs was either empty, or all IDs were invalid.
     d->SegmentsTable->selectionModel()->clearSelection();
+  }
+}
+
+//-----------------------------------------------------------------------------
+void qMRMLSegmentsTableView::scrollToSegment(const QString& segmentID)
+{
+  Q_D(qMRMLSegmentsTableView);
+  QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
+  if (!index.isValid())
+  {
+    // Segment is not in the table (for example, filtered out)
     return;
   }
-
-  // Make sure the selected segment is visible, even if it was selected
-  // from outside the table (keyboard shortcut, Python, other module).
-  // The table is not scrolled if the segment is already visible.
-  d->SegmentsTable->scrollTo(firstSelectedIndex);
+  // The table is not scrolled if the segment is already visible
+  d->SegmentsTable->scrollTo(index);
 }
 
 //-----------------------------------------------------------------------------

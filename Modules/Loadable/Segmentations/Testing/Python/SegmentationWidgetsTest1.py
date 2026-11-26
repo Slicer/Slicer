@@ -434,7 +434,7 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
     def TestSection_05_qMRMLSegmentsTableViewScrollToSelection(self):
         logging.info("Test section 5: qMRMLSegmentsTableView scroll to selection")
 
-        # Selecting a segment that is not visible in the table must scroll the table to show it (see issue #9562)
+        # Selecting a segment must not scroll the table, but scrollToSegment() must make it visible (see issue #9562)
         manySegmentsNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
         manySegmentsNode.CreateDefaultDisplayNodes()
         for segmentIndex in range(40):
@@ -453,6 +453,10 @@ class SegmentationWidgetsTest1(ScriptedLoadableModuleTest):
         self.assertFalse(tableWidget.viewport().rect.contains(tableWidget.visualRect(lastSegmentIndex)))
 
         segmentsTableView.setSelectedSegmentIDs([lastSegmentID])
+        slicer.app.processEvents()
+        self.assertFalse(tableWidget.viewport().rect.contains(tableWidget.visualRect(lastSegmentIndex)))
+
+        segmentsTableView.scrollToSegment(lastSegmentID)
         slicer.app.processEvents()
         self.assertTrue(tableWidget.viewport().rect.contains(tableWidget.visualRect(lastSegmentIndex)))
         slicer.util.delayDisplay("Scrolled to selected segment")
