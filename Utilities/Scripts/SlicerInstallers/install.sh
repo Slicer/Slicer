@@ -22,8 +22,10 @@
 #   <install>/bin/slicer-shortcuts   a desktop icon, and a pin on the dock
 #
 # Slicer packages built after those scripts were added upstream ship them
-# themselves; for every other package this installer writes its own copies, so
-# they are there either way. A package that already has them is left alone.
+# themselves; on Linux, for every other package this installer writes its own
+# copies, so they are there either way. A package that already has them is left
+# alone. On macOS an older package goes without them: Slicer.app is signed, and
+# adding a file to it makes macOS refuse to open the app.
 #
 # This never asks for root. Everything lands under $HOME: on Linux the system
 # libraries Slicer needs are left for you to install (or not) afterwards, with
@@ -88,7 +90,8 @@ C_BLUE='' C_YELLOW='' C_RED='' C_GREEN='' C_RESET=''
 DL_PKG=''
 
 # Set by install_linux()/install_macos() to the directory the optional helper
-# scripts live in inside the installation, so main() can point the user at them.
+# scripts live in inside the installation, so main() can point the user at them;
+# left empty when the installation has none.
 TOOLS_DIR=''
 
 # Set by resolve_package(): what the server says about the package to install.
@@ -1770,14 +1773,27 @@ SLICER_INNER_SCRIPT_EOF
 # copies, and those must win. Best-effort throughout; a read-only or otherwise
 # awkward installation directory is not a reason to fail an install that has
 # already succeeded.
+#
+# Except on macOS, where nothing is written: $1 is inside Slicer.app, whose code
+# signature seals every file in the bundle. One added file, even a shell script,
+# and Gatekeeper reports the app as damaged and refuses to open it. So there only
+# the copies the package ships are used, signed along with the rest of the
+# bundle, and a package that has none gets none.
 install_inner_tools() {
   TOOLS_DIR="$1"
+
+  if [ "$(uname -s)" = Darwin ]; then
+    for name in slicer-language slicer-shortcuts; do
+      [ ! -x "$TOOLS_DIR/$name" ] || return 0
+    done
+    TOOLS_DIR=''
+    return 0
+  fi
+
   mkdir -p "$TOOLS_DIR" 2>/dev/null || { TOOLS_DIR=''; return 0; }
 
   written=''
   for name in slicer-language slicer-deps slicer-shortcuts; do
-    # slicer-deps installs distribution packages; there is no such thing on macOS.
-    [ "$name" != slicer-deps ] || [ "$(uname -s)" = Linux ] || continue
     [ ! -e "$TOOLS_DIR/$name" ] || continue
 
     case "$name" in
@@ -2077,12 +2093,18 @@ main() {
   [ -n "$TOOLS_DIR" ] || return 0
   printf '\n'
   log "Optional tools in $TOOLS_DIR:"
-  if [ "$OS" = Linux ]; then
+  # Only the ones that are actually there: writing them is best-effort on Linux,
+  # and on macOS a package has only those it was built with.
+  if [ -x "$TOOLS_DIR/slicer-deps" ]; then
     log "  ${C_GREEN}slicer-deps${C_RESET}       run this if Slicer fails to start: it installs the"
     log "                    system libraries Slicer needs from your distribution"
   fi
-  log "  ${C_GREEN}slicer-language${C_RESET}   list or install Slicer's interface languages"
-  log "  ${C_GREEN}slicer-shortcuts${C_RESET}  add a desktop icon and pin Slicer to the dock"
+  if [ -x "$TOOLS_DIR/slicer-language" ]; then
+    log "  ${C_GREEN}slicer-language${C_RESET}   list or install Slicer's interface languages"
+  fi
+  if [ -x "$TOOLS_DIR/slicer-shortcuts" ]; then
+    log "  ${C_GREEN}slicer-shortcuts${C_RESET}  add a desktop icon and pin Slicer to the dock"
+  fi
 }
 
 main "$@"

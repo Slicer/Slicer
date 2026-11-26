@@ -62,6 +62,10 @@ deps/*.txt  ->  slicer-deps           ->  install.sh
   predates this directory. They write them out **only when the installed
   package does not already contain them**, so once these scripts ship in the
   package, the package's own copies win and the embedded ones are never used.
+  `install.sh` never writes them on macOS: they would go inside `Slicer.app`,
+  and any file added to the signed bundle breaks its signature, so Gatekeeper
+  reports the app as damaged and will not open it. An older macOS package goes
+  without them.
 
 So to change which system libraries Slicer needs, or an inner script: edit
 `deps/*.txt` or the script, run

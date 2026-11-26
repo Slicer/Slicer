@@ -200,7 +200,7 @@ powershell -c "irm https://download.slicer.org/install.ps1 | iex"
 - Windows: Slicer's regular installer runs silently, and installs into `%LOCALAPPDATA%\NA-MIC\Slicer <version>`.
 - If that version is already installed, the command asks whether to abort, reinstall it, install a second copy elsewhere, or uninstall it.
 
-When it finishes, the command prints the `bin` folder inside the installation, which holds a few optional helper scripts:
+When it finishes, the command prints the `bin` folder inside the installation, which holds a few optional helper scripts. On macOS that is `Slicer.app/Contents/bin`, and only packages built since November 2026 have them there: the installer does not add them to an older `Slicer.app`, since adding files to a signed app makes macOS refuse to open it.
 
 - `slicer-deps` (Linux): prints the command that installs the system libraries Slicer needs, and `slicer-deps --install` runs it, using `sudo`. Run it if Slicer does not start.
 - `slicer-language`: `slicer-language list` shows the available interface languages, and for example `slicer-language es-419` installs one and switches Slicer to it.
