@@ -208,7 +208,7 @@ void vtkITKGrowCut::ExecuteDataWithInformation(vtkDataObject* resultLabelVolumeD
   }
 
   vtkDataArray* seedScalars = seedLabelVolume ? seedLabelVolume->GetPointData()->GetScalars() : nullptr;
-  if (!intensityVolume)
+  if (!seedScalars)
   {
     vtkErrorMacro("Invalid seed image data");
     return;
