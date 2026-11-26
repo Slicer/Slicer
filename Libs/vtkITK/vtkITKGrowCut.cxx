@@ -224,11 +224,13 @@ void vtkITKGrowCut::ExecuteDataWithInformation(vtkDataObject* resultLabelVolumeD
       return;
     }
 
-    vtkArrayDispatch::Dispatch3::Execute(intensityScalars, seedScalars, maskScalars, worker, intensityVolume, seedLabelVolume, maskLabelVolume, resultLabelVolume, this);
+    vtkArrayDispatch::Dispatch3ByArray<vtkArrayDispatch::AOSArrays, vtkArrayDispatch::AOSArrays, vtkArrayDispatch::AOSArrays>::Execute(
+      intensityScalars, seedScalars, maskScalars, worker, intensityVolume, seedLabelVolume, maskLabelVolume, resultLabelVolume, this);
   }
   else
   {
-    vtkArrayDispatch::Dispatch2::Execute(intensityScalars, seedScalars, worker, intensityVolume, seedLabelVolume, resultLabelVolume, this);
+    vtkArrayDispatch::Dispatch2ByArray<vtkArrayDispatch::AOSArrays, vtkArrayDispatch::AOSArrays>::Execute(
+      intensityScalars, seedScalars, worker, intensityVolume, seedLabelVolume, resultLabelVolume, this);
   }
 }
 
