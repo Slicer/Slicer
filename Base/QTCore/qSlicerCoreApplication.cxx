@@ -112,6 +112,7 @@
 #include <vtkMRMLI18N.h>
 #include <vtkMRMLScene.h>
 #include <vtkMRMLTranslator.h>
+#include <vtkOutputWindow.h>
 
 // CTK includes
 #include <ctkUtils.h>
@@ -639,6 +640,8 @@ void qSlicerCoreApplicationPrivate::quickExit(int exitCode)
 #endif
   q->setMRMLScene(nullptr);
   q->qvtkDisconnectAll();
+  this->ErrorLogModel.clear();
+  vtkOutputWindow::SetInstance(nullptr);
 
   // XXX When supporting exclusively C++11, replace with std::quick_exit
 #ifdef Q_OS_WIN32
