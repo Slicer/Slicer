@@ -10,9 +10,19 @@ set(CPACK_SOURCE_TZ   OFF CACHE BOOL "Enable to build TZ source packages" FORCE)
 # Select generator
 # -------------------------------------------------------------------------
 if(UNIX)
-  set(CPACK_GENERATOR "TGZ")
   if(APPLE)
-    set(CPACK_GENERATOR "DragNDrop")
+    if(CPACK_GENERATOR STREQUAL "productbuild")
+      set(CPACK_PACKAGING_INSTALL_PREFIX "/Applications")
+      set(CPACK_PRODUCTBUILD_IDENTIFIER "${Slicer_MACOSX_BUNDLE_GUI_IDENTIFIER}")
+      set(CPACK_COMPONENT_PKG_DISPLAY_NAME "${Slicer_MAIN_PROJECT_APPLICATION_DISPLAY_NAME}")
+      set(CPACK_COMPONENT_PKG_REQUIRED ON)
+      set(_cpack_pkg_work_dir "${Slicer_BINARY_DIR}/CMake/SlicerCPackMacOSPkg")
+      set(CPACK_COMPONENT_PKG_PLIST "${_cpack_pkg_work_dir}/components.plist")
+      set(CPACK_PREFLIGHT_PKG_SCRIPT "${Slicer_CMAKE_DIR}/SlicerCPackMacOSPkg/Preinstall.sh")
+      set(CPACK_POSTFLIGHT_PKG_SCRIPT "${_cpack_pkg_work_dir}/scripts/postinstall")
+      list(APPEND CPACK_PRE_BUILD_SCRIPTS "${Slicer_CMAKE_DIR}/SlicerCPackMacOSPkg.cmake")
+      set(CPACK_MODULE_PATH "${Slicer_CMAKE_DIR}/SlicerCPackMacOSPkg;${CMAKE_MODULE_PATH}")
+    endif()
     # Use the LZFSE-compressed disk image format (ULFO) instead of the CPack
     # default (UDZO, zlib). LZFSE compresses the application bundle several
     # times faster and produces a slightly smaller image. ULFO images require
@@ -28,6 +38,8 @@ if(UNIX)
     if(NOT DEFINED CPACK_COMMAND_HDIUTIL)
       set(CPACK_COMMAND_HDIUTIL "/bin/sh ${Slicer_CMAKE_DIR}/SlicerCPackHdiutil.sh")
     endif()
+  else()
+    set(CPACK_GENERATOR "TGZ")
   endif()
 elseif(WIN32)
   set(CPACK_GENERATOR "NSIS")
@@ -137,6 +149,10 @@ endif()
 # Update CPACK_INSTALL_CMAKE_PROJECTS
 # -------------------------------------------------------------------------
 set(CPACK_INSTALL_CMAKE_PROJECTS)
+set(_cpack_install_subdir "/")
+if(APPLE AND CPACK_GENERATOR STREQUAL "productbuild")
+  set(_cpack_install_subdir "/pkg")
+endif()
 
 # Ensure external project associated with bundled extensions are packaged
 # On macOS this raw multi-project install is not used: SlicerCPackBundleFixup's
@@ -152,8 +168,8 @@ endif()
 
 # Install CTK Apps and Plugins (PythonQt modules, QtDesigner plugins ...)
 if(NOT "${CTK_DIR}" STREQUAL "" AND EXISTS "${CTK_DIR}/CTK-build/CMakeCache.txt")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;RuntimeApplications;/")
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;RuntimePlugins;/")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;RuntimeApplications;${_cpack_install_subdir}")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${CTK_DIR}/CTK-build;CTK;RuntimePlugins;${_cpack_install_subdir}")
 endif()
 
 if(NOT APPLE)
@@ -318,8 +334,12 @@ else()
   # HACK - For a given directory, "install(SCRIPT ...)" rule will be evaluated first,
   #        let's make sure the following install rule is evaluated within its own directory.
   #        Otherwise, the associated script will be executed before any other relevant install rules.
+  set(_cpack_fixup_component Runtime)
+  if(CPACK_GENERATOR STREQUAL "productbuild")
+    set(_cpack_fixup_component pkg)
+  endif()
   file(WRITE ${slicer_cpack_bundle_fixup_directory}/CMakeLists.txt
-    "install(SCRIPT \"${slicer_cpack_bundle_fixup_directory}/SlicerCPackBundleFixup.cmake\" COMPONENT Runtime)")
+    "install(SCRIPT \"${slicer_cpack_bundle_fixup_directory}/SlicerCPackBundleFixup.cmake\" COMPONENT ${_cpack_fixup_component})")
   add_subdirectory(${slicer_cpack_bundle_fixup_directory} ${slicer_cpack_bundle_fixup_directory}-binary)
 
 endif()
@@ -351,14 +371,18 @@ foreach(additional_project ${additional_projects})
 endforeach()
 
 # Install Slicer
-set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;RuntimeLibraries;/")
-set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;RuntimePlugins;/")
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;RuntimeLibraries;${_cpack_install_subdir}")
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;RuntimePlugins;${_cpack_install_subdir}")
 if(NOT Slicer_INSTALL_NO_DEVELOPMENT)
-  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;Development;/")
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;Development;${_cpack_install_subdir}")
 endif()
 
-# Installation of 'Runtime' should be last to ensure the 'SlicerCPackBundleFixup.cmake' is executed last.
-set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;Runtime;/")
+# Install all bundle files before running the fixup script.
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;Runtime;${_cpack_install_subdir}")
+if(APPLE AND CPACK_GENERATOR STREQUAL "productbuild")
+  # Register one productbuild component and run its fixup after staging.
+  set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${Slicer_BINARY_DIR};Slicer;ALL;/")
+endif()
 
 # -------------------------------------------------------------------------
 # Define helper macros and functions
@@ -390,7 +414,12 @@ endmacro()
 # -------------------------------------------------------------------------
 # Common package properties
 # -------------------------------------------------------------------------
-set(CPACK_MONOLITHIC_INSTALL ON)
+if(APPLE AND CPACK_GENERATOR STREQUAL "productbuild")
+  set(CPACK_MONOLITHIC_INSTALL OFF)
+  set(CPACK_COMPONENTS_ALL pkg)
+else()
+  set(CPACK_MONOLITHIC_INSTALL ON)
+endif()
 if(UNIX AND NOT APPLE AND "${CMAKE_BUILD_TYPE}" STREQUAL "Release")
   # Reduce package size stripping symbols from the regular symbol table
   # for ELF libraries and executables.
@@ -648,6 +677,8 @@ Pop $0
 
 endif()
 
+# CPack replaces CPACK_GENERATOR while configuring the source package.
+set(_binary_package_generator "${CPACK_GENERATOR}")
 include(CPack)
 
 # -------------------------------------------------------------------------
@@ -660,15 +691,16 @@ include(CPack)
 # by hand.
 if(APPLE)
 
-  # Directory where the CPack DragNDrop generator stages the packaged bundle:
-  #   <build>/_CPack_Packages/<system>/DragNDrop/<package-file-name>/<app>.app
+  # Directory where CPack stages the packaged bundle:
+  #   <build>/_CPack_Packages/<system>/<generator>/<package-file-name>/<app>.app
+  # The productbuild generator adds pkg/Applications before the bundle.
   # The <system> component is built directly from Slicer_OS/Slicer_ARCHITECTURE
   # rather than from CPACK_SYSTEM_NAME, since including CPack repurposes the
   # CPACK_SYSTEM_NAME and CPACK_PACKAGE_FILE_NAME variables for the source
   # package. The <package-file-name> and bundle name embed a build date and are
-  # discovered by the verify script, so only the DragNDrop directory is passed.
+  # discovered by the verify script, so only the generator directory is passed.
   set(_packageverify_dir
-    "${CMAKE_BINARY_DIR}/_CPack_Packages/${Slicer_OS}-${Slicer_ARCHITECTURE}/DragNDrop")
+    "${CMAKE_BINARY_DIR}/_CPack_Packages/${Slicer_OS}-${Slicer_ARCHITECTURE}/${_binary_package_generator}")
 
   add_custom_target(packageverify
     COMMAND ${CMAKE_COMMAND}

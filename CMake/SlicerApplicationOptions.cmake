@@ -134,6 +134,21 @@ if(APPLE)
 endif()
 
 #-----------------------------------------------------------------------------
+# macOS package generator
+#-----------------------------------------------------------------------------
+if(APPLE)
+  if(NOT DEFINED CPACK_GENERATOR)
+    set(CPACK_GENERATOR "DragNDrop")
+  endif()
+  set(CPACK_GENERATOR "${CPACK_GENERATOR}" CACHE STRING "macOS package generator: DragNDrop or productbuild")
+  set_property(CACHE CPACK_GENERATOR PROPERTY STRINGS DragNDrop productbuild)
+  if(NOT CPACK_GENERATOR MATCHES "^(DragNDrop|productbuild)$")
+    message(FATAL_ERROR "CPACK_GENERATOR must be DragNDrop or productbuild on macOS")
+  endif()
+  mark_as_superbuild(CPACK_GENERATOR:STRING)
+endif()
+
+#-----------------------------------------------------------------------------
 # Set libraries to leave untouched during macOS bundle fixup and re-signing
 #-----------------------------------------------------------------------------
 if(APPLE)

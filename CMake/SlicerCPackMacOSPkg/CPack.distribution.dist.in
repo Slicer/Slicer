@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<installer-gui-script minSpecVersion="1.0">
+  <title>@_slicer_pkg_title_xml@</title>
+  <license file="@_slicer_pkg_license_filename@"/>
+@CPACK_APPLE_PKG_INSTALLER_CONTENT@
+</installer-gui-script>
