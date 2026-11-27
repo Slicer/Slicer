@@ -458,6 +458,7 @@ void qSlicerSegmentationsModuleWidget::onAddSegment()
     QStringList segmentIDList;
     segmentIDList << QString(addedSegmentID.c_str());
     d->SegmentsTableView->setSelectedSegmentIDs(segmentIDList);
+    d->SegmentsTableView->scrollToSegment(QString(addedSegmentID.c_str()));
   }
 
   // Assign the new segment the terminology of the (now second) last segment

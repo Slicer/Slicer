@@ -1116,6 +1116,20 @@ void qMRMLSegmentsTableView::setSelectedSegmentIDs(QStringList segmentIDs)
 }
 
 //-----------------------------------------------------------------------------
+void qMRMLSegmentsTableView::scrollToSegment(const QString& segmentID)
+{
+  Q_D(qMRMLSegmentsTableView);
+  QModelIndex index = d->SortFilterModel->indexFromSegmentID(segmentID);
+  if (!index.isValid())
+  {
+    // Segment is not in the table (for example, filtered out)
+    return;
+  }
+  // The table is not scrolled if the segment is already visible
+  d->SegmentsTable->scrollTo(index);
+}
+
+//-----------------------------------------------------------------------------
 void qMRMLSegmentsTableView::clearSelection()
 {
   Q_D(qMRMLSegmentsTableView);

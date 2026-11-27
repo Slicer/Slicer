@@ -92,6 +92,12 @@ public:
   /// Clear segment selection
   Q_INVOKABLE void clearSelection();
 
+  /// Scroll the table to make the segment visible.
+  /// The table is not scrolled if the segment is already visible or not displayed in the table.
+  /// Selecting segments does not scroll the table, call this method where scrolling is desired,
+  /// such as after adding a segment or moving the selection to the previous/next segment.
+  Q_INVOKABLE void scrollToSegment(const QString& segmentID);
+
   /// Assemble terminology info string (for tooltips) from a segment's terminology tags
   Q_INVOKABLE static QString terminologyTooltipForSegment(vtkSegment* segment);
 
