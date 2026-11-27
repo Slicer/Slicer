@@ -346,9 +346,11 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
     // Read only the header first to check if this is a segmentation file in the legacy 4D format
     reader->UpdateOutputInformation();
   }
-  catch (itk::ImageFileReaderException& error)
+  catch (itk::ExceptionObject& error)
   {
-    // Do not report error as the file might contain poly data in which case ReadPolyDataRepresentation will read it alright
+    // Do not report error as the file might contain poly data in which case ReadPolyDataRepresentation will read it alright.
+    // Not only itk::ImageFileReaderException can be thrown here: an ImageIO that claims it can read the file
+    // (for example ScancoImageIO accepts any file) throws a generic itk::ExceptionObject from ReadImageInformation().
     vtkDebugMacro("ReadBinaryLabelmapRepresentation: Failed to load file " << path << " as segmentation. Exception:\n" << error);
     return 0;
   }
@@ -364,7 +366,7 @@ int vtkMRMLSegmentationStorageNode::ReadBinaryLabelmapRepresentation4DSpatial(vt
   {
     reader->Update();
   }
-  catch (itk::ImageFileReaderException& error)
+  catch (itk::ExceptionObject& error)
   {
     // Do not report error as the file might contain poly data in which case ReadPolyDataRepresentation will read it alright
     vtkDebugMacro("ReadBinaryLabelmapRepresentation: Failed to load file " << path << " as segmentation. Exception:\n" << error);
