@@ -18,5 +18,11 @@ foreach(dcmtk_Lib ${DCMTK_LIBRARIES})
       FILES "${Slicer_INSTALL_LIB_DIR}/lib${dcmtk_Lib}.so"
       COMPONENT Runtime
       )
+    # Libraries are copied from the DCMTK build tree, remove the RUNPATH
+    # referencing it (see #9351).
+    slicerRemoveInstalledLibraryRPath(
+      FILES "${Slicer_INSTALL_LIB_DIR}/lib${dcmtk_Lib}.so"
+      COMPONENT Runtime
+      )
   endif()
 endforeach()
