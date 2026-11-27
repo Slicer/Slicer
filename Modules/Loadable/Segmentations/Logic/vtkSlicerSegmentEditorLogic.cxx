@@ -1726,7 +1726,8 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
   constexpr float eraseValue{ 0.0 };
 
   vtkSmartPointer<vtkOrientedImageData> modifierLabelmap = modifierLabelmapInput;
-  if ((!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere) || parameterSetNode->GetSourceVolumeIntensityMask())
+  // Bypass masking ignores all masking options: editable area, editable intensity range and overwrite of other segments
+  if (!bypassMasking && (parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere || parameterSetNode->GetSourceVolumeIntensityMask()))
   {
     constexpr float fillValue{ 1.0 };
     vtkNew<vtkOrientedImageData> maskImage;
@@ -1738,7 +1739,7 @@ void vtkSlicerSegmentEditorLogic::ModifySegmentByLabelmap(vtkMRMLSegmentationNod
     vtkOrientedImageDataResample::FillImage(maskImage, eraseValue);
 
     // Apply mask to modifier labelmap if masking is enabled
-    if (!bypassMasking && parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere)
+    if (parameterSetNode->GetMaskMode() != vtkMRMLSegmentationNode::EditAllowedEverywhere)
     {
       if (!this->UpdateMaskLabelmap())
       {
