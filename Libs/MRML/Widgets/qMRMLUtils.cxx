@@ -20,6 +20,7 @@
 
 // Qt includes
 #include <QApplication>
+#include <QLocale>
 #include <QMimeData>
 #include <QPainter>
 #include <QStyle>
@@ -210,6 +211,12 @@ void qMRMLUtils::mimeDataToSubjectHierarchyItemIDs(const QMimeData* mimeData, vt
     QUrlQuery query(url.query());
     idList->InsertNextId(query.queryItemValue("id").toLong());
   }
+}
+
+//------------------------------------------------------------------------------
+QString qMRMLUtils::toExactString(double value)
+{
+  return QString::number(value, 'g', QLocale::FloatingPointShortest);
 }
 
 //------------------------------------------------------------------------------

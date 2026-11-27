@@ -67,6 +67,23 @@ int qMRMLUtilsTest1(int argc, char* argv[])
     return EXIT_FAILURE;
   }
 
+  // Test conversion of doubles to strings that convert back to the exact same value
+  const double values[] = { 33.31780242919922, -4.199450016021729, 123456.7, 1.0e-12, 0.1, 848.0, -0.0 };
+  for (double value : values)
+  {
+    QString text = qMRMLUtils::toExactString(value);
+    if (text.toDouble() != value)
+    {
+      qDebug() << "Failed: toExactString(" << QString::number(value, 'g', 17) << ") returned" << text;
+      return EXIT_FAILURE;
+    }
+  }
+  if (qMRMLUtils::toExactString(0.1) != "0.1" || qMRMLUtils::toExactString(848.0) != "848")
+  {
+    qDebug() << "Failed: toExactString did not return the shortest strings, but" << qMRMLUtils::toExactString(0.1) << qMRMLUtils::toExactString(848.0);
+    return EXIT_FAILURE;
+  }
+
   //  FIXME
   //  FIXME
   //  FIXME
