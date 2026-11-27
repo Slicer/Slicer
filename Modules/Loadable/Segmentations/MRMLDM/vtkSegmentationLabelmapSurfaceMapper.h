@@ -39,6 +39,22 @@ class vtkOrientedImageData;
 /// Model coordinates of the mapper are the IJK coordinates of the labelmap
 /// (the actor's matrix is expected to map them to world coordinates).
 ///
+/// All shown segments of the labelmap are rendered by one mapper, each with its own color and opacity. The distance
+/// field is that of all shown segments together (their outer surface). Each point of the surface has the color of the
+/// segment that it belongs to: colors of neighbor segments are not blended, the seam between two segments is only as
+/// wide as a pixel. Where something can be seen through (translucent segments, or a clipped surface that is not
+/// capped), the surfaces between segments that touch each other are shown, too: a ray that is inside the surface
+/// follows which segment it is in, and each segment is seen as a closed surface of its own opacity.
+/// A mapper that has both opaque and translucent segments is rendered in both the opaque and the translucent pass
+/// (\sa HasOpaqueGeometry, HasTranslucentPolygonalGeometry).
+///
+/// Segments that overlap are in several labelmaps, each rendered by a mapper. The translucent surfaces of all the mappers
+/// in a renderer are composited together, in depth order along each ray, whether or not the renderer uses depth peeling
+/// (render passes such as ambient shadows do not): the mapper that is the first to render translucent surfaces in a
+/// frame casts the rays of all of them into a joint image and draws it. Up to three faces along a ray are ordered
+/// exactly among the mappers, the faces that are farther are composited after them. The joint image is only used if
+/// there are several such mappers; it takes 64 bytes per pixel of the view.
+///
 /// Uses only OpenGL features that are available in both OpenGL 3.2 and OpenGL ES 3.0 (WebGL2),
 /// with 16-bit floating-point render targets (EXT_color_buffer_float on WebGL2).
 class VTK_SLICER_SEGMENTATIONS_MODULE_MRMLDISPLAYABLEMANAGER_EXPORT vtkSegmentationLabelmapSurfaceMapper : public vtkMRMLRayCastMapper
@@ -52,8 +68,10 @@ public:
   void SetLabelmap(vtkOrientedImageData* labelmap);
   vtkOrientedImageData* GetLabelmap();
 
-  /// Show the voxels that have the specified label value with the specified color and opacity.
-  /// Surfaces of segments that touch each other are only shown where they touch if they are in different mappers.
+  /// Show the voxels that have the specified label value (up to 65535) with the specified color and opacity.
+  /// The opacity is stored in 8 bits: a label is opaque if its opacity is at least 254.5 / 255.
+  /// Changing the color or the opacity of a shown label does not require any computation (only setting the opacity to
+  /// or from 0 does, because that changes which segments are shown).
   void SetLabelColor(int labelValue, double r, double g, double b, double opacity = 1.0);
   /// Remove all label colors (all labels are hidden).
   void RemoveAllLabelColors();
@@ -68,10 +86,9 @@ public:
   vtkGetMacro(SmoothingFactor, double);
 
   /// The labelmap is downsampled if its distance field would have more voxels than this.
-  /// Larger values preserve more details, but need more GPU memory: about 11 bytes per voxel while the distance field
-  /// is computed, 3 bytes per voxel after that. Each mapper instance holds its own distance field and color textures,
-  /// so the memory is multiplied by the number of mappers that show the same labelmap (the segmentations displayable
-  /// manager uses one mapper for the opaque segments of a segmentation and one for each distinct translucent opacity).
+  /// Larger values preserve more details, but need more GPU memory: 8 bytes per voxel (distance, segment, and the other
+  /// segment and its share near surfaces between segments), and 17 bytes more while the distance field is computed.
+  /// The memory does not depend on the number of segments or on their opacities.
   /// A downsampled voxel is shown if any of its labelmap voxels is shown, which is checked in at most 4 voxels along
   /// each axis: if the downsampling factor is above 4 along an axis (labelmap larger than about 1300^3 voxels at the
   /// default limit), the block is sampled at evenly spaced voxels and small structures between them may be missed.
@@ -130,6 +147,13 @@ public:
   /// Get the label of the shown segment that is at the specified position (in IJK coordinates of the labelmap),
   /// or the nearest one within the specified distance (in voxels). Returns 0 if there is no shown segment there.
   int GetShownLabelAtPosition(const double ijk[3], double maximumDistance = 1.5);
+
+  /// The mapper has opaque geometry if any shown label is opaque, and translucent geometry if any shown label is
+  /// translucent. If it has both then the actor renders it in the opaque and in the translucent pass: opaque segments
+  /// are drawn in the opaque pass (so that they are in the depth buffer, for other translucent geometry and for
+  /// volume rendering), translucent segments in the translucent pass.
+  bool HasOpaqueGeometry() override;
+  bool HasTranslucentPolygonalGeometry() override;
 
   void Render(vtkRenderer* ren, vtkActor* actor) override;
   void ReleaseGraphicsResources(vtkWindow* window) override;

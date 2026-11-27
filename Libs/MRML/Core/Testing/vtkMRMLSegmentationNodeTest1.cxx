@@ -180,17 +180,17 @@ int TestCalculateAutoOpacitiesForSegments()
   scene->AddNode(displayNode);
   segmentationNode->SetAndObserveDisplayNodeID(displayNode->GetID());
 
-  // Binary labelmap shown in 3D views: opacities are computed from the voxels of the segments,
-  // and translucent opacities are the levels that the labelmap surface rendering uses
+  // Binary labelmap shown in 3D views: opacities are computed from the voxels of the segments
+  // (the labelmap surface rendering shows each segment with its own opacity)
   displayNode->SetPreferredDisplayRepresentationName3D(binaryLabelmapName);
   CHECK_BOOL(displayNode->CalculateAutoOpacitiesForSegments(), true);
   CHECK_BOOL(segmentation->ContainsRepresentation(vtkSegmentationConverter::GetSegmentationClosedSurfaceRepresentationName()), false);
   vtkMRMLSegmentationDisplayNode::SegmentDisplayProperties properties;
-  // Two hierarchy levels (outer and middle contain other segments) are distributed among the translucent levels
+  // Two hierarchy levels (outer and middle contain other segments), as for closed surfaces
   displayNode->GetSegmentDisplayProperties("outer", properties);
-  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, displayNode->GetLabelmapSurfaceTranslucentOpacity(1), 1e-6);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0 / 3.0, 1e-6);
   displayNode->GetSegmentDisplayProperties("middle", properties);
-  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, displayNode->GetLabelmapSurfaceTranslucentOpacity(3), 1e-6);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 2.0 / 3.0, 1e-6);
   displayNode->GetSegmentDisplayProperties("inner", properties);
   CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
   displayNode->GetSegmentDisplayProperties("separate", properties);
@@ -216,32 +216,9 @@ int TestCalculateAutoOpacitiesForSegments()
   displayNode->GetSegmentDisplayProperties("empty", properties);
   CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
   displayNode->GetSegmentDisplayProperties("outer", properties);
-  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, displayNode->GetLabelmapSurfaceTranslucentOpacity(1), 1e-6);
-
-  // Fewer opacity levels: with a single translucent level (0.5) both containing segments get that opacity
-  displayNode->SetNumberOfLabelmapSurfaceOpacityLevels(3);
-  CHECK_INT(displayNode->GetNumberOfLabelmapSurfaceOpacityLevels(), 3);
-  CHECK_INT(displayNode->GetLabelmapSurfaceTranslucentOpacityLevel(0.9), 1);
-  CHECK_DOUBLE_TOLERANCE(displayNode->GetLabelmapSurfaceTranslucentOpacity(1), 0.5, 1e-6);
-  CHECK_BOOL(displayNode->CalculateAutoOpacitiesForSegments(), true);
-  displayNode->GetSegmentDisplayProperties("outer", properties);
-  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 0.5, 1e-6);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0 / 3.0, 1e-6);
   displayNode->GetSegmentDisplayProperties("middle", properties);
-  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 0.5, 1e-6);
-  displayNode->GetSegmentDisplayProperties("inner", properties);
-  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 1.0, 1e-6);
-
-  // More opacity levels: the hierarchy levels are rendered as distinct opacities again (0.3 and 0.7 of 11 levels)
-  displayNode->SetNumberOfLabelmapSurfaceOpacityLevels(11);
-  CHECK_BOOL(displayNode->CalculateAutoOpacitiesForSegments(), true);
-  displayNode->GetSegmentDisplayProperties("outer", properties);
-  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 0.3, 1e-6);
-  displayNode->GetSegmentDisplayProperties("middle", properties);
-  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 0.7, 1e-6);
-
-  // Invalid values are clamped to the minimum
-  displayNode->SetNumberOfLabelmapSurfaceOpacityLevels(1);
-  CHECK_INT(displayNode->GetNumberOfLabelmapSurfaceOpacityLevels(), 3);
+  CHECK_DOUBLE_TOLERANCE(properties.Opacity3D, 2.0 / 3.0, 1e-6);
 
   return EXIT_SUCCESS;
 }
