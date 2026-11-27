@@ -172,12 +172,10 @@ void vtkMRMLThreeDReformatDisplayableManager::vtkInternal::UpdateSliceNodes()
     return;
   }
 
-  vtkMRMLNode* node;
-  vtkCollectionSimpleIterator it;
   vtkCollection* scene = this->External->GetMRMLScene()->GetNodes();
-  for (scene->InitTraversal(it); (node = vtkMRMLNode::SafeDownCast(scene->GetNextItemAsObject(it)));)
+  for (int i = 0; i < scene->GetNumberOfItems(); ++i)
   {
-    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(node);
+    vtkMRMLSliceNode* sliceNode = vtkMRMLSliceNode::SafeDownCast(scene->GetItemAsObject(i));
     if (sliceNode)
     {
       this->AddSliceNode(sliceNode);

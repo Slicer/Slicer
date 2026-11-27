@@ -126,10 +126,13 @@ void PrintPath(vtkSegmentationConversionPath* path)
 
 void PrintPaths(vtkSegmentationConversionPaths* paths)
 {
-  vtkSegmentationConversionPath* path = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (paths->InitTraversal(it); (path = paths->GetNextPath(it));)
+  for (int i = 0; i < paths->GetNumberOfPaths(); ++i)
   {
+    vtkSegmentationConversionPath* path = paths->GetPath(i);
+    if (!path)
+    {
+      continue;
+    }
     std::cout << "    Path: (total cost = " << path->GetCost() << ")" << std::endl;
     PrintPath(path);
   }

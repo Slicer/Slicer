@@ -698,7 +698,20 @@ vtkIdType vtkMRMLTableNode::GetPropertyRowIndex(const std::string& columnName)
   {
     return -1;
   }
-  return columnNameArray->LookupValue(columnName);
+  // Do not use columnNameArray->LookupValue(columnName): vtkStringArray caches lookup
+  // results internally and the cache is not invalidated when rows are added/removed
+  // via vtkTable (RemoveRow, InsertNextBlankRow, etc.), which can lead to stale
+  // (incorrect) row indices being returned. Schema tables are small, so a linear
+  // search is cheap and avoids relying on that cache being kept in sync.
+  vtkIdType numberOfValues = columnNameArray->GetNumberOfValues();
+  for (vtkIdType i = 0; i < numberOfValues; ++i)
+  {
+    if (columnNameArray->GetValue(i) == columnName)
+    {
+      return i;
+    }
+  }
+  return -1;
 }
 
 //----------------------------------------------------------------------------

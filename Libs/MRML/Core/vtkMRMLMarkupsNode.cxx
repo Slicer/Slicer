@@ -264,11 +264,13 @@ void vtkMRMLMarkupsNode::ProcessMRMLEvents(vtkObject* caller, unsigned long even
   }
   else if (caller == this->Measurements)
   {
-    vtkCollectionSimpleIterator it;
-    vtkObject* measurementObject = nullptr;
-    for (this->Measurements->InitTraversal(it); (measurementObject = this->Measurements->GetNextItemAsObject(it));)
+    for (int i = 0; i < this->Measurements->GetNumberOfItems(); ++i)
     {
-      vtkObserveMRMLObjectEventMacroNoWarning(measurementObject, vtkMRMLMeasurement::InputDataModifiedEvent);
+      vtkObject* measurementObject = this->Measurements->GetItemAsObject(i);
+      if (measurementObject)
+      {
+        vtkObserveMRMLObjectEventMacroNoWarning(measurementObject, vtkMRMLMeasurement::InputDataModifiedEvent);
+      }
     }
   }
   else if (caller->IsA("vtkMRMLMeasurement") && event == vtkMRMLMeasurement::InputDataModifiedEvent)
@@ -2830,11 +2832,10 @@ int vtkMRMLMarkupsNode::GetNumberOfMeasurements()
 int vtkMRMLMarkupsNode::GetNumberOfEnabledMeasurements()
 {
   int numberOfEnabledMeasurements = 0;
-  vtkMRMLMeasurement* currentMeasurement = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (this->Measurements->InitTraversal(it); (currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetNextItemAsObject(it)));)
+  for (int i = 0; i < this->Measurements->GetNumberOfItems(); ++i)
   {
-    if (currentMeasurement->GetEnabled())
+    auto* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(i));
+    if (currentMeasurement && currentMeasurement->GetEnabled())
     {
       numberOfEnabledMeasurements++;
     }
@@ -3032,11 +3033,14 @@ void vtkMRMLMarkupsNode::WriteMeasurementsToDescription()
   int numberOfValidMeasurements = 0;
   std::string properties;
   std::string description;
-  vtkMRMLMeasurement* currentMeasurement = nullptr;
-  vtkCollectionSimpleIterator it;
   std::string measurementText;
-  for (this->Measurements->InitTraversal(it); (currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetNextItemAsObject(it)));)
+  for (int i = 0; i < this->Measurements->GetNumberOfItems(); ++i)
   {
+    auto* currentMeasurement = vtkMRMLMeasurement::SafeDownCast(this->Measurements->GetItemAsObject(i));
+    if (!currentMeasurement)
+    {
+      continue;
+    }
     if (!currentMeasurement->GetEnabled() || currentMeasurement->GetName().empty() || !currentMeasurement->GetValueDefined())
     {
       continue;

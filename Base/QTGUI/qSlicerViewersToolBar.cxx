@@ -314,10 +314,13 @@ void qSlicerViewersToolBarPrivate::setCrosshairJumpSlicesMode(int jumpSlicesMode
   {
     return;
   }
-  vtkMRMLCrosshairNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLCrosshairNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    auto* node = static_cast<vtkMRMLCrosshairNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     node->SetCrosshairBehavior(jumpSlicesMode);
   }
 }
@@ -333,10 +336,13 @@ void qSlicerViewersToolBarPrivate::setCrosshairEnabled(bool enabled)
   {
     return;
   }
-  vtkMRMLCrosshairNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLCrosshairNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    auto* node = static_cast<vtkMRMLCrosshairNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     if (enabled)
     {
       node->SetCrosshairMode(this->CrosshairLastMode);
@@ -359,10 +365,13 @@ void qSlicerViewersToolBarPrivate::setCrosshairMode(int mode)
   {
     return;
   }
-  vtkMRMLCrosshairNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLCrosshairNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    auto* node = static_cast<vtkMRMLCrosshairNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     // cache before carry
     if (mode != vtkMRMLCrosshairNode::NoCrosshair)
     {
@@ -382,10 +391,13 @@ void qSlicerViewersToolBarPrivate::setCrosshairThickness(int thickness)
   {
     return;
   }
-  vtkMRMLCrosshairNode* node = nullptr;
-  vtkCollectionSimpleIterator it;
-  for (nodes->InitTraversal(it); (node = static_cast<vtkMRMLCrosshairNode*>(nodes->GetNextItemAsObject(it)));)
+  for (int i = 0; i < nodes->GetNumberOfItems(); ++i)
   {
+    auto* node = static_cast<vtkMRMLCrosshairNode*>(nodes->GetItemAsObject(i));
+    if (!node)
+    {
+      continue;
+    }
     node->SetCrosshairThickness(thickness);
   }
 }
@@ -477,13 +489,11 @@ void qSlicerViewersToolBarPrivate::setMRMLScene(vtkMRMLScene* newScene)
   if (this->MRMLScene)
   {
     // Watch the crosshairs
-    vtkMRMLNode* node;
-    vtkCollectionSimpleIterator it;
     vtkSmartPointer<vtkCollection> crosshairs;
     crosshairs.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
-    for (crosshairs->InitTraversal(it); (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
+    for (int i = 0; i < crosshairs->GetNumberOfItems(); ++i)
     {
-      vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
+      vtkMRMLCrosshairNode* crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(crosshairs->GetItemAsObject(i));
       if (crosshairNode)
       {
         this->qvtkReconnect(crosshairNode, vtkCommand::ModifiedEvent, this, SLOT(onCrosshairNodeModeChangedEvent()));
@@ -506,18 +516,17 @@ void qSlicerViewersToolBarPrivate::updateWidgetFromMRML()
 {
   Q_ASSERT(this->MRMLScene);
 
-  vtkMRMLNode* node;
-  vtkCollectionSimpleIterator it;
   vtkMRMLCrosshairNode* crosshairNode = nullptr;
   vtkSmartPointer<vtkCollection> crosshairs;
   crosshairs.TakeReference(this->MRMLScene->GetNodesByClass("vtkMRMLCrosshairNode"));
-  for (crosshairs->InitTraversal(it); (node = (vtkMRMLNode*)crosshairs->GetNextItemAsObject(it));)
+  for (int i = 0; i < crosshairs->GetNumberOfItems(); ++i)
   {
-    crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(node);
+    crosshairNode = vtkMRMLCrosshairNode::SafeDownCast(crosshairs->GetItemAsObject(i));
     if (crosshairNode && crosshairNode->GetCrosshairName() == std::string("default"))
     {
       break;
     }
+    crosshairNode = nullptr;
   }
   if (crosshairNode)
   {
