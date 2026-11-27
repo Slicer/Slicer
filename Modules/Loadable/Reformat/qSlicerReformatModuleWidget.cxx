@@ -326,7 +326,7 @@ void qSlicerReformatModuleWidget::setup()
   d->OnPlaneGroupBox->setHidden(true);
 
   // Connect button group
-  this->connect(d->OriginCoordinateReferenceButtonGroup, SIGNAL(buttonPressed(int)), SLOT(onOriginCoordinateReferenceButtonPressed(int)));
+  this->connect(d->OriginCoordinateReferenceButtonGroup, SIGNAL(idPressed(int)), SLOT(onOriginCoordinateReferenceButtonPressed(int)));
 
   // Connect World Coordinates of origin spinBoxes
   this->connect(d->InVolumeCoordinatesWidget, SIGNAL(coordinatesChanged(double*)), this, SLOT(setWorldPosition(double*)));

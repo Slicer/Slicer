@@ -20,6 +20,8 @@
 
 // Qt includes
 
+// STD includes
+#include <memory>
 // Slicer includes
 #include "qSlicerCLILoadableModuleFactory.h"
 #include "qSlicerCLIModule.h"
@@ -82,8 +84,8 @@ QString qSlicerCLILoadableModuleFactoryItem::xmlModuleDescriptionFilePath() cons
 qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
 {
   // Using a scoped pointer ensures the memory will be cleaned if instantiator
-  // fails before returning the module. See QScopedPointer::take()
-  QScopedPointer<qSlicerCLIModule> module(new qSlicerCLIModule());
+  // fails before returning the module. See std::unique_ptr::release()
+  std::unique_ptr<qSlicerCLIModule> module(new qSlicerCLIModule());
 
   QString xmlFilePath = this->xmlModuleDescriptionFilePath();
 
@@ -135,7 +137,7 @@ qSlicerAbstractCoreModule* qSlicerCLILoadableModuleFactoryItem::instanciator()
   module->setInstalled(qSlicerCLIModuleFactoryHelper::isInstalled(this->path()));
   module->setBuiltIn(qSlicerCLIModuleFactoryHelper::isBuiltIn(this->path()));
 
-  return module.take();
+  return module.release();
 }
 
 //-----------------------------------------------------------------------------
