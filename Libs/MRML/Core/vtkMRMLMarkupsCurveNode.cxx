@@ -1088,7 +1088,7 @@ vtkIdType vtkMRMLMarkupsCurveNode::GetClosestPointPositionAlongCurve(vtkPoints* 
       return -1;
     }
     points->GetPoint(closestCurvePointIndex, closestCurvePoint);
-    closestDistance2 = vtkMath::Distance2BetweenPoints(pos, closestPos);
+    closestDistance2 = vtkMath::Distance2BetweenPoints(pos, closestCurvePoint);
   }
   else
   {
