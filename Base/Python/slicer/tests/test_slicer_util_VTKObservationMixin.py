@@ -122,20 +122,15 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
         self.assertEqual(group, group_)
         self.assertEqual(priority, priority_)
 
-    @unittest.expectedFailure
     def test_releaseNodes(self):
         """test_releaseNodes
 
-        This test was originally added following the introduction of :class:`weakref.WeakKeyDictionary`
-        ensuring the observed vtkObjects are garbage collected if all other references have been lost.
-        See https://github.com/Slicer/Slicer/issues/6406
+        Observed vtkObjects must be deleted if all other references have been lost,
+        and the observations of deleted objects must be forgotten.
+        See https://github.com/Slicer/Slicer/issues/6406 and https://github.com/Slicer/Slicer/issues/6679
 
-        The problem is that if an observer is attached to an object through :class:`slicer.util.VTKObservationMixin`,
-        and if a reference to the object is not kept in Python, then the observer was automatically garbage collected
-        from the :class:`weakref.WeakKeyDictionary` even if the VTK object still exists.
-        See https://github.com/Slicer/Slicer/issues/6610
-
-        Approaches for fixing this test are discussed in https://github.com/Slicer/Slicer/issues/6679
+        Observations must still be removable if no reference to the object is kept in Python,
+        see :func:`test_removeObserver_issue6610`.
         """
         foo = Foo()
         node = vtk.vtkObject()
@@ -147,6 +142,28 @@ class SlicerUtilVTKObservationMixinTests(unittest.TestCase):
         callback.assert_not_called()
         del node
         callback.assert_called_once()
+        self.assertEqual(len(foo.Observations), 0)
+
+    def test_observedObjectNotKeptAlive(self):
+        """Observing an object must not prevent the object from being deleted (see issue #6679)."""
+        foo = Foo()
+        obj = vtk.vtkObject()
+        weakReference = vtk.vtkWeakReference()
+        weakReference.Set(obj)
+
+        foo.addObserver(obj, vtk.vtkCommand.ModifiedEvent, foo.onObjectModified)
+        self.assertEqual(len(foo.Observations), 1)
+        del obj
+        self.assertIsNone(weakReference.Get())
+        self.assertEqual(len(foo.Observations), 0)
+
+        # Observations can be added to new objects after an observed object was deleted
+        obj = vtk.vtkObject()
+        foo.addObserver(obj, vtk.vtkCommand.ModifiedEvent, foo.onObjectModified)
+        self.assertTrue(foo.hasObserver(obj, vtk.vtkCommand.ModifiedEvent, foo.onObjectModified))
+        obj.Modified()
+        self.assertEqual(foo.modifiedEventCount(obj), 1)
+        foo.removeObservers()
         self.assertEqual(len(foo.Observations), 0)
 
     def test_removeObserver(self):
