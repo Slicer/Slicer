@@ -7,8 +7,15 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
     "Qt${CTK_QT_VERSION}::Gui"
     )
 
+  # The WebEngine module is named "WebEngine" in Qt5 and "WebEngineCore" in Qt6
+  if(CTK_QT_VERSION VERSION_EQUAL "5")
+    set(_webengine_qt_target "Qt5::WebEngine")
+  else()
+    set(_webengine_qt_target "Qt6::WebEngineCore")
+  endif()
+
   # WebEngine Dependencies
-  if("Qt${CTK_QT_VERSION}::WebEngine" IN_LIST QT_LIBRARIES)
+  if("${_webengine_qt_target}" IN_LIST QT_LIBRARIES)
     find_package(Qt${CTK_QT_VERSION} REQUIRED
       COMPONENTS
         Qml
@@ -29,10 +36,27 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
     if(TARGET "Qt${CTK_QT_VERSION}::QmlModels" AND NOT WIN32)
       list(APPEND QT_LIBRARIES "Qt${CTK_QT_VERSION}::QmlModels")
     endif()
+    # QmlMeta and QmlWorkerScript are required by Quick in Qt6. As for QmlModels,
+    # windeployqt implicitly copies them on Windows.
+    foreach(_qml_lib IN ITEMS QmlMeta QmlWorkerScript)
+      if(TARGET "Qt${CTK_QT_VERSION}::${_qml_lib}" AND NOT WIN32)
+        list(APPEND QT_LIBRARIES "Qt${CTK_QT_VERSION}::${_qml_lib}")
+      endif()
+    endforeach()
     if(TARGET "Qt${CTK_QT_VERSION}::Positioning")
       list(APPEND QT_LIBRARIES "Qt${CTK_QT_VERSION}::Positioning")
     endif()
   endif()
+
+  # Multimedia Dependencies
+  if(CTK_QT_VERSION VERSION_EQUAL "6" AND "Qt6::Multimedia" IN_LIST QT_LIBRARIES AND NOT WIN32)
+    # Concurrent is required by Multimedia in Qt6. On Windows, windeployqt
+    # implicitly copies it.
+    find_package(Qt6 REQUIRED COMPONENTS Concurrent)
+    list(APPEND QT_LIBRARIES "Qt6::Concurrent")
+  endif()
+
+  list(REMOVE_DUPLICATES QT_LIBRARIES)
 
   # Get root directory
   get_property(_filepath TARGET "Qt${CTK_QT_VERSION}::Core" PROPERTY LOCATION_RELEASE)
@@ -94,7 +118,7 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
     endforeach()
 
     # WebEngine Dependencies
-    if("Qt${CTK_QT_VERSION}::WebEngine" IN_LIST QT_LIBRARIES)
+    if("${_webengine_qt_target}" IN_LIST QT_LIBRARIES)
       install(PROGRAMS ${qt_root_dir}/libexec/QtWebEngineProcess
         DESTINATION ${Slicer_INSTALL_ROOT}/libexec COMPONENT Runtime
         )
@@ -144,7 +168,7 @@ set(QT_INSTALL_LIB_DIR ${Slicer_INSTALL_LIB_DIR})
       )
 
     # Install webengine translations
-    if("Qt${CTK_QT_VERSION}::WebEngine" IN_LIST QT_LIBRARIES)
+    if("${_webengine_qt_target}" IN_LIST QT_LIBRARIES)
       set(translations_dir "${qt_root_dir}/translations/qtwebengine_locales")
       install(DIRECTORY ${translations_dir}
         DESTINATION ${Slicer_INSTALL_ROOT}/share/QtTranslations/ COMPONENT Runtime
