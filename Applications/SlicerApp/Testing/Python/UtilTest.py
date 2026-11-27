@@ -346,6 +346,53 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         self.assertEqual(tableNode5.GetTable().GetValue(1, 0), 0)
         self.assertEqual(tableNode5.GetTable().GetValue(2, 0), 1)
 
+        self.delayDisplay("Test string array update")
+        tableNode6 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+        names = np.array(["Everest", "K2", "Kangchenjunga"])
+        heights = np.array([8849, 8611, 8586], dtype=np.int32)
+        slicer.util.updateTableFromArray(tableNode6, [names, heights], ["name", "height"])
+        self.assertEqual(tableNode6.GetNumberOfColumns(), 2)
+        self.assertEqual(tableNode6.GetNumberOfRows(), 3)
+        self.assertEqual(tableNode6.GetColumnType("name"), vtk.VTK_STRING)
+        self.assertEqual(tableNode6.GetColumnType("height"), vtk.VTK_INT)
+        self.assertEqual(tableNode6.GetCellText(1, 0), "K2")
+        self.assertEqual(tableNode6.GetCellText(2, 1), "8586")
+
+        self.delayDisplay("Test bytes, object and StringDType string array update")
+        tableNode7 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+        slicer.util.updateTableFromArray(tableNode7, [
+            np.array([b"a", b"bc"]),
+            np.array(["Zürich", ""], dtype=object),
+            np.array(["x", "yz"], dtype=np.dtypes.StringDType()),
+        ])
+        for columnIndex in range(3):
+            self.assertEqual(tableNode7.GetColumnType(tableNode7.GetColumnName(columnIndex)), vtk.VTK_STRING)
+        self.assertEqual(tableNode7.GetCellText(1, 0), "bc")
+        self.assertEqual(tableNode7.GetCellText(0, 1), "Zürich")
+        self.assertEqual(tableNode7.GetCellText(1, 1), "")
+        self.assertEqual(tableNode7.GetCellText(1, 2), "yz")
+
+        self.delayDisplay("Test structured and 2D string array update")
+        tableNode8 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+        mountains = np.array([("Everest", 8849), ("K2", 8611)], dtype=[("name", "U20"), ("height", np.int32)])
+        slicer.util.updateTableFromArray(tableNode8, mountains)
+        self.assertEqual(tableNode8.GetColumnType("name"), vtk.VTK_STRING)
+        self.assertEqual(tableNode8.GetColumnType("height"), vtk.VTK_INT)
+        self.assertEqual(tableNode8.GetCellText(1, 0), "K2")
+        slicer.util.updateTableFromArray(tableNode8, np.array([["a", "b"], ["c", "d"], ["e", "f"]]))
+        self.assertEqual(tableNode8.GetNumberOfColumns(), 2)
+        self.assertEqual(tableNode8.GetNumberOfRows(), 3)
+        self.assertEqual(tableNode8.GetCellText(2, 1), "f")
+
+        self.delayDisplay("Test that values that cannot be stored as UTF-8 strings are rejected")
+        tableNode9 = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLTableNode")
+        with self.assertRaisesRegex(TypeError, "got int"):
+            slicer.util.updateTableFromArray(tableNode9, np.array(["a", 1], dtype=object))
+        with self.assertRaises(UnicodeEncodeError):
+            slicer.util.updateTableFromArray(tableNode9, np.array(["\ud800"]))
+        with self.assertRaises(UnicodeDecodeError):
+            slicer.util.updateTableFromArray(tableNode9, np.array([b"\xff"]))
+
         self.delayDisplay("Testing slicer.util.test_updateTableFromArray passed")
 
     def test_arrayFromModelPoints(self):
