@@ -75,6 +75,7 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         self.test_findChild_properties()
         self.test_arrayFromVolume()
         self.test_updateVolumeFromArray()
+        self.test_updateSegmentBinaryLabelmapFromArray()
         self.test_updateTableFromArray()
         self.test_arrayFromModelPoints()
         self.test_arrayFromVTKMatrix()
@@ -281,6 +282,48 @@ class UtilTestTest(ScriptedLoadableModuleTest):
         self.assertEqual(voxelValueVtk, voxelValueNumpy)
 
         self.delayDisplay("Testing slicer.util.test_updateVolumeFromArray passed")
+
+    def test_updateSegmentBinaryLabelmapFromArray(self):
+        import numpy as np
+
+        shape = (5, 7, 9)
+        ijkToRas = np.array([[0, -1.1, 0, 3.5], [0.6, 0, 0, -2.5], [0, 0, 2.5, 4], [0, 0, 0, 1]])
+        reference = slicer.util.addVolumeFromArray(np.zeros(shape, dtype=np.int16), ijkToRas)
+        segmentation = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLSegmentationNode")
+        transform = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLLinearTransformNode")
+        try:
+            matrix = vtk.vtkMatrix4x4()
+            matrix.SetElement(0, 3, 10)
+            transform.SetMatrixTransformToParent(matrix)
+            reference.SetAndObserveTransformNodeID(transform.GetID())
+            segmentation.SetAndObserveTransformNodeID(transform.GetID())
+            segmentation.SetReferenceImageGeometryParameterFromVolumeNode(reference)
+
+            target = np.zeros(shape, dtype=np.uint8)
+            target[1:3, 2:4, 3:5] = 1
+            neighbor = np.roll(target, 4, axis=2)
+            slicer.util.updateSegmentBinaryLabelmapFromArray(target, segmentation, "target", reference)
+            slicer.util.updateSegmentBinaryLabelmapFromArray(neighbor, segmentation, "neighbor", reference)
+            segmentation.GetSegmentation().CollapseBinaryLabelmaps(False)
+
+            normalized = np.roll(target, 2, axis=0)
+            inputArray = normalized.astype(np.int16) * 2
+            inputArray[0, 0, 0] = -1
+            slicer.util.updateSegmentBinaryLabelmapFromArray(inputArray, segmentation, "target")
+            inputArray.fill(0)
+
+            np.testing.assert_array_equal(slicer.util.arrayFromSegmentBinaryLabelmap(segmentation, "target", reference), normalized)
+            np.testing.assert_array_equal(slicer.util.arrayFromSegmentBinaryLabelmap(segmentation, "neighbor", reference), neighbor)
+            labelmap = slicer.vtkOrientedImageData()
+            segmentation.GetBinaryLabelmapRepresentation("target", labelmap)
+            labelmap.GetImageToWorldMatrix(matrix)
+            np.testing.assert_allclose(slicer.util.arrayFromVTKMatrix(matrix), ijkToRas)
+
+            slicer.util.updateSegmentBinaryLabelmapFromArray(inputArray, segmentation, "target")
+            self.assertFalse(slicer.util.arrayFromSegmentBinaryLabelmap(segmentation, "target", reference).any())
+        finally:
+            for node in (segmentation, reference, transform):
+                slicer.mrmlScene.RemoveNode(node)
 
     def test_updateTableFromArray(self):
         # Test if updating table values from a numpy array works
