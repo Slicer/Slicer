@@ -880,7 +880,9 @@ void vtkMRMLScalarVolumeDisplayNode::CalculateAutoLevels()
   }
   if (this->GetAutoThreshold())
   {
-    this->SetThreshold(intensityRange[0], intensityRange[1]);
+    double scalarRange[2];
+    imageDataScalar->GetScalarRange(scalarRange);
+    this->SetThreshold(scalarRange[0], scalarRange[1]);
   }
   this->EndModify(disabledModify);
   this->IsInCalculateAutoLevels = false;
