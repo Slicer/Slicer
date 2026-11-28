@@ -888,7 +888,8 @@ bool vtkMRMLCameraWidget::ProcessTouchCameraTranslate(vtkMRMLInteractionEventDat
   }
 
   const double* translation = eventData->GetTranslation();
-  double deltaView[3] = { -translation[0], -translation[1], 0.0 };
+  const double* lastTranslation = eventData->GetLastTranslation();
+  double deltaView[3] = { lastTranslation[0] - translation[0], lastTranslation[1] - translation[1], 0.0 };
 
   double worldFocus[4];
   camera->GetFocalPoint(worldFocus);
