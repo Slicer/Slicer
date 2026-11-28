@@ -74,6 +74,7 @@ set(TEST_SOURCES
   qMRMLSceneColorTableModelTest1.cxx
   qMRMLSceneFactoryWidgetTest1.cxx
   qMRMLSceneHierarchyModelTest1.cxx
+  qMRMLSceneModelPopulateTest.cxx
   qMRMLSceneModelTest.cxx
   qMRMLSceneModelTest1.cxx
   qMRMLSceneTransformModelTest1.cxx
@@ -223,6 +224,7 @@ simple_test( qMRMLScalarInvariantComboBoxTest1 )
 simple_test( qMRMLSceneCategoryModelTest1 )
 simple_test( qMRMLSceneColorTableModelTest1 )
 simple_test( qMRMLSceneFactoryWidgetTest1 )
+simple_test( qMRMLSceneModelPopulateTest )
 simple_test( qMRMLSceneModelTest )
 simple_test( qMRMLSceneModelTest1 )
 simple_test( qMRMLSceneTransformModelTest1 )
