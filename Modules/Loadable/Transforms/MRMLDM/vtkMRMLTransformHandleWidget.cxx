@@ -372,21 +372,24 @@ void vtkMRMLTransformHandleWidget::TranslateTransformCenter(double eventPos[2])
     // 3D view
     double eventPos_Display[2] = { 0. };
 
+    // Project the event positions onto the plane that passes through the widget and is parallel to the
+    // focal plane. Without an explicit reference position the projection runs through the world origin
+    // instead, making the amount of translation depend on how far the widget is from it.
+    double referencePoint_World[3] = { 0.0, 0.0, 0.0 };
+    rep->GetInteractionHandleOriginWorld(referencePoint_World);
+
     eventPos_Display[0] = this->LastEventPosition[0];
     eventPos_Display[1] = this->LastEventPosition[1];
 
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos_Display, lastEventPos_World, eventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos_Display, referencePoint_World, lastEventPos_World, orientation_World))
     {
       return;
     }
-    lastEventPos_World[0] = eventPos_World[0];
-    lastEventPos_World[1] = eventPos_World[1];
-    lastEventPos_World[2] = eventPos_World[2];
 
     eventPos_Display[0] = eventPos[0];
     eventPos_Display[1] = eventPos[1];
 
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos_Display, lastEventPos_World, eventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos_Display, referencePoint_World, eventPos_World, orientation_World))
     {
       return;
     }

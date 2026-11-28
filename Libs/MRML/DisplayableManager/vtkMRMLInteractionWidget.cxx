@@ -495,11 +495,16 @@ void vtkMRMLInteractionWidget::TranslateWidget(double eventPos[2])
   {
     // 3D view
     double orientation_World[9] = { 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0 };
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, this->LastEventPosition, previousEventPos_World, orientation_World))
+    // Project the event positions onto the plane that passes through the widget and is parallel to the
+    // focal plane. Projecting onto the focal plane itself would make the amount of translation depend on
+    // the distance between the camera focal point and the widget.
+    double referencePoint_World[3] = { 0.0, 0.0, 0.0 };
+    rep->GetInteractionHandleOriginWorld(referencePoint_World);
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, this->LastEventPosition, referencePoint_World, previousEventPos_World, orientation_World))
     {
       return;
     }
-    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos, previousEventPos_World, eventPos_World, orientation_World))
+    if (!rep->GetPointPlacer()->ComputeWorldPosition(this->Renderer, eventPos, referencePoint_World, eventPos_World, orientation_World))
     {
       return;
     }
