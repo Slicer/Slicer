@@ -22,9 +22,13 @@ Version:   $Revision: 1.14 $
 #include <vtkCommand.h>
 #include <vtkGeneralTransform.h>
 #include <vtkIntArray.h>
+#include <vtkLinearTransform.h>
+#include <vtkMatrix4x4.h>
 #include <vtkNew.h>
 #include <vtkTransform.h>
-#include <vtkMatrix4x4.h>
+
+// STD includes
+#include <stack>
 
 const char* vtkMRMLTransformableNode::TransformNodeReferenceRole = "transform";
 const char* vtkMRMLTransformableNode::TransformNodeReferenceMRMLAttributeName = "transformNodeRef";
@@ -61,6 +65,10 @@ const char* vtkMRMLTransformableNode::GetTransformNodeReferenceMRMLAttributeName
 void vtkMRMLTransformableNode::WriteXML(ostream& of, int nIndent)
 {
   Superclass::WriteXML(of, nIndent);
+  if (!this->AutoReverseOrientation)
+  {
+    of << " autoReverseOrientation=\"false\"";
+  }
 }
 
 //----------------------------------------------------------------------------
@@ -69,6 +77,18 @@ void vtkMRMLTransformableNode::ReadXMLAttributes(const char** atts)
   int disabledModify = this->StartModify();
 
   Superclass::ReadXMLAttributes(atts);
+
+  const char* attName;
+  const char* attValue;
+  while (*atts != nullptr)
+  {
+    attName = *(atts++);
+    attValue = *(atts++);
+    if (!strcmp(attName, "autoReverseOrientation"))
+    {
+      this->SetAutoReverseOrientation(strcmp(attValue, "false") != 0);
+    }
+  }
 
   this->EndModify(disabledModify);
 }
@@ -80,6 +100,20 @@ void vtkMRMLTransformableNode::PrintSelf(ostream& os, vtkIndent indent)
   const char* transformNodeID = this->GetNodeReferenceID(this->GetTransformNodeReferenceRole());
 
   os << indent << "TransformNodeID: " << (transformNodeID ? transformNodeID : "(none)") << "\n";
+  os << indent << "AutoReverseOrientation: " << (this->AutoReverseOrientation ? "true" : "false") << "\n";
+}
+
+//----------------------------------------------------------------------------
+void vtkMRMLTransformableNode::CopyContent(vtkMRMLNode* anode, bool deepCopy /*=true*/)
+{
+  MRMLNodeModifyBlocker blocker(this);
+  Superclass::CopyContent(anode, deepCopy);
+  vtkMRMLTransformableNode* node = vtkMRMLTransformableNode::SafeDownCast(anode);
+  if (!node)
+  {
+    return;
+  }
+  this->SetAutoReverseOrientation(node->GetAutoReverseOrientation());
 }
 
 //----------------------------------------------------------------------------
@@ -272,4 +306,49 @@ void vtkMRMLTransformableNode::OnNodeReferenceRemoved(vtkMRMLNodeReference* refe
 void vtkMRMLTransformableNode::OnTransformNodeReferenceChanged(vtkMRMLTransformNode* transformNode)
 {
   this->InvokeCustomModifiedEvent(vtkMRMLTransformableNode::TransformModifiedEvent, transformNode);
+}
+
+//-----------------------------------------------------------
+bool vtkMRMLTransformableNode::IsOrientationReversingTransform(vtkAbstractTransform* transform)
+{
+  if (!transform)
+  {
+    return false;
+  }
+
+  // Flatten composite transforms by iterating through all concatenated components.
+  // Accumulate the sign of the determinant from each linear component.
+  // If any non-linear component is encountered, conservatively return false because
+  // the Jacobian determinant of a non-linear transform varies by position and its
+  // sign cannot be summarized globally.
+  double combinedDeterminant = 1.0;
+  std::stack<vtkAbstractTransform*> transformStack;
+  transformStack.push(transform);
+  while (!transformStack.empty())
+  {
+    vtkAbstractTransform* currentTransform = transformStack.top();
+    transformStack.pop();
+    vtkGeneralTransform* generalTransform = vtkGeneralTransform::SafeDownCast(currentTransform);
+    if (generalTransform)
+    {
+      generalTransform->Update();
+      int n = generalTransform->GetNumberOfConcatenatedTransforms();
+      while (n > 0)
+      {
+        transformStack.push(generalTransform->GetConcatenatedTransform(--n));
+      }
+    }
+    else if (vtkLinearTransform* linearTransform = vtkLinearTransform::SafeDownCast(currentTransform))
+    {
+      vtkNew<vtkMatrix4x4> matrix;
+      linearTransform->GetMatrix(matrix);
+      combinedDeterminant *= matrix->Determinant();
+    }
+    else
+    {
+      // Non-linear component found; cannot determine orientation reversal globally
+      return false;
+    }
+  }
+  return (combinedDeterminant < 0.0);
 }

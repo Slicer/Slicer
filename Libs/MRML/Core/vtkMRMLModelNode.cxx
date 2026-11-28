@@ -34,6 +34,7 @@ Version:   $Revision: 1.3 $
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
+#include <vtkReverseSense.h>
 #include <vtkSmartPointer.h>
 #include <vtkTransformFilter.h>
 #include <vtkTrivialProducer.h>
@@ -715,22 +716,45 @@ void vtkMRMLModelNode::ApplyTransform(vtkAbstractTransform* transform)
   transformFilter->SetInputConnection(this->MeshConnection);
   transformFilter->SetTransform(transform);
 
+  // When the transform reverses orientation (negative determinant), polygon winding
+  // is reversed, causing back faces to be rendered instead of front faces. Apply
+  // vtkReverseSense to fix cell winding. Only cell winding is reversed, not stored
+  // normals, because vtkTransformFilter already correctly transforms normals via the
+  // inverse-transpose of the transform matrix.
+  vtkSmartPointer<vtkReverseSense> reverseSense;
+  bool needReverseSense = this->GetAutoReverseOrientation() && vtkMRMLTransformableNode::IsOrientationReversingTransform(transform) && vtkPolyData::SafeDownCast(this->GetMesh());
+  if (needReverseSense)
+  {
+    reverseSense = vtkSmartPointer<vtkReverseSense>::New();
+    reverseSense->ReverseCellsOn();
+    reverseSense->SetInputConnection(transformFilter->GetOutputPort());
+  }
+
+  vtkAlgorithmOutput* outputConnection = needReverseSense ? reverseSense->GetOutputPort() : transformFilter->GetOutputPort();
+
   bool isInPipeline = !vtkTrivialProducer::SafeDownCast(this->MeshConnection ? this->MeshConnection->GetProducer() : nullptr);
 
   // If mesh was set through pipeline (SetMeshConnection), append
   // transform filter to that pipeline
   if (isInPipeline)
   {
-    this->SetMeshConnection(transformFilter->GetOutputPort());
+    this->SetMeshConnection(outputConnection);
   }
   // Else, if mesh was set as data object (SetAndObserveMesh: uses
   // vtkTrivialProducer to produce the mesh connection), apply the
   // transformation to the data object directly
   else
   {
-    transformFilter->Update();
+    if (needReverseSense)
+    {
+      reverseSense->Update();
+    }
+    else
+    {
+      transformFilter->Update();
+    }
     vtkPointSet* mesh = this->GetMesh();
-    mesh->DeepCopy(transformFilter->GetOutput());
+    mesh->DeepCopy(needReverseSense ? reverseSense->GetOutput() : transformFilter->GetOutput());
   }
   transformFilter->Delete();
 }
