@@ -209,9 +209,15 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
     }
     vtkMTimeType slicePlaneMTime = this->SlicePlane->GetMTime();
     vtkMTimeType markupsDisplayMTime = this->GetMarkupsDisplayNode()->GetMTime();
+    // Control point visibility changes do not modify the curve geometry, but affect which markers are displayed
+    vtkMTimeType markupsNodeMTime = markupsNode->GetMTime();
     bool hoverUpdate = caller == this->GetMarkupsNode() && event == vtkMRMLDisplayableNode::DisplayModifiedEvent;
-    if (updateDirectionMarkers || slicePlaneMTime != this->LineDirectionMarkerLastSlicePlaneMTime || markupsDisplayMTime != this->LineDirectionMarkerLastMarkupsDisplayMTime)
+    if (updateDirectionMarkers || slicePlaneMTime != this->LineDirectionMarkerLastSlicePlaneMTime || markupsDisplayMTime != this->LineDirectionMarkerLastMarkupsDisplayMTime
+        || markupsNodeMTime != this->LineDirectionMarkerLastMarkupsNodeMTime)
     {
+      // Markers overlapping control points visible on the slice are not displayed, to keep the control points easy to find
+      this->UpdateSliceControlPointsDisplayPositions();
+
       this->LineDirectionArrowPipeline->Points->Reset();
       this->LineDirectionArrowPipeline->Normals->Reset();
       this->LineDirectionArrowPipeline->SliceDistances->Reset();
@@ -271,6 +277,12 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
           continue;
         }
 
+        // Skip arrows that overlap with control points visible on the slice
+        if (this->IsOverlappingSliceControlPoint(arrowPos, markerSizePx))
+        {
+          continue;
+        }
+
         this->LineDirectionArrowPipeline->Points->InsertNextPoint(arrowPos);
         this->LineDirectionArrowPipeline->Normals->InsertNextTuple(sliceTangent);
         this->LineDirectionArrowPipeline->SliceDistances->InsertNextValue(static_cast<float>(sliceDist));
@@ -287,6 +299,7 @@ void vtkSlicerLineRepresentation2D::UpdateFromMRMLInternal(vtkMRMLNode* caller, 
 
       this->LineDirectionMarkerLastSlicePlaneMTime = slicePlaneMTime;
       this->LineDirectionMarkerLastMarkupsDisplayMTime = markupsDisplayMTime;
+      this->LineDirectionMarkerLastMarkupsNodeMTime = markupsNodeMTime;
     }
     else if (hoverUpdate)
     {
