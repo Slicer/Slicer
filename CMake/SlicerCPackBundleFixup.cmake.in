@@ -173,7 +173,7 @@ execute_process(
   ERROR_VARIABLE _codesign_error
   )
 if(NOT _codesign_result EQUAL 0)
-  message(WARNING "Re-signing the application bundle failed:\n${_codesign_error}")
+  message(FATAL_ERROR "Re-signing the application bundle failed:\n${_codesign_error}")
 endif()
 
 #-----------------------------------------------------------------------------
