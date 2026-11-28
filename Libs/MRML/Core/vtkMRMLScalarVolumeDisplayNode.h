@@ -119,7 +119,8 @@ public:
   virtual void SetApplyThreshold(int);
 
   ///
-  /// Specifies whether the threshold should be set automatically
+  /// Specifies whether the threshold should be set automatically to the full
+  /// scalar range of the input image, including its minimum and maximum.
   vtkBooleanMacro(AutoThreshold, int);
   vtkGetMacro(AutoThreshold, int);
   vtkSetMacro(AutoThreshold, int);
