@@ -79,9 +79,10 @@ void qSlicerSettingsExtensionsPanelPrivate::init()
 #ifdef Q_OS_MAC
   this->ExtensionsInstallPathButton->setDisabled(true);
 #endif
-  this->AutoUpdateCheckCheckBox->setChecked(false);
-  this->AutoUpdateInstallCheckBox->setChecked(false);
-  this->AutoInstallDependenciesCheckBox->setChecked(true);
+  // Initialize the auto-update widgets from the extensions manager model, so that the
+  // values written to the settings file on first start (ctkSettingsPanel::reloadSettings()
+  // persists the widget value when the key does not exist yet) match the model defaults.
+  q->updateAutoUpdateWidgetsFromModel();
 
   bool extensionsManagerEnabled = app && app->revisionUserSettings()->value("Extensions/ManagerEnabled").toBool();
   this->OpenExtensionsManagerPushButton->setVisible(extensionsManagerEnabled);
