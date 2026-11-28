@@ -40,7 +40,12 @@
 #include <vtkWeakPointer.h>
 #include <vtkImageData.h>
 #include <vtkColorTransferFunction.h>
+#include <vtkNew.h>
+#include <vtkPiecewiseFunction.h>
 #include <vtkVolumeProperty.h>
+
+// STD includes
+#include <algorithm>
 
 //-----------------------------------------------------------------------------
 class qSlicerVolumeRenderingPresetComboBoxPrivate : public Ui_qSlicerVolumeRenderingPresetComboBox
@@ -314,7 +319,31 @@ void qSlicerVolumeRenderingPresetComboBox::applyPreset(vtkMRMLNode* node)
     return;
   }
 
+  MRMLNodeModifyBlocker blocker(d->VolumePropertyNode);
+
+  // Presets only specify transfer functions for the first scalar component.
+  // Keep the transfer functions of additional components (used in independent components mode),
+  // otherwise they would be reset to VTK defaults (fully opaque in the 0..1024 range).
+  vtkVolumeProperty* volumeProperty = d->VolumePropertyNode->GetVolumeProperty();
+  vtkNew<vtkVolumeProperty> previousVolumeProperty;
+  previousVolumeProperty->DeepCopy(volumeProperty);
+
   d->VolumePropertyNode->CopyContent(presetNode);
+
+  const int numberOfComponents = std::min(d->VolumePropertyNode->GetNumberOfIndependentComponents(), VTK_MAX_VRCOMP);
+  for (int component = 1; component < numberOfComponents; ++component)
+  {
+    if (previousVolumeProperty->GetColorChannels(component) == 1)
+    {
+      volumeProperty->GetGrayTransferFunction(component)->DeepCopy(previousVolumeProperty->GetGrayTransferFunction(component));
+    }
+    else
+    {
+      volumeProperty->GetRGBTransferFunction(component)->DeepCopy(previousVolumeProperty->GetRGBTransferFunction(component));
+    }
+    volumeProperty->GetScalarOpacity(component)->DeepCopy(previousVolumeProperty->GetScalarOpacity(component));
+    volumeProperty->GetGradientOpacity(component)->DeepCopy(previousVolumeProperty->GetGradientOpacity(component));
+  }
 
   // Associate the volume property node by the preset by copying its name.
   // Note: it would be more robust to save the preset ID into the volume property node.
