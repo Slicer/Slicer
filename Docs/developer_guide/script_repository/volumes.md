@@ -157,6 +157,8 @@ def showVolumeRendering(volumeNode):
 slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeAddedEvent, onNodeAdded)
 ```
 
+See also [Trigger an action when selected volume changes](#trigger-an-action-when-selected-volume-changes) for cases where the loading of the volume takes too long.
+
 ### Show volume rendering using maximum intensity projection
 
 ```python
@@ -248,6 +250,39 @@ def checkForNewVolumes():
 
 # Start monitoring
 checkForNewVolumes()
+```
+
+### Trigger an action when selected volume changes
+
+This snippet will run your code when the selected volume changes. One important case is, when a new volume finishes loading, it is usually selected; but there are other cases where the selected volume changes.
+
+The selected volume (along with other things, like the selected camera, active view, etc) is managed by a `vtkMRMLSelectionNode`. It fires a `ModifiedEvent` when it changes, but that doesn't say exactly what changed; so if you want to respond to a volume change specifically, you need to take some care:
+
+```python
+def onSelectionModified(caller: slicer.vtkMRMLSelectionNode, event) -> None:
+    ourNode = # previously held reference to volume node
+    selectedNodeID = caller.GetActiveVolumeID()
+    if (ourNode and ourNode.GetID() != selectedNodeID) or (not ourNode and selectedNodeID):
+        newNode = slicer.mrmlScene.GetNodeByID(selectedNodeID) if selectedNodeID else None
+        # Your action to respond to the volume change here
+        # Make sure it also updates your held reference to the volume node
+
+selectionNode = slicer.app.applicationLogic().GetSelectionNode()
+selectionNode.AddObserver(vtk.vtkCommand.ModifiedEvent, onSelectionModified)
+```
+
+If your code is within a module's widget, or some other class that inherits `VTKObservationMixin`, you'll typically have the callback as a method rather than a function:
+
+```python
+    def onSelectionModified(self, caller, event) -> None:
+        # ... Rest as above
+```
+
+You should then use the observation management facilities, and instead of the last two lines above, put these lines in `setup()` or an equivalent initialization method:
+
+```python
+        selectionNode = slicer.app.applicationLogic().GetSelectionNode()
+        self.addObserver(selectionNode, vtk.vtkCommand.ModifiedEvent, self.onSelectionModified)
 ```
 
 ### Extract slice from volume
