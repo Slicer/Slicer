@@ -72,6 +72,13 @@ public:
   /// Get visibility icon for a visibility state
   QIcon visibilityIcon(int visible) override;
 
+  /// Set lock state of an owned subject hierarchy item
+  void setDisplayLocked(vtkIdType itemID, int locked) override;
+
+  /// Get lock state of an owned subject hierarchy item
+  /// \return Lock state (0: unlocked, 1: locked, -1: item is not a markups node)
+  int getDisplayLocked(vtkIdType itemID) const override;
+
   /// Set display color of an owned subject hierarchy item
   /// \param color Display color to set
   /// \param terminologyMetadata Strongly typed terminology metadata
@@ -113,6 +120,10 @@ protected slots:
   void refocusCamera();
   /// Called when clicking on delete point action
   void deletePoint();
+  /// Called when clicking on add point action
+  void addPoint();
+  /// Called when clicking on reverse points action
+  void reversePoints();
   /// Called when clicking on delete node action
   void requestDeleteNode();
   /// Called by a timer to remove those nodes from the scene that were requested to be deleted.
